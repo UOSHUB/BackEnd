@@ -1,0 +1,5 @@
+# Ignore Interpreted Python Files
+*.pyc
+
+# Ignore PyCharm Project folder
+.idea
