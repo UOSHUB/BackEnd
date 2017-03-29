@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import netifaces
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,12 +21,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'ue3axgr(ny2a027!bb2_exy#040)$vbq8q04(ogs80p76m**2d'
+# Use SECRET_KEY from current machine's environment, otherwise use this one below
+SECRET_KEY = os.environ['SECRET_KEY'] if 'SECRET_KEY' in os.environ else 'ue3axgr(ny2a027!bb2_exy#040)$vbq8q04(ogs80p76m**2d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+# Allow Django from all hosts. This snippet is installed from
+# /var/lib/digitalocean/allow_hosts.py
+
+# Find out what the IP addresses are at run time
+# This is necessary because otherwise Gunicorn will reject the connections
 ALLOWED_HOSTS = []
+for interface in netifaces.interfaces():
+    addrs = netifaces.ifaddresses(interface)
+    for x in (netifaces.AF_INET, netifaces.AF_INET6):
+        if x in addrs:
+            ALLOWED_HOSTS.append(addrs[x][0]['addr'])
 
 
 # Application definition
@@ -122,3 +135,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# This is necessary so that Nginx can handle requests for static items
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')

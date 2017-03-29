@@ -3,3 +3,6 @@
 
 # Ignore PyCharm Project folder
 .idea
+
+# Ignore Django Static Files folder
+static
