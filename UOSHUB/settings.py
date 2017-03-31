@@ -25,7 +25,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY'] if 'SECRET_KEY' in os.environ else 'ue3axgr(ny2a027!bb2_exy#040)$vbq8q04(ogs80p76m**2d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Use DEBUG from current machine's environment, otherwise set it to True
+DEBUG = os.environ['DEBUG'] if 'DEBUG' in os.environ else True
 
 
 # Allow Django from all hosts. This snippet is installed from
@@ -44,10 +45,10 @@ for interface in netifaces.interfaces():
 # Application definition
 
 INSTALLED_APPS = [
-    'Blackboard',
-    'myUDC',
-    'Office',
-    'UOS',
+    'Blackboard.apps.BlackboardConfig',
+    'myUDC.apps.MyudcConfig',
+    'Office.apps.OfficeConfig',
+    'UOS.apps.UosConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
