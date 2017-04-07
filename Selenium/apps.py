@@ -3,5 +3,5 @@ from __future__ import unicode_literals
 from django.apps import AppConfig
 
 
-class OfficeConfig(AppConfig):
-    name = 'Office'
+class SeleniumConfig(AppConfig):
+    name = 'Selenium'
