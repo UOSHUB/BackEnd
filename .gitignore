@@ -1,4 +1,5 @@
 # Ignore Interpreted Python Files
+__pycache__/
 *.pyc
 
 # Ignore PyCharm Project folder

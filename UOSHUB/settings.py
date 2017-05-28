@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-import netifaces
+# import netifaces
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -35,17 +35,17 @@ DEBUG = os.environ['DEBUG'] if 'DEBUG' in os.environ else True
 # Find out what the IP addresses are at run time
 # This is necessary because otherwise Gunicorn will reject the connections
 ALLOWED_HOSTS = []
-for interface in netifaces.interfaces():
-    addrs = netifaces.ifaddresses(interface)
-    for x in (netifaces.AF_INET, netifaces.AF_INET6):
-        if x in addrs:
-            ALLOWED_HOSTS.append(addrs[x][0]['addr'])
+# for interface in netifaces.interfaces():
+#     addrs = netifaces.ifaddresses(interface)
+#     for x in (netifaces.AF_INET, netifaces.AF_INET6):
+#         if x in addrs:
+#             ALLOWED_HOSTS.append(addrs[x][0]['addr'])
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'Mechanize.apps.MechanizeConfig',
+    'Requests.apps.RequestsConfig',
     'Selenium.apps.SeleniumConfig',
     'Website.apps.WebsiteConfig',
     'django.contrib.admin',
