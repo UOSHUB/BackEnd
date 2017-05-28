@@ -1,47 +1,60 @@
-import requests
-
-url = "{}://{}.sharjah.{}/reports/rwservlet"
-common = {
-    "desformat": "xml",
-    "destype": "cache",
-    "userid": "uos_mis/u_pick_it@PROD",
-}
+from requests import post, get
 
 
-def academic_calendar():
-    return requests.get("http://www.sharjah.ac.ae/en/academics/A-Calendar/Pages/academiccalendar16-17.aspx").text
+def request(options):
+    return post(
+        url="https://uos.sharjah.ac.ae:9050/reports/rwservlet",
+        data=dict({
+            "server": "RptSvr_uosas5_INB_asinst",
+            "desformat": "xml",
+            "destype": "cache",
+            "userid": "uos_mis/u_pick_it@PROD"
+        }, **options)
+    )
 
 
 def personal_info(sid):
-    request = requests.post(url.format("https", "uos", "ac.ae:9050"), data=dict({
-        "REPORT": "syrexdt_rep",
-        "server": "RptSvr_uosas5_INB_asinst",
+    response = request({
+        "REPORT": "SYREXDT_REP",
         "P_SPRIDEN_ID": sid.upper()
-    }, **common))
-    request.encoding = "utf-8"
-    return request.text
+    })
+    response.encoding = "utf-8"
+    return response.text.encode('utf-8')
 
 
-def uosas5_request(options):
-    return requests.post(url.format("http", "uosas5", "uos.edu:7782"), data=dict(options, **common)).text
+def schedule(sid, semester):
+    return request({
+        "REPORT": "SYFSSCE_REP",
+        "P_ID_FROM": sid.upper(),
+        "P_ID_TO": sid.upper(),
+        "P_TERM_CODE": semester
+    }).text
 
 
-def study_plan(sid):
-    return uosas5_request({
+def final_exams(sid, semester):
+    return request({
+        "REPORT": "SYRSSFE_REP",
+        "P_ID": sid.upper(),
+        "P_TERM_CODE": semester
+    }).text
+
+
+def study_plan(sid, reg_semester):
+    return request({
         "REPORT": "SYRSPOS_REP",
-        # Student enrollment semester
-        "P_TERM_CODE": "201410",
         "P_PROG_CODE": "ALL",
         "P_EXP_GRD": "ALL",
         "P_COLL_CODE": "ALL",
         "P_CAMP_CODE": "ALL",
         "P_LEVEL_CODE": "ALL",
-        "P_STUDENT_ID": sid.upper()
-    })
+        "P_STUDENT_ID": sid.upper(),
+        # Student enrollment semester
+        "P_TERM_CODE": reg_semester
+    }).text
 
 
 def offered_courses(semester):
-    return uosas5_request({
+    return request({
         "REPORT": "SYRSCHE_REP",
         "CAMP": "%",
         "COLL": "%",
@@ -52,11 +65,11 @@ def offered_courses(semester):
         "MAX": "258",
         "MIN": "0",
         "TERM": semester
-    })
+    }).text
 
 
 def unofficial_transcript(sid):
-    return uosas5_request({
+    return request({
         "REPORT": "SYFTRTE_REP",
         "P_CAMP": "ALL",
         "P_LEVL_CODE": "ALL",
@@ -67,4 +80,8 @@ def unofficial_transcript(sid):
         # Whether to show in progress courses
         "P_INPROG_CRS_IND": "Y",
         "P_ID": sid.upper()
-    })
+    }).text
+
+
+def academic_calendar():
+    return get("http://www.sharjah.ac.ae/en/academics/A-Calendar/Pages/academiccalendar16-17.aspx").text
