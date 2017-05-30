@@ -1,18 +1,27 @@
-from requests import post, get
+import requests
 
 root_url = "https://uos.sharjah.ac.ae:9050/prod_enUS/"
 
 
-def login(sid, pin):
-    return post(
+def __login(sid, pin):
+    return requests.post(
         root_url + "twbkwbis.P_ValLogin",
         data={"sid": sid, "PIN": pin},
         cookies={"TESTID": "set"}
     ).cookies
 
 
+def transcript(session):
+    return requests.post(
+        root_url + "bwskotrn.P_ViewTran",
+        data={"tprt": "NOF"},
+        headers={"referer": root_url + "bwskotrn.P_ViewTermTran"},
+        cookies=session
+    ).text
+
+
 def get_page(link, referer, session):
-    return get(
+    return requests.get(
         root_url + link,
         headers={"referer": root_url + "twbkwbis.P_GenMenu?name=bmenu.P_" + referer},
         cookies=session

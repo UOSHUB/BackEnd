@@ -1,8 +1,8 @@
-from requests import post, get
+import requests
 
 
 def request(options):
-    return post(
+    return requests.post(
         url="https://uos.sharjah.ac.ae:9050/reports/rwservlet",
         data=dict({
             "server": "RptSvr_uosas5_INB_asinst",
@@ -19,7 +19,7 @@ def personal_info(sid):
         "P_SPRIDEN_ID": sid.upper()
     })
     response.encoding = "utf-8"
-    return response.text.encode('utf-8')
+    return response.text.encode()
 
 
 def schedule(sid, semester):
@@ -81,7 +81,3 @@ def unofficial_transcript(sid):
         "P_INPROG_CRS_IND": "Y",
         "P_ID": sid.upper()
     }).text
-
-
-def academic_calendar():
-    return get("http://www.sharjah.ac.ae/en/academics/A-Calendar/Pages/academiccalendar16-17.aspx").text
