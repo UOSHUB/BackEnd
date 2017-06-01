@@ -28,10 +28,6 @@ def get_page(link, referer, session):
     ).text
 
 
-def dir_profile(session):
-    return get_page("bwgkoprf.P_ShowDiroItems", "GenMnu", session)
-
-
 def active_reg(session):
     return get_page("bwsksreg.p_active_regs", "RegMnu", session)
 
@@ -46,3 +42,7 @@ def account_summary(session, by_term=False):
 
 def admission_card(session):
     return get_page("uos_admission_card.p_dispadmissioncard", "MyAdmMnu", session)
+
+
+def __dir_profile(session):
+    return get_page("bwgkoprf.P_ShowDiroItems", "GenMnu", session)
