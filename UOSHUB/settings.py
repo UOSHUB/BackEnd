@@ -46,7 +46,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'Requests.apps.RequestsConfig',
-    'Selenium.apps.SeleniumConfig',
     'Website.apps.WebsiteConfig',
     'django.contrib.admin',
     'django.contrib.auth',
