@@ -1,5 +1,4 @@
 from lxml.html import fromstring as __parse_html, tostring as __get_html
-import re, json
 
 
 def courses(response, from_list_of=False):
@@ -26,4 +25,5 @@ def profile_image(response):
 
 
 def __survey_courses(response):
+    import re, json
     return json.loads(re.search("json_ecb = ({.*?});", response).group(1))
