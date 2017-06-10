@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-# import netifaces
+import netifaces
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,18 +29,13 @@ SECRET_KEY = os.environ['SECRET_KEY'] if 'SECRET_KEY' in os.environ else 'ue3axg
 DEBUG = os.environ['DEBUG'] if 'DEBUG' in os.environ else True
 
 
-# Allow Django from all hosts. This snippet is installed from
-# /var/lib/digitalocean/allow_hosts.py
-
-# Find out what the IP addresses are at run time
+# Add machine's IP address to Django's allowed hosts
 # This is necessary because otherwise Gunicorn will reject the connections
-ALLOWED_HOSTS = []
-# for interface in netifaces.interfaces():
-#     addrs = netifaces.ifaddresses(interface)
-#     for x in (netifaces.AF_INET, netifaces.AF_INET6):
-#         if x in addrs:
-#             ALLOWED_HOSTS.append(addrs[x][0]['addr'])
-
+ALLOWED_HOSTS = ['.uoshub.com']
+for interface in netifaces.interfaces():
+    addrs = netifaces.ifaddresses(interface)
+    if netifaces.AF_INET in addrs:
+        ALLOWED_HOSTS.append(addrs[netifaces.AF_INET][0]['addr'])
 
 # Application definition
 
