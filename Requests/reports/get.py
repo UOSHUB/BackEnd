@@ -43,7 +43,7 @@ def schedule(sid, semester):
         "P_ID_TO": sid.upper(),
         # Semester code
         "P_TERM_CODE": semester
-    }).text
+    }).content
 
 
 # Gets student's final exams schedule
@@ -55,7 +55,7 @@ def final_exams(sid, semester):
         "P_ID": sid.upper(),
         # Semester code
         "P_TERM_CODE": semester
-    }).text
+    }).content
 
 
 # Gets student's whole study plan
@@ -76,7 +76,7 @@ def study_plan(sid, reg_semester):
         "P_STUDENT_ID": sid.upper(),
         # Student enrollment semester code
         "P_TERM_CODE": reg_semester
-    }).text
+    }).content
 
 
 # Gets offered courses catalog for a semester
@@ -101,7 +101,7 @@ def offered_courses(semester):
         "MIN": "0",
         # Semester code
         "TERM": semester
-    }).text
+    }).content
 
 
 # Gets student's unofficial transcript
@@ -123,4 +123,4 @@ def unofficial_transcript(sid):
         "P_INPROG_CRS_IND": "Y",
         # Student id
         "P_ID": sid.upper()
-    }).text
+    }).content
