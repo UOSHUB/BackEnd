@@ -18,3 +18,36 @@ def new_grades(transcript, semester, known_courses):
                     # Add it's grade to the new grades dictionary
                     grades[course_title] = course.find("GRDE_CODE_FINAL").text
     return grades
+
+
+# Scrapes campus abbreviations from offered courses report
+def __campus_abbreviations(courses):
+    # Using a pythonic short loop
+    return {
+        # Create {key: value} pairs of {"campus long name": "campus abbreviation"}
+        course.find("CAMPUS_DESC").text: course.find("SSBSECT_CAMP_CODE").text
+        # Loop through courses to get campuses (as courses are offered in different campuses)
+        for course in __parse_xml(courses).find("LIST_G_SSBSECT_TERM_CODE")
+    }
+
+
+# Scrapes collages numbers from offered courses report
+def __collages_numbers(courses):
+    # Using a pythonic short loop
+    return {
+        # Create {key: value} pairs of {"collage long name": "collage number"}
+        course.find("COLLEGE_NAME").text: course.find("SCBCRSE_COLL_CODE").text
+        # Loop through courses to get collages (as courses are offered by different collages)
+        for course in __parse_xml(courses).find("LIST_G_SSBSECT_TERM_CODE")
+    }
+
+
+# Scrapes departments initials from offered courses report
+def __departments_initials(courses):
+    # Using a pythonic short loop
+    return {
+        # Create {key: value} pairs of {"department long name": "department initials"}
+        course.find("DEPT_NAME").text: course.find("SCBCRSE_DEPT_CODE").text
+        # Loop through courses to get departments (as courses are offered by different departments)
+        for course in __parse_xml(courses).find("LIST_G_SSBSECT_TERM_CODE")
+    }
