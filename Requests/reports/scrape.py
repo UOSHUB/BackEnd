@@ -20,34 +20,22 @@ def new_grades(transcript, semester, known_courses):
     return grades
 
 
-# Scrapes campus abbreviations from offered courses report
-def __campus_abbreviations(courses):
-    # Using a pythonic short loop
-    return {
-        # Create {key: value} pairs of {"campus long name": "campus abbreviation"}
-        course.find("CAMPUS_DESC").text: course.find("SSBSECT_CAMP_CODE").text
-        # Loop through courses to get campuses (as courses are offered in different campuses)
-        for course in __parse_xml(courses).find("LIST_G_SSBSECT_TERM_CODE")
-    }
-
-
-# Scrapes collages numbers from offered courses report
-def __collages_numbers(courses):
-    # Using a pythonic short loop
-    return {
-        # Create {key: value} pairs of {"collage long name": "collage number"}
-        course.find("COLLEGE_NAME").text: course.find("SCBCRSE_COLL_CODE").text
-        # Loop through courses to get collages (as courses are offered by different collages)
-        for course in __parse_xml(courses).find("LIST_G_SSBSECT_TERM_CODE")
-    }
-
-
-# Scrapes departments initials from offered courses report
-def __departments_initials(courses):
-    # Using a pythonic short loop
-    return {
-        # Create {key: value} pairs of {"department long name": "department initials"}
-        course.find("DEPT_NAME").text: course.find("SCBCRSE_DEPT_CODE").text
-        # Loop through courses to get departments (as courses are offered by different departments)
-        for course in __parse_xml(courses).find("LIST_G_SSBSECT_TERM_CODE")
-    }
+# Scrape possible values of ["Campus", "Collage", "Department"] from offered courses report
+def __values_of(courses, *params):
+    # For each supported value, create an empty dictionary in values for later use
+    values = {param: {} for param in params if param in ["Campus", "Collage", "Department"]}
+    # Loop through courses to get the required values
+    for course in __parse_xml(courses).find("LIST_G_SSBSECT_TERM_CODE"):
+        # If campus values are required
+        if "Campus" in values:
+            # Add course's campus to values as {"campus long name": "campus abbreviation"}
+            values["Campus"].update({course.find("CAMPUS_DESC").text: course.find("SSBSECT_CAMP_CODE").text})
+        # If collage values are required
+        if "Collage" in values:
+            # Add course's collage to values as {"collage long name": "collage number"}
+            values["Collage"].update({course.find("COLLEGE_NAME").text: course.find("SCBCRSE_COLL_CODE").text})
+        # If department values are required
+        if "Department" in values:
+            # Add course's department to values as {"department long name": "department initials"}
+            values["Department"].update({course.find("DEPT_NAME").text: course.find("SCBCRSE_DEPT_CODE").text})
+    return values
