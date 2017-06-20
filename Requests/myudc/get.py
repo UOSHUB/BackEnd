@@ -31,7 +31,7 @@ def transcript(session):
 
 
 # General myUDC page request with common attributes
-def get_page(link, referer, session):
+def page(link, referer, session):
     return requests.get(
         # Get data from root url + sub url
         root_url + link,
@@ -45,29 +45,29 @@ def get_page(link, referer, session):
 # Gets student's active registration page
 def active_reg(session):
     # Coming from "Registration" page
-    return get_page("bwsksreg.p_active_regs", "RegMnu", session)
+    return page("bwsksreg.p_active_regs", "RegMnu", session)
 
 
 # Gets student's holds page
 def holds(session):
     # Coming from "Student Records" page
-    return get_page("bwskoacc.P_ViewHold", "AdminMnu", session)
+    return page("bwskoacc.P_ViewHold", "AdminMnu", session)
 
 
 # Gets student's account summary page
 # ether all terms combined or one by one (by_term=True)
 def account_summary(session, by_term=False):
     # Coming from "Student Account" page
-    return get_page("bwskoacc.P_ViewAcct" + ["Total", ''][by_term], "ARMnu", session)
+    return page("bwskoacc.P_ViewAcct" + ["Total", ''][by_term], "ARMnu", session)
 
 
 # Gets student's admission log card page
 def admission_card(session):
     # Coming from "My Admission" page
-    return get_page("uos_admission_card.p_dispadmissioncard", "MyAdmMnu", session)
+    return page("uos_admission_card.p_dispadmissioncard", "MyAdmMnu", session)
 
 
 # Gets student's directory profile page
 def __dir_profile(session):
     # Coming from "Personal Information" page
-    return get_page("bwgkoprf.P_ShowDiroItems", "GenMnu", session)
+    return page("bwgkoprf.P_ShowDiroItems", "GenMnu", session)

@@ -2,7 +2,7 @@ import requests
 
 
 # General report request with common attributes
-def request(options):
+def report(options):
     # HTTP post request
     return requests.post(
         # Root UOS reports url
@@ -24,7 +24,7 @@ def request(options):
 
 # Gets student's personal information
 def personal_info(sid):
-    return request({
+    return report({
         # Report cipher
         "REPORT": "SYREXDT_REP",
         # Student id
@@ -35,7 +35,7 @@ def personal_info(sid):
 
 # Gets student's summarized schedule
 def schedule(sid, semester):
-    return request({
+    return report({
         # Report cipher
         "REPORT": "SYFSSCE_REP",
         # Student ids range (from, to)
@@ -48,7 +48,7 @@ def schedule(sid, semester):
 
 # Gets student's final exams schedule
 def final_exams(sid, semester):
-    return request({
+    return report({
         # Report cipher
         "REPORT": "SYRSSFE_REP",
         # Student id
@@ -60,7 +60,7 @@ def final_exams(sid, semester):
 
 # Gets student's whole study plan
 def study_plan(sid, reg_semester):
-    return request({
+    return report({
         # Report cipher
         "REPORT": "SYRSPOS_REP",
         # Still don't know these two
@@ -81,7 +81,7 @@ def study_plan(sid, reg_semester):
 
 # Gets offered courses catalog for a semester
 def offered_courses(semester):
-    return request({
+    return report({
         # Report cipher
         "REPORT": "SYRSCHE_REP",
         # Campus abbreviation
@@ -106,7 +106,7 @@ def offered_courses(semester):
 
 # Gets student's unofficial transcript
 def unofficial_transcript(sid):
-    return request({
+    return report({
         # Report cipher
         "REPORT": "SYFTRTE_REP",
         # Campus abbreviation
