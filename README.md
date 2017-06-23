@@ -1,4 +1,4 @@
-![](https://github.com/UOSHUB/FrontEnd/raw/master/img/brand.png)
+![](https://github.com/UOSHUB/Images/raw/master/slogan.png)
 
 # UOS HUB Website Back-End
 
@@ -14,7 +14,7 @@ Then the extracted data will be structured and sent to the client-side as JSON o
 
 ### Diagram of our Back-End's scraping flow (the main functionality)
 
-![](scraping-flow.png)
+![](https://github.com/UOSHUB/Images/raw/master/scraping-flow.png)
 
 ***
 
