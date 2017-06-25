@@ -6,7 +6,7 @@ from . import myudc as udc, blackboard as bb, reports as rep
 
 # API root (/api/) requests handler
 class APIRoot(APIView):
-    """ UOSHUB Restful API Root URL"""
+    """ UOSHUB Restful API Root URL """
     # Returns list of available API calls on GET request
     def get(self, request):
         url = request.build_absolute_uri
@@ -21,17 +21,24 @@ class Login(APIView):
     """ LOGIN TO UOSHUB """
     # Describes login credentials fields
     class Credentials(Serializer):
-        username = CharField(max_length=9)
-        password = CharField(max_length=6)
+        student_id = CharField()
+        password = CharField()
     # Register fields description in login API
     serializer_class = Credentials
 
     # Receives credentials data and preforms login on POST request
     def post(self, request):
-        # Store getter function of submitted data
-        get = request.data.get
-        # Display submitted credentials to viewer (for now)
+        # Store submitted credentials
+        sid = request.data.get('student_id')
+        pin = request.data.get('password')
+        # Try logging in and storing Blackboard cookies
+        try: bb_cookies = bb.login(sid, pin)
+        # If login fails, store error message instead
+        except ConnectionError as error:
+            bb_cookies = error.args[0]
+        # Display submitted credentials and cookies to viewer (for now)
         return Response({
-            'Username': get('username'),
-            'Password': get('password')
+            'Credentials': sid + ', ' + pin,
+            # Send back Blackboard cookies or error message
+            'Blackboard Cookie': bb_cookies
         })

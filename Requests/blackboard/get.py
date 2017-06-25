@@ -8,12 +8,20 @@ __id = "_{}_1"
 
 # Logs in Blackboard and returns the session
 def __login(sid, pin):
-    return requests.post(
+    # Post HTTP request and store its response
+    response = requests.post(
         # Post data to login url
         root_url + "login/",
         # Send student id and password
         data={"user_id": sid, "password": pin}
-    ).cookies
+    )
+    # For some reason, response is encoded in 'ISO-8859-1'
+    # only when login succeeds, otherwise
+    if response.encoding != 'ISO-8859-1':
+        # Raise an error to indicate login failure
+        raise ConnectionError("Failed to Login!")
+    # If login succeeded, send back session cookies
+    return response.cookies.get_dict()
 
 
 # General Blackboard data request with common attributes
