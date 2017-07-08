@@ -1,29 +1,37 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import BrowsableAPIRenderer
-from rest_framework.serializers import Serializer, CharField
+from rest_framework.serializers import Serializer, CharField, BooleanField
 from . import myudc as udc, blackboard as bb, reports as rep
 
 
 # API root (/api/) requests handler
 class APIRoot(APIView):
-    """ UOSHUB Restful API Root URL """
+    """
+    UOSHUB Restful API root URL.
+    Notice that all API calls require login first except for calendar calls.
+    """
     # Returns list of available API calls on GET request
     def get(self, request):
+        # Provide full API URL to current server
         url = request.build_absolute_uri
-        return Response([
-            {"Login": url("login/")},
-            "Notice that all API calls require login first except for calendar calls"
-        ])
+        # Display a list of available API calls
+        return Response({
+            "Login": url("login/")
+        })
 
 
 # Login and session requests handler
 class Login(APIView):
-    """ LOGIN TO UOSHUB """
+    """
+    Login to UOSHUB
+    {Sid: Student Id, Pin: Password, New: whether it's the first login or not}
+    """
     # Describes login credentials fields
     class Credentials(Serializer):
         sid = CharField()
         pin = CharField()
+        new = BooleanField()
     # Register fields description in login API
     serializer_class = Credentials
 
@@ -41,10 +49,14 @@ class Login(APIView):
         # Prepare cookies by storing submitted credentials and blackboard cookies
         cookies = {'uoshub': {'sid': sid, 'pin': pin}, 'blackboard': bb_cookies}
         # Prepare response and set cookies
-        response = Response()
+        response = Response({})
         response.set_cookie("login", cookies)
         # If API is being requested from a browser
         if isinstance(request.accepted_renderer, BrowsableAPIRenderer):
             # Display cookies in viewer browser (for now)
-            response.data = cookies
+            response.data['cookies'] = cookies
+        # If this is student's first login
+        if request.data.get('new'):
+            # Return student's core details (dummy for now)
+            response.data.update({})
         return response
