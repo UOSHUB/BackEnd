@@ -58,5 +58,5 @@ class Login(APIView):
         # If this is student's first login
         if request.data.get('new'):
             # Return student's core details (dummy for now)
-            response.data.update({})
+            response.data.update(rep.scrape.core_details(rep.get.unofficial_transcript(sid)))
         return response

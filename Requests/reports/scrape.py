@@ -1,6 +1,27 @@
 from lxml.etree import fromstring as __parse_xml
 
 
+# Scrapes student's core information from his transcript
+def core_details(transcript):
+    # Find and store the element which contains the required info
+    soup = __parse_xml(transcript).find(".//G_SGBSTDN")
+    # Return a dictionary of straight forward to reach info
+    return {
+        # Store student's name, collage, major and semesters
+        "name": soup.find("STUDENT_NAME").text.strip(),
+        "collage": soup.find("CURR_COLL_CODE").text,
+        "major": soup.find("CURR_MAJR_CODE").text,
+        "semesters": [
+            # Place semester key in the array
+            term.find("TERM_CODE_KEY").text
+            # Loop through semesters
+            for term in soup.find(".//LIST_G_ACADEMIC_HIST_TERM")
+        ],
+        # Store student's first semester to be used in offered_courses()
+        "first_term": soup.find("FIRST_TERM_ADMIT").text
+    }
+
+
 # Scrapes new grades from transcript report which aren't in known course
 def new_grades(transcript, semester, known_courses):
     # Dictionary to store new grades
