@@ -48,7 +48,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    # Third Party Apps
+    'rest_framework',
+    'compressor'
 ]
 
 MIDDLEWARE = [
@@ -63,11 +65,28 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'UOSHUB.urls'
 
+# Configure Django Compressor
+COMPRESS_ENABLED = False
+COMPRESS_OUTPUT_DIR = 'min'
+COMPRESS_ROOT = os.path.join(BASE_DIR, 'Website/static/')
+COMPRESS_CSS_FILTERS = ['compressor.filters.cssmin.rCSSMinFilter']
+COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.SlimItFilter']
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+# In Production, Enable offline compression
+if not DEBUG:
+    COMPRESS_ENABLED = True
+    COMPRESS_OFFLINE = True
+
 # Configure Django templates (only for /admin/ pages)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [COMPRESS_ROOT],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
