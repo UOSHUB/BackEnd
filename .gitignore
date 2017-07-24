@@ -7,3 +7,11 @@ __pycache__/
 
 # Ignore Django Static Files folder
 static
+
+
+# To Ignore DB Changes, Use This Command:
+## git update-index --assume-unchanged db.sqlite3
+
+# To Undo The Ignore On DB, Use This Command:
+## git update-index --no-assume-unchanged db.sqlite3
+

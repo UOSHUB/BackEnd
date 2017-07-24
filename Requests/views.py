@@ -46,17 +46,16 @@ class Login(APIView):
         except ConnectionError as error:
             # Return error message with BAD_REQUEST status
             return Response(error.args[0], status=400)
-        # Prepare cookies by storing submitted credentials and blackboard cookies
-        cookies = {'uoshub': {'sid': sid, 'pin': pin}, 'blackboard': bb_cookies}
-        # Prepare response and set cookies
+        # Establish a session by storing submitted credentials and blackboard cookies
+        request.session['login'] = {'uoshub': {'sid': sid, 'pin': pin}, 'blackboard': bb_cookies}
+        # Prepare a response for later
         response = Response({})
-        response.set_cookie("login", cookies)
         # If API is being requested from a browser
         if isinstance(request.accepted_renderer, BrowsableAPIRenderer):
-            # Display cookies in viewer browser (for now)
-            response.data['cookies'] = cookies
+            # Display Django session id in viewer's browser
+            response.data['session_id'] = request.session.session_key
         # If this is student's first login
         if request.data.get('new'):
-            # Return student's core details (dummy for now)
+            # Return student's core details
             response.data.update(rep.scrape.core_details(rep.get.unofficial_transcript(sid)))
         return response
