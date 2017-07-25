@@ -46,21 +46,25 @@ MIDDLEWARE = [
 ]
 
 # Configure Django Compressor
-COMPRESS_ENABLED = False
+COMPRESS_ENABLED = True
 COMPRESS_OUTPUT_DIR = 'min'
 COMPRESS_ROOT = os.path.join(BASE_DIR, 'Website/static/')
-COMPRESS_CSS_FILTERS = ['compressor.filters.cssmin.rCSSMinFilter']
-COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.SlimItFilter']
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
 
-# In Production, enable offline compression & secure cookies
-if not DEBUG:
-    COMPRESS_ENABLED = True
+# In Development
+if DEBUG:
+    # Combine static files without compression
+    COMPRESS_JS_FILTERS = []
+else:  # In Production
+    # Enable offline compression
     COMPRESS_OFFLINE = True
+    COMPRESS_CSS_FILTERS = ['compressor.filters.cssmin.rCSSMinFilter']
+    COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.SlimItFilter']
+    # Secure session cookies
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True
