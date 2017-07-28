@@ -7,51 +7,51 @@ def core_details(transcript):
     soup = __parse_xml(transcript).find(".//G_SGBSTDN")
     # Create a dictionary of straight forward to reach info
     details = {
-        # Store student's name, collage, major and semesters
+        # Store student's name, collage, major and terms
         "name": soup.find("STUDENT_NAME").text.strip(),
         "collage": soup.find("CURR_COLL_CODE").text,
         "major": soup.find("CURR_MAJR_CODE").text,
-        "semesters": {
-            # Initialize in progress semester
+        "terms": {
+            # Initialize in progress term
             "in_progress": {},
-            # Store all semesters key
+            # Store all terms key
             "all_keys": [
-                # Place semester key in the array
+                # Place term key in the array
                 term.find("TERM_CODE_KEY").text
-                # Loop through semesters which aren't in progress
+                # Loop through terms which aren't in progress
                 for term in soup.find(".//LIST_G_ACADEMIC_HIST_TERM")
             ]
         },
-        # Store student's first semester to be used in offered_courses()
+        # Store student's first term to be used in offered_courses()
         "first_term": soup.find("FIRST_TERM_ADMIT").text
     }
-    # Loop through in progress semesters and keep the index of looping
+    # Loop through in progress terms and keep the index of looping
     for index, term in enumerate(soup.find("LIST_G_SFRSTCR_PIDM")):
-        # Add in progress semester's key to all semesters key
-        details["semesters"]["all_keys"].append(term.find("SFRSTCR_TERM_CODE").text)
-        # If it's the first in progress semester
+        # Add in progress term's key to all terms key
+        details["terms"]["all_keys"].append(term.find("SFRSTCR_TERM_CODE").text)
+        # If it's the first in progress term
         if index == 0:
-            # Store it's key and courses as the "in_progress" semester
-            details["semesters"]["in_progress"][term.find("SFRSTCR_TERM_CODE").text] = {
+            # Store it's key and courses as the "in_progress" term
+            details["terms"]["in_progress"][term.find("SFRSTCR_TERM_CODE").text] = {
                 # Combine course's subject code and section code to get it's key
                 course.find("SSBSECT_SUBJ_CODE").text + course.find("SSBSECT_CRSE_NUMB").text:
                     # With the line above, form {"course key": "course name"} pairs
                     course.find("SFRSTCR_COURSE_TITLE").text.strip()
-                # Loop through courses in that semester
+                # Loop through courses in that term
                 for course in term.find("LIST_G_SFRSTCR_DETAIL")
             }
     return details
 
 
 # Scrapes new grades from transcript report which aren't in known course
-def new_grades(transcript, semester, known_courses):
+def new_grades(transcript, term, known_courses):
     # Dictionary to store new grades
     grades = {}
-    # Loop through the available semesters in transcript
+    # Loop through the available terms in transcript
     for term in __parse_xml(transcript).find(".//LIST_G_ACADEMIC_HIST_TERM"):
-        # If the semester is the selected one
-        if term.find("TERM_CODE_KEY").text == semester:
-            # Loop through courses in that semester
+        # If the term is the selected one
+        if term.find("TERM_CODE_KEY").text == term:
+            # Loop through courses in that term
             for course in term.find("LIST_G_ACADEMIC_HIST_DETAILS"):
                 # Store course title
                 course_title = course.find("COURSE_TITLE").text

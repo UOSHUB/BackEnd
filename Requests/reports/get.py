@@ -34,32 +34,32 @@ def personal_info(sid):
 
 
 # Gets student's summarized schedule
-def schedule(sid, semester):
+def schedule(sid, term):
     return report({
         # Report cipher
         "REPORT": "SYFSSCE_REP",
         # Student ids range (from, to)
         "P_ID_FROM": sid.upper(),
         "P_ID_TO": sid.upper(),
-        # Semester code
-        "P_TERM_CODE": semester
+        # term code
+        "P_TERM_CODE": term
     }).content
 
 
 # Gets student's final exams schedule
-def final_exams(sid, semester):
+def final_exams(sid, term):
     return report({
         # Report cipher
         "REPORT": "SYRSSFE_REP",
         # Student id
         "P_ID": sid.upper(),
-        # Semester code
-        "P_TERM_CODE": semester
+        # term code
+        "P_TERM_CODE": term
     }).content
 
 
 # Gets student's whole study plan
-def study_plan(sid, reg_semester):
+def study_plan(sid, reg_term):
     return report({
         # Report cipher
         "REPORT": "SYRSPOS_REP",
@@ -74,13 +74,13 @@ def study_plan(sid, reg_semester):
         "P_LEVEL_CODE": "ALL",
         # Student id
         "P_STUDENT_ID": sid.upper(),
-        # Student enrollment semester code
-        "P_TERM_CODE": reg_semester
+        # Student enrollment term code
+        "P_TERM_CODE": reg_term
     }).content
 
 
-# Gets offered courses catalog for a semester
-def offered_courses(semester):
+# Gets offered courses catalog for a term
+def offered_courses(term):
     return report({
         # Report cipher
         "REPORT": "SYRSCHE_REP",
@@ -99,8 +99,8 @@ def offered_courses(semester):
         # Class capacity range (min, max)
         "MAX": "258",
         "MIN": "0",
-        # Semester code
-        "TERM": semester
+        # term code
+        "TERM": term
     }).content
 
 
