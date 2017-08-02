@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework.serializers import Serializer, CharField, BooleanField
-from . import myudc as udc, blackboard as bb, reports as rep
+from . import myudc as udc, blackboard as bb, reports as rep, outlook as ms
 
 
 # API root (/api/) requests handler
@@ -40,14 +40,12 @@ class Login(APIView):
         # Store submitted credentials
         sid = request.data.get('sid')
         pin = request.data.get('pin')
-        # Try logging in and storing Blackboard cookies
-        try: bb_cookies = bb.login(sid, pin)
-        # If login to Blackboard fails
-        except ConnectionError as error:
+        # Login to outlook, if credentials are wrong
+        if not ms.login(sid, pin):
             # Return error message with BAD_REQUEST status
-            return Response(error.args[0], status=400)
-        # Establish a session by storing submitted credentials and blackboard cookies
-        request.session['login'] = {'uoshub': {'sid': sid, 'pin': pin}, 'blackboard': bb_cookies}
+            return Response("Wrong Credentials!", status=400)
+        # Establish a session by storing submitted credentials
+        request.session['uoshub'] = {'sid': sid, 'pin': pin}
         # Prepare a response for later
         response = Response({})
         # If API is being requested from a browser

@@ -19,7 +19,7 @@ def __login(sid, pin):
     # only when login succeeds, otherwise
     if response.encoding != 'ISO-8859-1':
         # Raise an error to indicate login failure
-        raise ConnectionError("Failed to Login!")
+        raise ConnectionError("Wrong Credentials!")
     # If login succeeded, send back session cookies
     return response.cookies.get_dict()
 

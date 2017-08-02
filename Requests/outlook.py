@@ -5,6 +5,12 @@ root_url = "https://outlook.office365.com/api/v1.0/me/"
 email = "{}@sharjah.ac.ae"
 
 
+# Login to outlook
+def login(sid, pin):
+    # HTTP get request from api root with basic authentication that returns success or failure
+    return requests.get(root_url, auth=(email.format(sid), pin)).status_code == 200
+
+
 # Gets the latest emails of a user
 def get_emails(sid, pin, count=25, offset=0):
     # HTTP get request
