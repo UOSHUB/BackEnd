@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import BrowsableAPIRenderer
-from rest_framework.serializers import Serializer, CharField, BooleanField
+from rest_framework.serializers import Serializer, CharField
 from . import myudc as udc, blackboard as bb, reports as rep, outlook as ms
 
 
@@ -17,11 +17,12 @@ class APIRoot(APIView):
         url = request.build_absolute_uri
         # Display a list of available API calls
         return Response({
-            "Login": url("login/")
+            "Login": url("login/"),
+            "Core Details": url("details/"),
         })
 
 
-# Login and session requests handler
+# Login requests handler
 class Login(APIView):
     """
     Login to UOSHUB
@@ -31,7 +32,6 @@ class Login(APIView):
     class Credentials(Serializer):
         sid = CharField()
         pin = CharField()
-        new = BooleanField()
     # Register fields description in login API
     serializer_class = Credentials
 
@@ -46,14 +46,26 @@ class Login(APIView):
             return Response("Wrong Credentials!", status=400)
         # Establish a session by storing submitted credentials
         request.session['uoshub'] = {'sid': sid, 'pin': pin}
-        # Prepare a response for later
-        response = Response({})
         # If API is being requested from a browser
         if isinstance(request.accepted_renderer, BrowsableAPIRenderer):
             # Display Django session id in viewer's browser
-            response.data['session_id'] = request.session.session_key
-        # If this is student's first login
-        if request.data.get('new'):
-            # Return student's core details
-            response.data.update(rep.scrape.core_details(rep.get.unofficial_transcript(sid)))
-        return response
+            return Response({'session_id': request.session.session_key})
+        # Otherwise, return an empty response indicating success
+        return Response()
+
+
+# Core student details requests handler
+class CoreDetails(APIView):
+    # Returns student's core details on GET request
+    def get(self, request):
+        # Return student's core details
+        return Response(
+            # Scrape core details
+            rep.scrape.core_details(
+                # Get student's transcript
+                rep.get.unofficial_transcript(
+                    # Pass student id from session
+                    request.session['uoshub']['sid']
+                )
+            )
+        )
