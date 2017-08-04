@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework.serializers import Serializer, CharField
+from requests.exceptions import ConnectionError as NoConnectionError
 from . import myudc as udc, blackboard as bb, reports as rep, outlook as ms
 
 
@@ -40,12 +41,24 @@ class Login(APIView):
         # Store submitted credentials
         sid = request.data.get('sid')
         pin = request.data.get('pin')
-        # Login to outlook, if credentials are wrong
-        if not ms.login(sid, pin):
+        # Try logging in and storing Blackboard cookies
+        try: bb_cookies = bb.login(sid, pin)
+        # If login to Blackboard fails
+        except ConnectionError as error:
             # Return error message with BAD_REQUEST status
-            return Response("Wrong Credentials!", status=400)
-        # Establish a session by storing submitted credentials
-        request.session['uoshub'] = {'sid': sid, 'pin': pin}
+            return Response(error.args[0], status=400)
+        # If Blackboard is down
+        except NoConnectionError:
+            # Login to outlook, if credentials are wrong
+            if not ms.login(sid, pin):
+                # Return error message with BAD_REQUEST status
+                return Response("Wrong Credentials!", status=400)
+        # Otherwise, if logging in to Blackboard succeeds
+        else:
+            # Store blackboard cookies in session
+            request.session['blackboard'] = bb_cookies
+        # Store submitted credentials in session
+        request.session['student'] = {'sid': sid, 'pin': pin}
         # If API is being requested from a browser
         if isinstance(request.accepted_renderer, BrowsableAPIRenderer):
             # Display Django session id in viewer's browser
@@ -65,7 +78,7 @@ class CoreDetails(APIView):
                 # Get student's transcript
                 rep.get.unofficial_transcript(
                     # Pass student id from session
-                    request.session['uoshub']['sid']
+                    request.session['student']['sid']
                 )
             )
         )
