@@ -78,15 +78,6 @@ def announcements(session, course_id=None):
     })
 
 
-# Gets student's Blackboard profile image page
-def profile_image(session):
-    # Get data from Blackboard flyout menu url
-    return data("portal/execute/globalNavFlyout", session, {
-        # Required parameter
-        "cmd": "view"
-    })
-
-
 # Get direct list of courses
 def courses(session):
     # Get data from top right navigation menu
@@ -100,3 +91,12 @@ def courses(session):
 def __tasks(session):
     # Get data from tasks management page
     return data("blackboard/execute/taskEditList", session)
+
+
+# Gets student's Blackboard profile image page (useless in latest update)
+def __profile_image(session):
+    # Get data from Blackboard flyout menu url
+    return data("portal/execute/globalNavFlyout", session, {
+        # Required parameter
+        "cmd": "view"
+    })
