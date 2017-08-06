@@ -19,7 +19,7 @@ class APIRoot(APIView):
         # Display a list of available API calls
         return Response({
             "Login": url("login/"),
-            "Core Details": url("details/"),
+            "Layout Details": url("details/"),
         })
 
 
@@ -67,18 +67,22 @@ class Login(APIView):
         return Response()
 
 
-# Core student details requests handler
-class CoreDetails(APIView):
-    # Returns student's core details on GET request
+# Website's layout details requests handler
+class LayoutDetails(APIView):
+    """
+    This only returns student's basic info right now,
+    but in the future it will have all layout details including:
+    theme preferences, student's modifications and other settings
+    """
+    # Returns layout details on GET request
     def get(self, request):
-        # Return student's core details
+        # Return student's basic info as of now
         return Response(
-            # Scrape core details
-            rep.scrape.core_details(
-                # Get student's transcript
-                rep.get.unofficial_transcript(
-                    # Pass student id from session
-                    request.session['student']['sid']
-                )
+            # Get student's basic info from Blackboard
+            bb.get.basic_info(
+                # Send Blackboard cookies
+                request.session['blackboard'],
+                # And current student id
+                request.session['student']['sid']
             )
         )

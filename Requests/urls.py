@@ -6,6 +6,6 @@ urlpatterns = [
     url(r'^$', APIRoot.as_view()),
     # Login path
     url(r'^login/?$', Login.as_view()),
-    # Core details path
-    url(r'^details/?$', CoreDetails.as_view()),
+    # Layout details path
+    url(r'^details/?$', LayoutDetails.as_view()),
 ]
