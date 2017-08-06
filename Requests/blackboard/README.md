@@ -1,18 +1,22 @@
 # Blackboard Scraping Package
 
-This module contains an unofficial api (through web scraping) to allow interaction with UOS Blackboard system.  
+This module uses both an official api and an unofficial api (through web scraping),
+that's done to allow interaction with UOS Blackboard system.  
 it's using python3-requests library to get and post data, and using lxml scrape the needed information.
 
 ***
 
-### Why not use the official Blackboard APIs?
+### Why not use the official Blackboard APIs for everything?
 
-Even though Blackboard has two types of APIs, our university system does not have any of them!
+Even though Blackboard has two types of APIs, our university system only partially supports one of them.
 
 
 ##### REST API (JSON):
 It's the better option between the two, it's simple, well documented and new (introduced in Q2 2016).  
-But because it's new, it's not available in our university's Blackboard as they're still using October 2014 version.
+Recently, our university's Blackboard was updated to version (3100.0.3-rel.51+917ccd3).  
+This version of Blackboard includes a lot of api functions but lacks some few important ones like:
+authentication, announcements, attachments and more.  
+So for that reason, we're only partially depending on it.
 
 Blackboard REST API documentation can be found here:  
 https://developer.blackboard.com/portal/displayApi
