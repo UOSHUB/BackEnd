@@ -1,6 +1,31 @@
 from lxml.etree import fromstring as __parse_xml
 
 
+# Scrapes a specific term's schedule details
+def schedule_details(schedule):
+    # Dictionary to store schedule details
+    details = {}
+    # Loop through courses in the schedule report to get its details
+    for course in __parse_xml(schedule).find(".//LIST_G_SSBSECT_CRN"):
+        # Make a shortcut function for getting text by key
+        get = lambda key: course.find(key).text
+        # Scrape and store data dictionary in details['course id']
+        details[get("SSBSECT_SUBJ_CODE") + get("SSBSECT_CRSE_NUMB")] = {
+            "crn": get("SSBSECT_CRN"),
+            "section": get("SSBSECT_SEQ_NUMB"),
+            "type": get("SSBSECT_SCHD_CODE"),
+            "ch": get("SFRSTCR_CREDIT_HR"),
+            "title": get("SCBCRSE_TITLE").strip(),
+            "days": get(".//DAYES").split(),
+            "time": get(".//TIME").split(" - "),
+            "building": get(".//SSRMEET_BLDG_CODE"),
+            "room": get(".//SSRMEET_ROOM_CODE"),
+            # If doctor isn't announced yet, insert 'TBA' instead
+            "doctor": get(".//CF_INSTRUCTOR_NAME") if course.find(".//CF_INSTRUCTOR_NAME") is not None else "TBA"
+        }
+    return details
+
+
 # Scrapes student's core information from his transcript
 def core_details(transcript):
     # Find and store the element which contains the required info
