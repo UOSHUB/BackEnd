@@ -7,22 +7,32 @@ def schedule_details(schedule):
     details = {}
     # Loop through courses in the schedule report to get its details
     for course in __parse_xml(schedule).find(".//LIST_G_SSBSECT_CRN"):
-        # Make a shortcut function for getting text by key
-        get = lambda key: course.find(key).text
+        course_id = course.find("SSBSECT_SUBJ_CODE").text + course.find("SSBSECT_CRSE_NUMB").text
         # Scrape and store data dictionary in details['course id']
-        details[get("SSBSECT_SUBJ_CODE") + get("SSBSECT_CRSE_NUMB")] = {
-            "crn": get("SSBSECT_CRN"),
-            "section": get("SSBSECT_SEQ_NUMB"),
-            "type": get("SSBSECT_SCHD_CODE"),
-            "ch": get("SFRSTCR_CREDIT_HR"),
-            "title": get("SCBCRSE_TITLE").strip(),
-            "days": get(".//DAYES").split(),
-            "time": get(".//TIME").split(" - "),
-            "building": get(".//SSRMEET_BLDG_CODE"),
-            "room": get(".//SSRMEET_ROOM_CODE"),
-            # If doctor isn't announced yet, insert 'TBA' instead
-            "doctor": get(".//CF_INSTRUCTOR_NAME") if course.find(".//CF_INSTRUCTOR_NAME") is not None else "TBA"
+        details[course_id] = {
+            "crn": course.find("SSBSECT_CRN").text,
+            "section": course.find("SSBSECT_SEQ_NUMB").text,
+            "type": course.find("SSBSECT_SCHD_CODE").text,
+            "credits": course.find("SFRSTCR_CREDIT_HR").text,
+            "title": course.find("SCBCRSE_TITLE").text.strip(),
+            # Initialize an empty classes array for later
+            "classes": []
         }
+        # Loop through days in the current course
+        for day in course.find("LIST_G_DAYES"):
+            # Add a class dictionary of data for every day in course
+            details[course_id]["classes"].append({
+                "days": day.find("DAYES").text.split(),
+                "time": day.find("TIME").text.split(" - "),
+                "building": day.find("SSRMEET_BLDG_CODE").text,
+                "room": day.find("SSRMEET_ROOM_CODE").text,
+                # Place doctors in an array as there might be many
+                "doctor": [
+                    doctor.find("CF_INSTRUCTOR_NAME").text
+                    # Loop through doctor in the current day
+                    for doctor in day.find("LIST_G_SIRASGN_PIDM")
+                ]
+            })
     return details
 
 
