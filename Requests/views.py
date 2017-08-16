@@ -20,6 +20,7 @@ class APIRoot(APIView):
         return Response({
             "Login": url("login/"),
             "Layout Details": url("details/"),
+            "Schedule": url("schedule/"),
         })
 
 
@@ -84,5 +85,28 @@ class LayoutDetails(APIView):
                 request.session['blackboard'],
                 # And current student id
                 request.session['student']['sid']
+            )
+        )
+
+
+# student's schedule requests handler
+class Schedule(APIView):
+    """
+    This returns student's schedule details,
+    which's a dictionary of courses that contains:
+    course id, title, days, time, crn, location, etc..
+    """
+    # Returns schedule dictionary of requested term on GET request
+    def get(self, request):
+        # Return student's schedule details
+        return Response(
+            # Get student's basic info from Blackboard
+            rep.scrape.schedule_details(
+                rep.get.schedule(
+                    # Send current student id
+                    request.session['student']['sid'],
+                    # And specified term
+                    request.data.get('term')
+                )
             )
         )

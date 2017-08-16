@@ -8,4 +8,6 @@ urlpatterns = [
     url(r'^login/?$', Login.as_view()),
     # Layout details path
     url(r'^details/?$', LayoutDetails.as_view()),
+    # Schedule dictionary path
+    url(r'^schedule/?$', Schedule.as_view()),
 ]
