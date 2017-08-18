@@ -42,7 +42,7 @@ def basic_info(session, sid):
     student = api('users/userName:' + sid, session, {'fields': 'name,job'})
     # Extract and return a dictionary of student info
     return {
-        'name': ' '.join(student['name'].values()),
+        'name': student['name']['given'],
         'major': student['job']['department'],
         'collage': student['job']['company']
     }

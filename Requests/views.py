@@ -93,11 +93,11 @@ class LayoutDetails(APIView):
 class Schedule(APIView):
     """
     This returns student's schedule details,
-    which's a dictionary of courses that contains:
+    which's a dictionary of courses that contain:
     course id, title, days, time, crn, location, etc..
     """
     # Returns schedule dictionary of requested term on GET request
-    def get(self, request):
+    def get(self, request, term=None):
         # Return student's schedule details
         return Response(
             # Get student's basic info from Blackboard
@@ -105,8 +105,8 @@ class Schedule(APIView):
                 rep.get.schedule(
                     # Send current student id
                     request.session['student']['sid'],
-                    # And specified term
-                    request.data.get('term')
+                    # And the specified or current term code
+                    term  # or bb.get.current_term()
                 )
             )
         )
