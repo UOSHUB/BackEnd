@@ -34,11 +34,3 @@ def announcements(response):
 # Scraps url of Blackboard profile image
 def profile_image(response):
     return __parse_html(response).xpath("//a[@id='profileLink']/img/@src")[0]
-
-
-# Scrapes list of courses from survey panel (obsolete)
-def __survey_courses(response):
-    # Using Regex and Json
-    import re, json
-    # Search for the Json object that contains the course list and parse it
-    return json.loads(re.search("json_ecb = ({.*?});", response).group(1))

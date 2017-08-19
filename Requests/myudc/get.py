@@ -65,9 +65,3 @@ def account_summary(session, by_term=False):
 def admission_card(session):
     # Coming from "My Admission" page
     return page("uos_admission_card.p_dispadmissioncard", "MyAdmMnu", session)
-
-
-# Gets student's directory profile page
-def __dir_profile(session):
-    # Coming from "Personal Information" page
-    return page("bwgkoprf.P_ShowDiroItems", "GenMnu", session)
