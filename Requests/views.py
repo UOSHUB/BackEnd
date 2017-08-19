@@ -80,7 +80,7 @@ class LayoutDetails(APIView):
         # Return student's basic info as of now
         return Response(
             # Get student's basic info from Blackboard
-            bb.get.basic_info(
+            bb.api.basic_info(
                 # Send Blackboard cookies
                 request.session['blackboard'],
                 # And current student id

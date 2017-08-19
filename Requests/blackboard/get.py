@@ -1,7 +1,7 @@
 import requests
 
 # Root url of UOS Blackboard
-root_url = "https://elearning.sharjah.ac.ae/"
+root_url = "https://elearning.sharjah.ac.ae/webapps/"
 # General Blackboard items id format
 __id = "_{}_1"
 
@@ -11,7 +11,7 @@ def __login(sid, pin):
     # Post HTTP request and store its response
     response = requests.post(
         # Post data to login url
-        root_url + 'webapps/login/',
+        root_url + 'login/',
         # Send student id and password
         data={"user_id": sid, "password": pin}
     )
@@ -24,35 +24,11 @@ def __login(sid, pin):
     return response.cookies.get_dict()
 
 
-# General Blackboard API request with common attributes
-def api(link, session, params=None):
-    return requests.get(
-        # Get data from root url + api url
-        root_url + 'learn/api/public/v1/' + link,
-        # Send login session
-        cookies=session,
-        # Send required data
-        params=params
-    ).json()
-
-
-# Get student's basic info (name, major, collage)
-def basic_info(session, sid):
-    # Request data from API url while passing student id
-    student = api('users/userName:' + sid, session, {'fields': 'name,job'})
-    # Extract and return a dictionary of student info
-    return {
-        'name': student['name']['given'],
-        'major': student['job']['department'],
-        'collage': student['job']['company']
-    }
-
-
 # General Blackboard request to 'webapps/' with common attributes
-def web(link, session, params=None):
+def data(link, session, params=None):
     return requests.get(
         # Get data from root url + web url
-        root_url + 'webapps/' + link,
+        root_url + link,
         # Send login session
         cookies=session,
         # Send required data
@@ -63,7 +39,7 @@ def web(link, session, params=None):
 # Gets list of one of the options listed below through AJAX
 def list_of(session, query):
     # Get data from AJAX requests url
-    return web("portal/execute/tabs/tabAction", session, {
+    return data("portal/execute/tabs/tabAction", session, {
         # Get list through AJAX
         "action": "refreshAjaxModule",
         # Get list of one of these options
@@ -87,7 +63,7 @@ def list_of(session, query):
 # Gets page of announcements for all courses or for one course by id
 def announcements(session, course_id=None):
     # Get data from announcements url
-    return web("blackboard/execute/announcement", session, {
+    return data("blackboard/execute/announcement", session, {
         # By default get all course announcements, if course id is sent then only get the sent one
         "method": "search", "searchSelect": course_id or "announcement.coursesonly.label"
     })
@@ -96,7 +72,7 @@ def announcements(session, course_id=None):
 # Get direct list of courses
 def courses(session):
     # Get data from top right navigation menu
-    return web("blackboard/execute/globalCourseNavMenuSection", session, {
+    return data("blackboard/execute/globalCourseNavMenuSection", session, {
         # Required parameter
         "cmd": "view"
     }).text
