@@ -1,7 +1,8 @@
+from . import root_url as url
 import requests
 
-# Root url of UOS Blackboard
-root_url = "https://elearning.sharjah.ac.ae/webapps/"
+# Append Blackboard website path to root URL
+url += "webapps/"
 # General Blackboard items id format
 __id = "_{}_1"
 
@@ -11,7 +12,7 @@ def __login(sid, pin):
     # Post HTTP request and store its response
     response = requests.post(
         # Post data to login url
-        root_url + 'login/',
+        url + 'login/',
         # Send student id and password
         data={"user_id": sid, "password": pin}
     )
@@ -27,8 +28,8 @@ def __login(sid, pin):
 # General Blackboard request to 'webapps/' with common attributes
 def data(link, session, params=None):
     return requests.get(
-        # Get data from root url + web url
-        root_url + link,
+        # Get data from website url + sub-url
+        url + link,
         # Send login session
         cookies=session,
         # Send required data
