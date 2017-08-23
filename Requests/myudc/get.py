@@ -35,7 +35,7 @@ def page(link, referer, session):
     return requests.get(
         # Get data from root url + sub url
         root_url + link,
-        # Coming from 'referer' page (required by myUDC)
+        # Coming from "referer" page (required by myUDC)
         headers={"referer": root_url + "twbkwbis.P_GenMenu?name=bmenu.P_" + referer},
         # Send login session
         cookies=session

@@ -10,12 +10,12 @@ def login(sid, pin):
     # Post HTTP request and store its response
     response = requests.post(
         # Post data to login url
-        url + 'sslUserLogin',
+        url + "sslUserLogin",
         # Send student id and password
-        data={'username': sid, 'password': pin}
+        data={"username": sid, "password": pin}
     )
-    # If response status is not 'OK'
-    if 'OK' not in response.text:
+    # If response status is not "OK"
+    if "OK" not in response.text:
         # Raise an error to indicate login failure
         raise ConnectionError("Wrong Credentials!")
     # If login succeeded, send back session cookies

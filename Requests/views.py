@@ -40,8 +40,8 @@ class Login(APIView):
     # Receives credentials data and preforms login on POST request
     def post(self, request):
         # Store submitted credentials
-        sid = request.data.get('sid')
-        pin = request.data.get('pin')
+        sid = request.data.get("sid")
+        pin = request.data.get("pin")
         # Try logging in and storing Blackboard cookies
         try: bb_cookies = bb.login(sid, pin)
         # If login to Blackboard fails
@@ -57,13 +57,13 @@ class Login(APIView):
         # Otherwise, if logging in to Blackboard succeeds
         else:
             # Store blackboard cookies in session
-            request.session['blackboard'] = bb_cookies
+            request.session["blackboard"] = bb_cookies
         # Store submitted credentials in session
-        request.session['student'] = {'sid': sid, 'pin': pin}
+        request.session["student"] = {"sid": sid, "pin": pin}
         # If API is being requested from a browser
         if isinstance(request.accepted_renderer, BrowsableAPIRenderer):
-            # Display Django session id in viewer's browser
-            return Response({'session_id': request.session.session_key})
+            # Display Django session id in viewer"s browser
+            return Response({"session_id": request.session.session_key})
         # Otherwise, return an empty response indicating success
         return Response()
 
@@ -82,9 +82,9 @@ class LayoutDetails(APIView):
             # Get student's basic info from Blackboard
             bb.api.basic_info(
                 # Send Blackboard cookies
-                request.session['blackboard'],
+                request.session["blackboard"],
                 # And current student id
-                request.session['student']['sid']
+                request.session["student"]["sid"]
             )
         )
 
@@ -104,7 +104,7 @@ class Schedule(APIView):
             rep.scrape.schedule_details(
                 rep.get.schedule(
                     # Send current student id
-                    request.session['student']['sid'],
+                    request.session["student"]["sid"],
                     # And the specified or current term code
                     term  # or bb.get.current_term()
                 )

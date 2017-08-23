@@ -8,7 +8,7 @@ def schedule_details(schedule):
     # Loop through courses in the schedule report to get its details
     for course in __parse_xml(schedule).find(".//LIST_G_SSBSECT_CRN"):
         course_id = course.find("SSBSECT_SUBJ_CODE").text + course.find("SSBSECT_CRSE_NUMB").text
-        # Scrape and store data dictionary in details['course id']
+        # Scrape and store data dictionary in details["course id"]
         details[course_id] = {
             "crn": course.find("SSBSECT_CRN").text,
             "section": course.find("SSBSECT_SEQ_NUMB").text,
@@ -66,9 +66,9 @@ def core_details(transcript):
         details["terms"]["all_keys"].append(term.find("SFRSTCR_TERM_CODE").text)
         # If it's the first in progress term
         if index == 0:
-            # Store it's key and courses as the "in_progress" term
+            # Store its key and courses as the "in_progress" term
             details["terms"]["in_progress"][term.find("SFRSTCR_TERM_CODE").text] = {
-                # Combine course's subject code and section code to get it's key
+                # Combine course's subject code and section code to get its key
                 course.find("SSBSECT_SUBJ_CODE").text + course.find("SSBSECT_CRSE_NUMB").text:
                     # With the line above, form {"course key": "course name"} pairs
                     course.find("SFRSTCR_COURSE_TITLE").text.strip()
@@ -92,6 +92,6 @@ def new_grades(transcript, term_key, known_courses):
                 course_title = course.find("COURSE_TITLE").text
                 # If course isn't already among the known courses
                 if course_title not in known_courses:
-                    # Add it's grade to the new grades dictionary
+                    # Add its grade to the new grades dictionary
                     grades[course_title] = course.find("GRDE_CODE_FINAL").text
     return grades

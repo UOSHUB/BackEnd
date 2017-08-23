@@ -20,10 +20,10 @@ def get(link, session, params=None):
 # Get student's basic info (name, major, collage)
 def basic_info(session, sid):
     # Request data from API url while passing student id
-    student = get('users/userName:' + sid, session, {'fields': 'name,job'})
+    student = get("users/userName:" + sid, session, {"fields": "name,job"})
     # Extract and return a dictionary of student info
     return {
-        'name': student['name']['given'],
-        'major': student['job']['department'],
-        'collage': student['job']['company']
+        "name": student["name"]["given"],
+        "major": student["job"]["department"],
+        "collage": student["job"]["company"]
     }

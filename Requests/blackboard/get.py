@@ -12,20 +12,20 @@ def __login(sid, pin):
     # Post HTTP request and store its response
     response = requests.post(
         # Post data to login url
-        url + 'login/',
+        url + "login/",
         # Send student id and password
         data={"user_id": sid, "password": pin}
     )
-    # For some reason, response is encoded in 'ISO-8859-1'
+    # For some reason, response is encoded in "ISO-8859-1"
     # only when login succeeds, otherwise
-    if response.encoding != 'ISO-8859-1':
+    if response.encoding != "ISO-8859-1":
         # Raise an error to indicate login failure
         raise ConnectionError("Wrong Credentials!")
     # If login succeeded, send back session cookies
     return response.cookies.get_dict()
 
 
-# General Blackboard request to 'webapps/' with common attributes
+# General Blackboard request to "webapps/" with common attributes
 def data(link, session, params=None):
     return requests.get(
         # Get data from website url + sub-url

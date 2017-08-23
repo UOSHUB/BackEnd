@@ -19,14 +19,14 @@ def get_emails(sid, pin, count=25, offset=0):
         root_url + "messages",
         # Basic authentication using sid(@sharjah.ac.ae) & pin
         auth=(email.format(sid), pin),
-        # '$top': number of requested emails, '$skip': number of skipped emails
+        # "$top": number of requested emails, "$skip": number of skipped emails
         params={"$top": count, "$skip": offset}
     ).text
 
 
 # Sends an simple email from a user to another
 def send_email(sid, pin, subject, body, recipients):
-    # 'recipients' has to be an array of strings
+    # "recipients" has to be an array of strings
     if isinstance(recipients, str):
         # So if it's a string, put it in an array
         recipients = [recipients]

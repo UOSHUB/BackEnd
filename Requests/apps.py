@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class RequestsConfig(AppConfig):
-    name = 'Requests'
+    name = "Requests"
