@@ -1,10 +1,8 @@
-from . import root_url as url
+from . import root_url as url, __id
 import requests
 
 # Append Blackboard website path to root URL
 url += "webapps/"
-# General Blackboard items id format
-__id = "_{}_1"
 
 
 # Logs in Blackboard and returns the session
@@ -44,7 +42,7 @@ def list_of(session, query):
         # Get list through AJAX
         "action": "refreshAjaxModule",
         # Get list of one of these options
-        "modId": __id.format({
+        "modId": __id({
             # Available lists
             "Announcements": 1,
             "Courses": 4,
@@ -57,7 +55,7 @@ def list_of(session, query):
             # Select one of them
         }[query]),
         # Required parameter
-        "tabId": __id.format(1),
+        "tabId": __id(1),
     })
 
 
