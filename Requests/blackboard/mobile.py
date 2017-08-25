@@ -1,4 +1,5 @@
 from .get import url
+from . import __id
 import requests
 
 # Append Blackboard Mobile path to website URL
@@ -20,3 +21,22 @@ def login(sid, pin):
         raise ConnectionError("Wrong Credentials!")
     # If login succeeded, send back session cookies
     return response.cookies.get_dict()
+
+
+# Returns a specific course's data by its id
+def course_data(session, course_id, section):
+    return requests.get(
+        # Get data from course data url
+        url + "courseData",
+        # Send login session
+        cookies=session,
+        params={
+            # Send course id
+            "course_id": __id(course_id),
+            # Currently known possible values are
+            # "ANNOUNCEMENTS" and "GRADES"
+            "course_section": section,
+            # This flag reduces HTML junk
+            "rich_content_level": "RICH"
+        }
+    ).text
