@@ -1,9 +1,10 @@
-from .get import url
+from .get import url, data
 from . import __id
 import requests
 
 # Append Blackboard Mobile path to website URL
-url += "Bb-mobile-bb_bb60/"
+sub_url = "Bb-mobile-bb_bb60/"
+url += sub_url
 
 
 # Logs in Blackboard Mobile and returns the session
@@ -25,30 +26,19 @@ def login(sid, pin):
 
 # Returns student's list of courses
 def courses(session):
-    return requests.get(
-        # Get data from enrollments data url
-        url + "enrollments",
-        # Send login session
-        cookies=session,
-        # Specify that requested type is course
-        params={"course_type": "COURSE"}
-    ).text
+    # Get data from enrollments data url while specifying that requested type is "course"
+    return data(sub_url + "courseData", session, {"course_type": "COURSE"})
 
 
 # Returns a specific course's data by its id
 def course_data(session, course_id, section):
-    return requests.get(
-        # Get data from course data url
-        url + "courseData",
-        # Send login session
-        cookies=session,
-        params={
-            # Send course id
-            "course_id": __id(course_id),
-            # Currently known possible values are
-            # "ANNOUNCEMENTS" and "GRADES"
-            "course_section": section,
-            # This flag reduces HTML junk
-            "rich_content_level": "RICH"
-        }
-    ).text
+    # Get data from course data url
+    return data(sub_url + "courseData", session, {
+        # Send course id
+        "course_id": __id(course_id),
+        # Currently known possible values are
+        # "ANNOUNCEMENTS" and "GRADES"
+        "course_section": section,
+        # This flag reduces HTML junk
+        "rich_content_level": "RICH"
+    })
