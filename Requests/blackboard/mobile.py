@@ -23,6 +23,18 @@ def login(sid, pin):
     return response.cookies.get_dict()
 
 
+# Returns student's list of courses
+def courses(session):
+    return requests.get(
+        # Get data from enrollments data url
+        url + "enrollments",
+        # Send login session
+        cookies=session,
+        # Specify that requested type is course
+        params={"course_type": "COURSE"}
+    ).text
+
+
 # Returns a specific course's data by its id
 def course_data(session, course_id, section):
     return requests.get(
