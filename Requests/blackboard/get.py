@@ -1,5 +1,5 @@
 from . import root_url as url, __id
-import requests
+import requests, time
 
 # Append Blackboard website path to root URL
 url += "webapps/"
@@ -21,6 +21,32 @@ def __login(sid, pin):
         raise ConnectionError("Wrong Credentials!")
     # If login succeeded, send back session cookies
     return response.cookies.get_dict()
+
+
+# Gets updates and announcements in a JSON object
+def updates(session):
+    # Store Blackboard stream url
+    stream_url = url + "streamViewer/streamViewer"
+    # Request updates from Blackboard stream and store returned cookies
+    stream_cookies = requests.get(stream_url, cookies=session, params={
+        "cmd": "view",
+        "streamName": "alerts"
+    }).cookies
+    # Wait a bit until updates are ready
+    time.sleep(.05)
+    # Loop until they are ready or something happens
+    for _ in range(5):
+        # Request updates using previous cookies, and convert response to JSON
+        response = requests.post(stream_url, cookies=stream_cookies, data={
+            # Pass required parameters
+            "cmd": "loadStream",
+            "streamName": "alerts",
+            "forOverview": "false",
+            "providers": "{}",
+        }).json()
+        # Return response if it contains requested data
+        if response["sv_streamEntries"]:
+            return response
 
 
 # General Blackboard request to "webapps/" with common attributes
