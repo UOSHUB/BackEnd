@@ -1,5 +1,34 @@
 # Import two html processing functions as hidden variables
 from lxml.html import fromstring as __parse_html, tostring as __get_html
+from .values import __types, __events
+
+
+# Scrapes useful data from updates JSON object
+def updates(response):
+    # Dictionary to store data
+    data = {"courses": {
+        # Loop through courses and store their name and id
+        course["id"]: course["name"] for course in response["sv_extras"]["sx_courses"]
+    }, "updates": []}
+    # Loop through updates
+    for update in response["sv_streamEntries"]:
+        # Store repeatedly used references of the object
+        event = update["extraAttribs"]["event_type"].split(":")
+        item = update["itemSpecificData"]
+        details = item["notificationDetails"]
+        # Append update dictionary to data
+        data["updates"].append({
+            # Store all ids related to the update
+            "updateId": details["actorId"],
+            "courseId": details["courseId"],
+            "contentId": details["sourceId"],
+            # Store title and time
+            "title": item["title"],
+            "time": update["se_timestamp"],
+            # Get meaningful equivalent of event from stored values
+            "event": __types[event[0]] + " " + __events[event[1].split('_')[-1]]
+        })
+    return data
 
 
 # Scrapes courses ids from list_of("Courses") and courses()
