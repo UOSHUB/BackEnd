@@ -1,4 +1,5 @@
 from . import root_url as url, __id
+from .values import __lists
 import requests, time
 
 # Append Blackboard website path to root URL
@@ -68,18 +69,7 @@ def list_of(session, query):
         # Get list through AJAX
         "action": "refreshAjaxModule",
         # Get list of one of these options
-        "modId": __id({
-            # Available lists
-            "Announcements": 1,
-            "Courses": 4,
-            "Organizations": 5,
-            "Tasks": 7,
-            "Notes": 12,
-            "Grades": 20,
-            "Collages": 28,
-            "Surveys": 257
-            # Select one of them
-        }[query]),
+        "modId": __id(__lists[query]),
         # Required parameter
         "tabId": __id(1),
     })
