@@ -20,6 +20,7 @@ class APIRoot(APIView):
         return Response({
             "Login": url("login/"),
             "Layout Details": url("details/"),
+            "Updates": url("updates/"),
             "Schedule": url("schedule/"),
         })
 
@@ -85,6 +86,27 @@ class LayoutDetails(APIView):
                 request.session["blackboard"],
                 # And current student id
                 request.session["student"]["sid"]
+            )
+        )
+
+
+# Student's updates requests handler
+class Updates(APIView):
+    """
+    This returns student's Blackboard updates,
+    which is a dictionary of updates and the
+    names of the courses they are coming from.
+    """
+    # Returns updates dictionary of all courses on GET request
+    def get(self, request):
+        # Return updates object
+        return Response(
+            # Get & scrape student's updates from Blackboard
+            bb.scrape.updates(
+                bb.get.updates(
+                    # Send Blackboard cookies
+                    request.session["blackboard"]
+                )
             )
         )
 

@@ -8,6 +8,8 @@ urlpatterns = [
     url(r"^login/?$", Login.as_view()),
     # Layout details path
     url(r"^details/?$", LayoutDetails.as_view()),
+    # Blackboard updates path
+    url(r"^updates/?$", Updates.as_view()),
     # Schedule dictionary path (by term code)
     url(r"^schedule(/((?P<term>[0-9]+)/?)?)?$", Schedule.as_view()),
 ]
