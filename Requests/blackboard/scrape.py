@@ -58,8 +58,3 @@ def announcements(response):
             "id": item.xpath(".//span[@class='courseId']")[0].text[:7],
         })
     return messages
-
-
-# Scraps url of Blackboard profile image
-def profile_image(response):
-    return __parse_html(response).xpath("//a[@id='profileLink']/img/@src")[0]

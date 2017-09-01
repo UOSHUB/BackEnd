@@ -29,7 +29,7 @@ class APIRoot(APIView):
 class Login(APIView):
     """
     Login to UOSHUB
-    {Sid: Student Id, Pin: Password, New: whether it's the first login or not}
+    {Sid: Student Id, Pin: Password}
     """
     # Describes login credentials fields
     class Credentials(Serializer):
@@ -63,8 +63,10 @@ class Login(APIView):
         request.session["student"] = {"sid": sid, "pin": pin}
         # If API is being requested from a browser
         if isinstance(request.accepted_renderer, BrowsableAPIRenderer):
-            # Display Django session id in viewer"s browser
-            return Response({"session_id": request.session.session_key})
+            # Display Django session id in viewer's browser
+            return Response({
+                "sessionId": request.session.session_key or "Refresh to see it"
+            })
         # Otherwise, return an empty response indicating success
         return Response()
 
@@ -111,7 +113,7 @@ class Updates(APIView):
         )
 
 
-# student's schedule requests handler
+# Student's schedule requests handler
 class Schedule(APIView):
     """
     This returns student's schedule details,
@@ -122,7 +124,7 @@ class Schedule(APIView):
     def get(self, request, term=None):
         # Return student's schedule details
         return Response(
-            # Get student's basic info from Blackboard
+            # Get & scrape student's basic info from Blackboard
             rep.scrape.schedule_details(
                 rep.get.schedule(
                     # Send current student id

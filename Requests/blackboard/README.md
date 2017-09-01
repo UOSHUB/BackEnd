@@ -1,6 +1,6 @@
 # Blackboard Scraping Package
 
-This module uses both an official api and an unofficial api (through web scraping),
+This module uses both the official api and an unofficial one (through web scraping),
 that's done to allow interaction with UOS Blackboard system.  
 it's using python3-requests library to get and post data, and using lxml scrape the needed information.
 
