@@ -14,4 +14,6 @@ urlpatterns = [
     url(r"^schedule(/((?P<term>[0-9]+)/?)?)?$", Schedule.as_view()),
     # Emails path
     url(r"^emails/?$", Emails.as_view()),
+    # Emails previews path
+    url(r"^emails/previews/?$", Emails.Previews.as_view()),
 ]

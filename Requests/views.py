@@ -153,4 +153,27 @@ class Emails(APIView):
         url = request.build_absolute_uri
         # Display a list of available email related API calls
         return Response({
+            "Previews": url("previews/"),
         })
+
+    # Student's emails previews handler
+    class Previews(APIView):
+        """
+        This returns previews of student's emails,
+        which's a dictionary of email reviews that only contain:
+        title, event, time and sender.
+        """
+        # Returns a dictionary of emails previews on GET request
+        def get(self, request):
+            # Return student's emails previews
+            return Response(
+                # Get & scrape student's emails previews from Outlook
+                ms.scrape.emails_previews(
+                    ms.get_emails(
+                        # Send current student id
+                        request.session["student"]["sid"],
+                        # And his password
+                        request.session["student"]["pin"]
+                    )
+                )
+            )
