@@ -81,15 +81,15 @@ class LayoutDetails(APIView):
     # Returns layout details on GET request
     def get(self, request):
         # Return student's basic info as of now
-        return Response(
+        return Response({
             # Get student's basic info from Blackboard
-            bb.api.basic_info(
+            "student": bb.api.basic_info(
                 # Send Blackboard cookies
                 request.session["blackboard"],
                 # And current student id
                 request.session["student"]["sid"]
             )
-        )
+        })
 
 
 # Student's updates requests handler
