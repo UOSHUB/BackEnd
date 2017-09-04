@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import BrowsableAPIRenderer
@@ -22,6 +23,7 @@ class APIRoot(APIView):
             "Layout Details": url("details/"),
             "Updates": url("updates/"),
             "Schedule": url("schedule/"),
+            "Emails": url("emails/"),
         })
 
 
@@ -134,3 +136,21 @@ class Schedule(APIView):
                 )
             )
         )
+
+
+# Student's emails requests handler
+class Emails(APIView):
+    """
+    Emails API root URL
+    """
+    # Returns list of email related API calls on GET request
+    def get(self, request):
+        # If URL isn't ending with trailing slash
+        if not request.path.endswith("/"):
+            # Redirect to one with trailing slash
+            return redirect("emails/")
+        # Provide emails API URL
+        url = request.build_absolute_uri
+        # Display a list of available email related API calls
+        return Response({
+        })

@@ -12,4 +12,6 @@ urlpatterns = [
     url(r"^updates/?$", Updates.as_view()),
     # Schedule dictionary path (by term code)
     url(r"^schedule(/((?P<term>[0-9]+)/?)?)?$", Schedule.as_view()),
+    # Emails path
+    url(r"^emails/?$", Emails.as_view()),
 ]
