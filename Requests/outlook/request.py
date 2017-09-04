@@ -21,7 +21,7 @@ def get_emails(sid, pin, count=25, offset=0):
         auth=(email.format(sid), pin),
         # "$top": number of requested emails, "$skip": number of skipped emails
         params={"$top": count, "$skip": offset}
-    ).text
+    ).json()["value"]
 
 
 # Sends an simple email from a user to another
