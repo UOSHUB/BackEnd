@@ -16,6 +16,20 @@ def __login(sid, pin):
     ).cookies
 
 
+# Gets student's schedule page by term id
+def schedule(term, session):
+    return requests.post(
+        # Get data from detail schedule url
+        root_url + "bwskfshd.P_CrseSchdDetl",
+        # Send required term id
+        data={"term_in": term},
+        # Coming from the same page page
+        headers={"referer": root_url + "bwskfshd.P_CrseSchdDetl"},
+        # Send login session
+        cookies=session
+    ).text
+
+
 # Gets student's unofficial transcript page
 def transcript(session):
     return requests.post(
