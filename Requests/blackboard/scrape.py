@@ -42,19 +42,28 @@ def courses(response, from_list_of=False):
 
 # Scrapes announcements' useful data
 def announcements(response):
+    # Parse page's html and store it
+    page = __parse_html(response)
+    # Store course ids dictionary
+    ids = {
+        # Store values in {course name: course id} pairs
+        course.text[1:]: course.get("value")
+        # Loop through student's available courses
+        for course in page.findall(".//select[@id='searchSelectId']/option")[3:]
+    }
     # Array to store announcements dictionaries
     messages = []
     # Loop through announcements
-    for item in __parse_html(response).xpath("//ul[@id='announcementList']/li"):
+    for item in page.findall(".//ul[@id='announcementList']/li"):
         # Add announcement to the array
         messages.append({
             # Clear announcement title from white spaces and store it
-            "title": item.xpath("h3[@class='item']")[0].text.strip(),
+            "title": item.find("h3[@class='item']").text.strip(),
             # Store raw announcement body in html format after encoding in utf-8
-            "body": __get_html(item.xpath(".//div[@class='vtbegenerated']")[0]).decode(),
-            # Store tag's all children text content as date using text_content()
-            "date": item.xpath("div[@class='details']/p")[0].text_content(),
+            "body": __get_html(item.find(".//div[@class='vtbegenerated']")).decode(),
+            # Store announcement date from first paragraph in ".details" tag
+            "date": item.find("div[@class='details']/p/span").text[11:],
             # Store announcement's associated course id
-            "id": item.xpath(".//span[@class='courseId']")[0].text[:7],
+            "id": ids[item.find("div[@class='announcementInfo']/p[2]").text_content()[11:]],
         })
     return messages
