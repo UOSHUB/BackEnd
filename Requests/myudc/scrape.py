@@ -4,33 +4,37 @@ from lxml.html import fromstring as __parse_html
 # Scrapes Student Detail Schedule data from response
 def schedule(response):
     data = {}
-    # Loop through tables with datadisplaytable class
-    for table in __parse_html(response).findall(".//table[@class='datadisplaytable']"):
-        # If it's the heading table
-        if table.find("caption").text != "Scheduled Meeting Times":
-            # Split table caption into three parts ["name", "key", "section"]
-            name, key, section = table.find("caption").text.split(" - ")
-            # Store dictionary key as course number after removing spaces
-            key = key.replace(' ', '')
-            # Store all table cells into cells array
-            cells = table.findall(".//td[@class='dddefault']")
-            # Store course info so far
-            course = {
-                "name": name, "section": section,
-                "crn": int(cells[1].text),
-                "ch": int(cells[5].text.strip()[0])}
-        else:
-            rows = table.findall("tr")
-            course.update(__extract_data(rows[1].findall("td[@class='dddefault']"), {"doctor": ["To Be Announced"] * 2}))
-            if len(rows) > 2:
-                course["lab"] = __extract_data(rows[2].findall("td[@class='dddefault']"), {})
-            # If course key is new to schedule
-            if data.get(key) is None:
-                # Store the course with that key
-                data[key] = course
-            else:  # If the course already exists
-                # Store it as a lab of the previous course
-                data[key]["lab"] = course
+    # Store all tables with "datadisplaytable" class
+    tables = iter(__parse_html(response).findall(".//table[@class='datadisplaytable']"))
+    # Loop through every two tables as one (head and body)
+    for head, body in zip(tables, tables):
+        # Split table caption into three parts ["title", "key", "section"]
+        title, key, section = head.find("caption").text.split(" - ")
+        # Remove spaces from course key
+        key = key.replace(" ", "")
+        # Store all table head cells and body rows into arrays
+        cells, rows = head.findall(".//td"), body.findall("tr")
+        # Store course info so far
+        course = {
+            "title": title,
+            "section": section,
+            "crn": cells[1].text,
+            "ch": cells[5].text.strip()[0]
+        }
+        # Add extra details to course if it's not the Junior/Senior Project
+        if not ("Junior" in title or "Senior" in title):
+            # Extract more course data and add them
+            course.update(dict(__extract_data(rows[1].findall("td")), **({
+                # Add course lab if it has one attached
+                "lab": __extract_data(rows[2].findall("td"), True)
+            } if len(rows) > 2 else {})))
+        # If course key is new to schedule
+        if data.get(key) is None:
+            # Store the course with that key
+            data[key] = course
+        # If the course already exists
+        else:  # Store it as a lab of the previous course
+            data[key]["lab"] = course
     return data
 
 
