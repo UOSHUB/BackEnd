@@ -2,11 +2,11 @@ from lxml.etree import fromstring as __parse_xml
 
 
 # Scrapes a specific term's schedule details
-def schedule_details(schedule):
+def schedule(response):
     # Dictionary to store schedule details
     details = {}
     # Loop through courses in the schedule report to get its details
-    for course in __parse_xml(schedule).find(".//LIST_G_SSBSECT_CRN"):
+    for course in __parse_xml(response).find(".//LIST_G_SSBSECT_CRN"):
         course_id = course.find("SSBSECT_SUBJ_CODE").text + course.find("SSBSECT_CRSE_NUMB").text
         # Scrape and store data dictionary in details["course id"]
         details[course_id] = {

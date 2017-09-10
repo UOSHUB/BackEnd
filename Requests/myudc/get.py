@@ -13,7 +13,7 @@ def __login(sid, pin):
         data={"sid": sid, "PIN": pin},
         # Required cookie for myUDC login
         cookies={"TESTID": "set"}
-    ).cookies
+    ).cookies.get_dict()
 
 
 # Gets student's schedule page by term id

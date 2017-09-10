@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework.serializers import Serializer, CharField
 from requests.exceptions import ConnectionError as NoConnectionError
-from . import myudc as udc, blackboard as bb, reports as rep, outlook as ms
+from . import myudc as udc, blackboard as bb, outlook as ms
 
 
 # API root (/api/) requests handler
@@ -124,15 +124,24 @@ class Schedule(APIView):
     """
     # Returns schedule dictionary of requested term on GET request
     def get(self, request, term=None):
+        # If not logged in to myUDC already
+        if not request.session.get("myudc"):
+            # Login and store its cookies in the session
+            request.session["myudc"] = udc.login(
+                # Send current student id
+                request.session["student"]["sid"],
+                # Send student password
+                request.session["student"]["pin"]
+            )
         # Return student's schedule details
         return Response(
-            # Get & scrape student's basic info from Blackboard
-            rep.scrape.schedule_details(
-                rep.get.schedule(
-                    # Send current student id
-                    request.session["student"]["sid"],
-                    # And the specified or current term code
-                    term  # or bb.get.current_term()
+            # Get & scrape student's schedule from myUDC
+            udc.scrape.schedule(
+                udc.get.schedule(
+                    # Send specified or current term code
+                    term,  # or bb.get.current_term()
+                    # And send myUDC cookies
+                    request.session["myudc"]
                 )
             )
         )
