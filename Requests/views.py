@@ -124,6 +124,14 @@ class Schedule(APIView):
     """
     # Returns schedule dictionary of requested term on GET request
     def get(self, request, term=None):
+        # If accessing "/schedule" without specifying term
+        if not term:  # Get current term and redirect to it
+            return redirect("/api/schedule/" + bb.api.current_term(
+                # Send Blackboard cookies
+                request.session["blackboard"],
+                # Send current student id
+                request.session["student"]["sid"]
+            ))
         # If not logged in to myUDC already
         if not request.session.get("myudc"):
             # Login and store its cookies in the session
@@ -138,10 +146,8 @@ class Schedule(APIView):
             # Get & scrape student's schedule from myUDC
             udc.scrape.schedule(
                 udc.get.schedule(
-                    # Send specified or current term code
-                    term,  # or bb.get.current_term()
-                    # And send myUDC cookies
-                    request.session["myudc"]
+                    # Send term code & myUDC cookies
+                    term, request.session["myudc"]
                 )
             )
         )
