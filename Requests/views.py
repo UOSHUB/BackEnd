@@ -45,8 +45,8 @@ class Login(APIView):
         # Store submitted credentials
         sid = request.data.get("sid")
         pin = request.data.get("pin")
-        # Try logging in and storing Blackboard cookies
-        try: bb_cookies = bb.login(sid, pin)
+        # Try logging in to Blackboard and storing its cookies in session
+        try: request.session["blackboard"] = bb.login(sid, pin)
         # If login to Blackboard fails
         except ConnectionError as error:
             # Return error message with BAD_REQUEST status
@@ -57,20 +57,20 @@ class Login(APIView):
             if not ms.login(sid, pin):
                 # Return error message with BAD_REQUEST status
                 return Response("Wrong Credentials!", status=400)
-        # Otherwise, if logging in to Blackboard succeeds
-        else:
-            # Store blackboard cookies in session
-            request.session["blackboard"] = bb_cookies
         # Store submitted credentials in session
         request.session["student"] = {"sid": sid, "pin": pin}
-        # If API is being requested from a browser
-        if isinstance(request.accepted_renderer, BrowsableAPIRenderer):
-            # Display Django session id in viewer's browser
-            return Response({
-                "sessionId": request.session.session_key or "Refresh to see it"
-            })
-        # Otherwise, return an empty response indicating success
-        return Response()
+        # Return an empty response indicating success
+        return Response() if not isinstance(
+            # Unless it's a browser, then redirect to GET
+            request.accepted_renderer, BrowsableAPIRenderer
+        ) else redirect(request.path)
+
+    # Returns login session/status on GET request
+    def get(self, request):
+        # Return "You're not logged in!" if so, otherwise return session id
+        return Response({
+            "sessionId": request.session.session_key or "You're not logged in!"
+        })
 
 
 # Website's layout details requests handler
