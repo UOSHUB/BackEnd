@@ -27,3 +27,16 @@ def basic_info(session, sid):
         "major": student["job"]["department"],
         "collage": student["job"]["company"]
     }
+
+
+# Get student's current term code
+def current_term(session, sid):
+    # Get student's courses while passing his id
+    date = get("users/userName:" + sid + "/courses", session, {
+        # Only return the field "created" and sort by it
+        "fields": "created",
+        "sort": "created"
+        # Select student's latest course creation date
+    })["results"][-1]["created"]
+    # Extract term code by concatenating year and semester code according to the month
+    return date[:4] + (int(date[6]) > 7 and "10" or date[6] < "6" and "20" or "30")
