@@ -62,6 +62,12 @@ def active_reg(session):
     return page("bwsksreg.p_active_regs", "RegMnu", session)
 
 
+# Gets student's registration history page
+def reg_history(session):
+    # Coming from "Registration" page
+    return page("bwskhreg.p_reg_hist", "RegMnu", session)
+
+
 # Gets student's holds page
 def holds(session):
     # Coming from "Student Records" page

@@ -11,6 +11,16 @@ def __get_term_code(term):
     return year.split("-")[0] + seasons_codes[season]
 
 
+# Scrapes all terms that student was registered in
+def registered_terms(page):
+    return {
+        # Return a dictionary that contains {term code: term name} pairs
+        __get_term_code(term.text): term.text
+        # Loop through tags which contain term name
+        for term in __parse(page).findall(".//span[@class='fieldOrangetextbold']")
+    }
+
+
 # Scrapes "Student Detail Schedule" data from page
 def schedule(page):
     data = {}
