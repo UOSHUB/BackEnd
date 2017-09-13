@@ -1,11 +1,21 @@
-from lxml.html import fromstring as __parse_html
+from lxml.html import fromstring as __parse
+
+seasons_codes = {"Fall": "10", "Spring": "20", "Summer": "30"}
 
 
-# Scrapes Student Detail Schedule data from response
-def schedule(response):
+# Returns term code from string of "TERM YYYY-YYYY" format
+def __get_term_code(term):
+    # Separate season from year and store both
+    season, year = term.split(" ", 1)
+    # Return the first year among the two plus season's code
+    return year.split("-")[0] + seasons_codes[season]
+
+
+# Scrapes "Student Detail Schedule" data from page
+def schedule(page):
     data = {}
     # Store all tables with "datadisplaytable" class
-    tables = iter(__parse_html(response).findall(".//table[@class='datadisplaytable']"))
+    tables = iter(__parse(page).findall(".//table[@class='datadisplaytable']"))
     # Loop through every two tables as one (head and body)
     for head, body in zip(tables, tables):
         # Split table caption into three parts ["title", "key", "section"]

@@ -171,13 +171,3 @@ levels = {
     "Undeclared": "00",
     "Undergraduate": "UG"
 }
-
-seasons_codes = {"fall": "10", "spring": "20", "summer": "30"}
-
-
-# Returns term code from string of "Fall 2017-2018" format
-def term_code(term):
-    # Separate season from year and store both
-    season, year = term.split(" ", 1)
-    # Return the first year among the two plus season's code
-    return year.split("-")[0].strip() + seasons_codes[season.lower()]
