@@ -7,6 +7,12 @@ from requests.exceptions import ConnectionError as NoConnectionError
 from . import myudc as udc, blackboard as bb, outlook as ms
 
 
+# Returns whether the request is from client-side or not
+def client_side(request):
+    # If request renderer isn't browser, consider it from client-side
+    return not isinstance(request.accepted_renderer, BrowsableAPIRenderer)
+
+
 # API root (/api/) requests handler
 class APIRoot(APIView):
     """
@@ -59,11 +65,8 @@ class Login(APIView):
                 return Response("Wrong Credentials!", status=400)
         # Store submitted credentials in session
         request.session["student"] = {"sid": sid, "pin": pin}
-        # Return an empty response indicating success
-        return Response() if not isinstance(
-            # Unless it's a browser, then redirect to GET
-            request.accepted_renderer, BrowsableAPIRenderer
-        ) else redirect(request.path)
+        # Return an empty response indicating success, or go to GET if browser
+        return Response() if client_side(request) else redirect(request.path)
 
     # Returns login session/status on GET request
     def get(self, request):
@@ -143,11 +146,8 @@ class Schedule(APIView):
                 )
             )
             # Return all terms as {term code: term name} pairs
-            return Response(terms if not isinstance(
-                # Unless it's a browser
-                request.accepted_renderer, BrowsableAPIRenderer
-            ) else {
-                # Then make it {term name: term url} pairs
+            return Response(terms if client_side(request) else {
+                # Unless it's a browser, then make it {term name: term url} pairs
                 name: request.build_absolute_uri(code)
                 # By looping through all terms and formatting them
                 for code, name in terms.items()
