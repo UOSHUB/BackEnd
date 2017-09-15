@@ -60,18 +60,19 @@ def schedule(page):
 
 # Returns extracted data from cells as a dict
 def __extract_data(cells, lab=False):
-    # Store doctor and location [building, room]
-    location = cells[3].text.split()
-    doctor = cells[6].find("a")
+    # A function that takes a string and returns all digits in it
+    clean = lambda string: "".join([c for c in string if c.isdigit()])
     # Upper case and split time string e.g. ["8:00 AM", "9:15 AM"]
     time = cells[1].text.upper().split(" - ")
+    # Store location and doctor
+    location = cells[3].text.split()
+    doctor = cells[6].find("a")
     return dict({  # Return data dictionary
         "start": time[0], "end": time[1],
         # Store class days in chars, e.g. ["M", "W"]
         "days": cells[2].text.replace(" ", ""),
-        # Remove extra parts from location details, e.g. ["M10", "TH007"]
-        "building": location[0][0] + __get_digits(location[0][1:]),
-        "room": __get_digits(location[-1].split("-")[-1])
+        # Remove extra parts from location details to gat e.g. "M10, 007"
+        "location": location[0][0] + clean(location[0][1:]) + ", " + clean(location[-1].split("-")[-1])
         # Also add course doctor
     }, **({  # If doctor info is announced store his name and email
         "doctor": doctor.get("target"),
@@ -82,8 +83,3 @@ def __extract_data(cells, lab=False):
         "email": "To Be Announced"
         # Unless it's a lab, in which case keep it empty
     } if not lab else {}))
-
-
-# Takes a string and returns all digits in it
-def __get_digits(string):
-    return "".join([char for char in string if char.isdigit()])

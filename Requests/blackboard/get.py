@@ -36,7 +36,7 @@ def updates(session):
     # Wait a bit until updates are ready
     time.sleep(.05)
     # Loop until they are ready or something happens
-    for _ in range(5):
+    for _ in range(8):
         # Request updates using previous cookies, and convert response to JSON
         response = requests.post(stream_url, cookies=stream_cookies, data={
             # Pass required parameters

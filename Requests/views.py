@@ -199,7 +199,9 @@ class Emails(APIView):
                         # Send current student id
                         request.session["student"]["sid"],
                         # And his password
-                        request.session["student"]["pin"]
+                        request.session["student"]["pin"],
+                        # Only get the 10 latest emails
+                        count=10
                     )
                 )
             )
