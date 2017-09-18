@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework.serializers import Serializer, CharField
 from requests.exceptions import ConnectionError as NoConnectionError
-from . import myudc as udc, blackboard as bb, outlook as ms
+from . import myudc, blackboard, outlook
 
 
 # Returns whether the request is from client-side or not
@@ -52,7 +52,7 @@ class Login(APIView):
         sid = request.data.get("sid")
         pin = request.data.get("pin")
         # Try logging in to Blackboard and storing its cookies in session
-        try: request.session["blackboard"] = bb.login(sid, pin)
+        try: request.session["blackboard"] = blackboard.login(sid, pin)
         # If login to Blackboard fails
         except ConnectionError as error:
             # Return error message with BAD_REQUEST status
@@ -60,11 +60,11 @@ class Login(APIView):
         # If Blackboard is down
         except NoConnectionError:
             # Login to outlook, if credentials are wrong
-            if not ms.login(sid, pin):
+            if not outlook.login(sid, pin):
                 # Return error message with BAD_REQUEST status
                 return Response("Wrong Credentials!", status=400)
         # Store submitted credentials in session
-        request.session["student"] = {"sid": sid, "pin": pin}
+        request.session.update({"sid": sid, "pin": pin})
         # Return an empty response indicating success, or go to GET if browser
         return Response() if client_side(request) else redirect(request.path)
 
@@ -88,11 +88,11 @@ class LayoutDetails(APIView):
         # Return student's basic info as of now
         return Response({
             # Get student's basic info from Blackboard
-            "student": bb.api.basic_info(
+            "student": blackboard.api.basic_info(
                 # Send Blackboard cookies
                 request.session["blackboard"],
                 # And current student id
-                request.session["student"]["sid"]
+                request.session["sid"]
             )
         })
 
@@ -109,8 +109,8 @@ class Updates(APIView):
         # Return updates object
         return Response(
             # Get & scrape student's updates from Blackboard
-            bb.scrape.updates(
-                bb.get.updates(
+            blackboard.scrape.updates(
+                blackboard.get.updates(
                     # Send Blackboard cookies
                     request.session["blackboard"]
                 )
@@ -130,17 +130,17 @@ class Schedule(APIView):
         # If not logged in to myUDC already
         if not request.session.get("myudc"):
             # Login and store its cookies in the session
-            request.session["myudc"] = udc.login(
+            request.session["myudc"] = myudc.login(
                 # Send current student id
-                request.session["student"]["sid"],
+                request.session["sid"],
                 # Send student password
-                request.session["student"]["pin"]
+                request.session["pin"]
             )
         # If accessing "/schedule" without specifying term
         if not term:
             # Get & scrape all registered terms
-            terms = udc.scrape.registered_terms(
-                udc.get.reg_history(
+            terms = myudc.scrape.registered_terms(
+                myudc.get.reg_history(
                     # Send myUDC cookies
                     request.session["myudc"]
                 )
@@ -155,8 +155,8 @@ class Schedule(APIView):
         # Return student's schedule details
         return Response(
             # Get & scrape student's schedule from myUDC
-            udc.scrape.schedule(
-                udc.get.schedule(
+            myudc.scrape.schedule(
+                myudc.get.schedule(
                     # Send term code & myUDC cookies
                     term, request.session["myudc"]
                 )
@@ -194,12 +194,12 @@ class Emails(APIView):
             # Return student's emails previews
             return Response(
                 # Get & scrape student's emails previews from Outlook
-                ms.scrape.emails_previews(
-                    ms.get_emails(
+                outlook.scrape.emails_previews(
+                    outlook.get_emails(
                         # Send current student id
-                        request.session["student"]["sid"],
+                        request.session["sid"],
                         # And his password
-                        request.session["student"]["pin"],
+                        request.session["pin"],
                         # Only get the 10 latest emails
                         count=10
                     )

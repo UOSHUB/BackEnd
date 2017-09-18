@@ -71,7 +71,7 @@ def __extract_data(cells, lab=False):
         "start": time[0], "end": time[1],
         # Store class days in chars, e.g. ["M", "W"]
         "days": cells[2].text.replace(" ", ""),
-        # Remove extra parts from location details to gat e.g. "M10, 007"
+        # Remove extra parts from location details to get e.g. "M10, 007"
         "location": location[0][0] + clean(location[0][1:]) + ", " + clean(location[-1].split("-")[-1])
         # Also add course doctor
     }, **({  # If doctor info is announced store his name and email
