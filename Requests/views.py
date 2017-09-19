@@ -81,8 +81,13 @@ class Login(APIView):
         # Store submitted credentials
         sid = request.data.get("sid")
         pin = request.data.get("pin")
-        # Try logging in to Blackboard and storing its cookies in session
-        try: request.session["blackboard"] = blackboard.login(sid, pin)
+        # Try logging in to Blackboard
+        try: request.session.update({
+                # Store its cookies in session
+                "blackboard": blackboard.login(sid, pin),
+                # Store login timestamp
+                "blackboard_time": time()
+            })
         # If login to Blackboard fails
         except ConnectionError as error:
             # Return error message with BAD_REQUEST status
@@ -108,12 +113,14 @@ class Login(APIView):
 
 # Website's layout details requests handler
 class LayoutDetails(APIView):
+    server = "blackboard"
     """
     This only returns student's basic info right now,
     but in the future it will have all layout details including:
     theme preferences, student's modifications and other settings
     """
     # Returns layout details on GET request
+    @login_required
     def get(self, request):
         # Return student's basic info as of now
         return Response({
@@ -129,12 +136,14 @@ class LayoutDetails(APIView):
 
 # Student's updates requests handler
 class Updates(APIView):
+    server = "blackboard"
     """
     This returns student's Blackboard updates,
     which is a dictionary of updates and the
     names of the courses they are coming from.
     """
     # Returns updates dictionary of all courses on GET request
+    @login_required
     def get(self, request):
         # Return updates object
         return Response(
@@ -150,22 +159,15 @@ class Updates(APIView):
 
 # Student's schedule requests handler
 class Schedule(APIView):
+    server = "myudc"
     """
     This returns student's schedule details,
     which's a dictionary of courses that contain:
     course id, title, days, time, crn, location, etc..
     """
     # Returns schedule dictionary of requested term on GET request
+    @login_required
     def get(self, request, term=None):
-        # If not logged in to myUDC already
-        if not request.session.get("myudc"):
-            # Login and store its cookies in the session
-            request.session["myudc"] = myudc.login(
-                # Send current student id
-                request.session["sid"],
-                # Send student password
-                request.session["pin"]
-            )
         # If accessing "/schedule" without specifying term
         if not term:
             # Get & scrape all registered terms
@@ -200,6 +202,7 @@ class Emails(APIView):
     Emails API root URL
     """
     # Returns list of email related API calls on GET request
+    @login_required
     def get(self, request):
         # If URL isn't ending with trailing slash
         if not request.path.endswith("/"):
@@ -220,6 +223,7 @@ class Emails(APIView):
         title, event, time and sender.
         """
         # Returns a dictionary of emails previews on GET request
+        @login_required
         def get(self, request):
             # Return student's emails previews
             return Response(
