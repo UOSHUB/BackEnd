@@ -110,6 +110,14 @@ class Login(APIView):
             "sessionId": request.session.session_key or "You're not logged in!"
         })
 
+    # Logout by deleting login session
+    @login_required
+    def delete(self, request):
+        # Clear student session
+        request.session.flush()
+        # Indicate success
+        return Response()
+
 
 # Website's layout details requests handler
 class LayoutDetails(APIView):
