@@ -5,30 +5,37 @@ from .values import __types, __events
 
 # Scrapes useful data from updates JSON object
 def updates(response):
-    # Dictionary to store data
-    data = {"courses": {
+    # Array to store updates
+    updates_array = []
+    # Dictionary of courses names for later use
+    courses_names = {
         # Loop through courses and store their name and id
-        course["id"]: course["name"] for course in response["sv_extras"]["sx_courses"]
-    }, "updates": []}
+        course["id"]: course["name"].split("-")[0]
+        for course in response["sv_extras"]["sx_courses"]
+    }
     # Loop through updates
     for update in response["sv_streamEntries"]:
         # Store repeatedly used references of the object
         event = update["extraAttribs"]["event_type"].split(":")
         item = update["itemSpecificData"]
         details = item["notificationDetails"]
-        # Append update dictionary to data
-        data["updates"].append({
+        # Append the update as a dictionary to updates array
+        updates_array.append({
             # Store all ids related to the update
             "updateId": details["actorId"],
             "courseId": details["courseId"],
             "contentId": details["sourceId"],
-            # Store title and time
+            # Store title, course and time
             "title": item["title"],
+            "course": courses_names[details["courseId"]],
             "time": update["se_timestamp"],
             # Get meaningful equivalent of event from stored values
-            "event": __types[event[0]] + " " + __events[event[1].split('_')[-1]]
+            "event": __types[event[0]] + (
+                # Add event type as long as it's not an announcement
+                " " + __events[event[1].split('_')[-1]] if event[0] != "AN" else ""
+            )
         })
-    return data
+    return updates_array
 
 
 # Scrapes courses ids from list_of("Courses") and courses()
