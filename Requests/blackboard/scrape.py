@@ -38,15 +38,6 @@ def updates(response):
     return updates_array
 
 
-# Scrapes courses ids from list_of("Courses") and courses()
-def courses(response, from_list_of=False):
-    # Determine scraped attribute and location of course id
-    # depending on whether the sent data is from list_of() or courses() functions
-    attr, start, end = ("href", 54, -7) if from_list_of else ("onclick", 87, -24)
-    # Return dictionary of courses blackboard ids mapped to courses myUDC ids
-    return {link.text[:7]: link.attrib[attr][start:end] for link in __parse_html(response).xpath("//a")}
-
-
 # Scrapes announcements' useful data
 def announcements(response):
     # Parse page's html and store it

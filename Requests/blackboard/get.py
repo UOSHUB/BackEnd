@@ -82,12 +82,3 @@ def announcements(session, course_id=None):
         # By default get all course announcements, if course id is sent then only get the sent one
         "method": "search", "searchSelect": course_id or "announcement.coursesonly.label"
     })
-
-
-# Get direct list of courses
-def courses(session):
-    # Get data from top right navigation menu
-    return data("blackboard/execute/globalCourseNavMenuSection", session, {
-        # Required parameter
-        "cmd": "view"
-    }).text

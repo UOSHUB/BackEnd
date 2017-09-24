@@ -40,3 +40,20 @@ def current_term(session, sid):
     })["results"][-1]["created"]
     # Extract term code by concatenating year and semester code according to the month
     return date[:4] + (int(date[6]) > 7 and "10" or date[6] < "6" and "20" or "30")
+
+
+def courses(session, term, sid):
+    year = term[:4]
+    start, end = {"10": [12, 8], "30": [7, 6], "20": [5, 1]}[term[4:]]
+    # Get student's courses while passing his id
+    return [
+        course["courseId"][1:-2]
+        for course in get("users/userName:" + sid + "/courses", session, {
+            # Only return the field "created" and sort by it
+            "fields": "created,courseId,courseRoleId"
+            # Select student's latest course creation date
+        })["results"][-10:]
+        if course["created"][:4] == year and
+        start >= int(course["created"][5:7]) >= end and
+        course["courseRoleId"] == "Student"
+    ]

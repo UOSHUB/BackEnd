@@ -1,3 +1,4 @@
+from lxml.etree import fromstring as __parse_xml
 from .get import url, data
 from . import __id
 import requests
@@ -25,9 +26,16 @@ def login(sid, pin):
 
 
 # Returns student's list of courses
-def courses(session):
+def courses(session, term):
+    term = {"10": "FALL", "30": "SUM", "20": "SPR"}[term[4:]] + term[:4]
     # Get data from enrollments data url while specifying that requested type is "course"
-    return data(sub_url + "courseData", session, {"course_type": "COURSE"})
+    return [
+        course.get("bbid")[1:-2]
+        for course in __parse_xml(data(
+            sub_url + "enrollments", session, {"course_type": "COURSE"}
+        ).encode()).find(".//courses")
+        if term in course.get("courseid") and course.get("roleIdentifier") == "S"
+    ]
 
 
 # Returns a specific course's data by its id
