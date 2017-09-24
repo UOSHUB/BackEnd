@@ -26,3 +26,18 @@ __events = {
     "OVERDUE": "Overdue",
     "DUE": "Due",
 }
+
+__terms = {
+    "10": {
+        "name": "FALL",
+        "range": [12, 8]
+    },
+    "30": {
+        "name": "SUM",
+        "range": [7, 6]
+    },
+    "20": {
+        "name": "SPR",
+        "range": [5, 1]
+    },
+}

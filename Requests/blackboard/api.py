@@ -1,4 +1,5 @@
 from . import root_url as url
+from .values import __terms
 import requests
 
 # Append Blackboard API path to root URL
@@ -42,18 +43,24 @@ def current_term(session, sid):
     return date[:4] + (int(date[6]) > 7 and "10" or date[6] < "6" and "20" or "30")
 
 
+# Returns student's list of courses
 def courses(session, term, sid):
+    # Store term year and months range start and end
+    start, end = __terms[term[4:]]["range"]
     year = term[:4]
-    start, end = {"10": [12, 8], "30": [7, 6], "20": [5, 1]}[term[4:]]
-    # Get student's courses while passing his id
     return [
+        # Return an array of courses ids
         course["courseId"][1:-2]
+        # Get and loop through student's courses while passing his id
         for course in get("users/userName:" + sid + "/courses", session, {
             # Only return the field "created" and sort by it
             "fields": "created,courseId,courseRoleId"
             # Select student's latest course creation date
         })["results"][-10:]
+        # Only return courses from requested year
         if course["created"][:4] == year and
+        # And in the range of months of requested term
         start >= int(course["created"][5:7]) >= end and
+        # And which role is 'Student'
         course["courseRoleId"] == "Student"
     ]

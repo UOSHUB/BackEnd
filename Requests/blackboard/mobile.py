@@ -1,4 +1,5 @@
 from lxml.etree import fromstring as __parse_xml
+from .values import __terms
 from .get import url, data
 from . import __id
 import requests
@@ -27,13 +28,17 @@ def login(sid, pin):
 
 # Returns student's list of courses
 def courses(session, term):
-    term = {"10": "FALL", "30": "SUM", "20": "SPR"}[term[4:]] + term[:4]
-    # Get data from enrollments data url while specifying that requested type is "course"
+    # Get Blackboard term name in "FALL2017" format from term code
+    term = __terms[term[4:]]["name"] + term[:4]
     return [
+        # Return an array of Blackboard course ids
         course.get("bbid")[1:-2]
+        # Loop through list of courses in parsed xml
         for course in __parse_xml(data(
+            # Get data from enrollments data url while specifying that requested type is "course"
             sub_url + "enrollments", session, {"course_type": "COURSE"}
         ).encode()).find(".//courses")
+        # Only return courses from the requested term and that are with "Student" role
         if term in course.get("courseid") and course.get("roleIdentifier") == "S"
     ]
 
