@@ -133,7 +133,7 @@ class LayoutDetails(APIView):
         # Return student's basic info as of now
         return Response({
             # Get student's basic info from Blackboard
-            "student": blackboard.api.basic_info(
+            "student": blackboard.get.basic_info(
                 # Send Blackboard cookies
                 request.session["blackboard"],
                 # And current student id

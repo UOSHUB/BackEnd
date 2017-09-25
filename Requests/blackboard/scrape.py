@@ -1,6 +1,5 @@
-# Import two html processing functions as hidden variables
-from lxml.html import fromstring as __parse_html, tostring as __get_html
-from .values import __types, __events
+from .values import __types, __events, __terms
+from lxml.etree import fromstring as __parse_xml
 
 
 # Scrapes useful data from updates JSON object
@@ -32,36 +31,21 @@ def updates(response):
             # Get meaningful equivalent of event from stored values
             "event": __types[event[0]] + (
                 # Add event type as long as it's not an announcement
-                " " + __events[event[1].split('_')[-1]] if event[0] != "AN" else ""
+                " " + __events.get(event[1].split("_")[-1], "") if event[0] != "AN" else ""
             )
         })
     return updates_array
 
 
-# Scrapes announcements' useful data
-def announcements(response):
-    # Parse page's html and store it
-    page = __parse_html(response)
-    # Store course ids dictionary
-    ids = {
-        # Store values in {course name: course id} pairs
-        course.text[1:]: course.get("value")
-        # Loop through student's available courses
-        for course in page.findall(".//select[@id='searchSelectId']/option")[3:]
-    }
-    # Array to store announcements dictionaries
-    messages = []
-    # Loop through announcements
-    for item in page.findall(".//ul[@id='announcementList']/li"):
-        # Add announcement to the array
-        messages.append({
-            # Clear announcement title from white spaces and store it
-            "title": item.find("h3[@class='item']").text.strip(),
-            # Store raw announcement body in html format after encoding in utf-8
-            "body": __get_html(item.find(".//div[@class='vtbegenerated']")).decode(),
-            # Store announcement date from first paragraph in ".details" tag
-            "date": item.find("div[@class='details']/p/span").text[11:],
-            # Store announcement's associated course id
-            "id": ids[item.find("div[@class='announcementInfo']/p[2]").text_content()[11:]],
-        })
-    return messages
+# Scrapes student's list of courses
+def courses_list(response, term):
+    # Get Blackboard term name in "FALL2017" format from term code
+    term = __terms[term[4:]]["name"] + term[:4]
+    return [
+        # Return an array of Blackboard course ids
+        course.get("bbid")[1:-2]
+        # Loop through list of courses in parsed xml
+        for course in __parse_xml(response).find(".//courses")
+        # Only return courses from the requested term and that are with "Student" role
+        if term in course.get("courseid") and course.get("roleIdentifier") == "S"
+    ]

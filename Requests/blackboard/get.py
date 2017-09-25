@@ -1,33 +1,11 @@
-from . import root_url as url, __id
-from .values import __lists
+from .general import root_url, mobile as __mobile, api as __api
 import requests, time
-
-# Append Blackboard website path to root URL
-url += "webapps/"
-
-
-# Logs in Blackboard and returns the session
-def __login(sid, pin):
-    # Post HTTP request and store its response
-    response = requests.post(
-        # Post data to login url
-        url + "login/",
-        # Send student id and password
-        data={"user_id": sid, "password": pin}
-    )
-    # For some reason, response is encoded in "ISO-8859-1"
-    # only when login succeeds, otherwise
-    if response.encoding != "ISO-8859-1":
-        # Raise an error to indicate login failure
-        raise ConnectionError("Wrong Credentials!")
-    # If login succeeded, send back session cookies
-    return response.cookies.get_dict()
 
 
 # Gets updates and announcements in a JSON object
 def updates(session):
     # Store Blackboard stream url
-    stream_url = url + "streamViewer/streamViewer"
+    stream_url = root_url + "webapps/streamViewer/streamViewer"
     # Request updates from Blackboard stream and store returned cookies
     stream_cookies = requests.get(stream_url, cookies=session, params={
         "cmd": "view",
@@ -50,35 +28,23 @@ def updates(session):
             return response
 
 
-# General Blackboard request to "webapps/" with common attributes
-def data(link, session, params=None):
-    return requests.get(
-        # Get data from website url + sub-url
-        url + link,
-        # Send login session
-        cookies=session,
-        # Send required data
-        params=params
-    ).text
+# Get student's basic info (name, major, collage)
+def basic_info(session, sid):
+    # Request data from API url while passing student id
+    student = __api("users/userName:" + sid, session, {"fields": "name,job"})
+    # Extract and return a dictionary of student info
+    return {
+        "name": student["name"]["given"],
+        "major": student["job"]["department"],
+        "collage": student["job"]["company"]
+    }
 
 
-# Gets list of one of the options listed below through AJAX
-def list_of(session, query):
-    # Get data from AJAX requests url
-    return data("portal/execute/tabs/tabAction", session, {
-        # Get list through AJAX
-        "action": "refreshAjaxModule",
-        # Get list of one of these options
-        "modId": __id(__lists[query]),
-        # Required parameter
-        "tabId": __id(1),
-    })
-
-
-# Gets page of announcements for all courses or for one course by id
-def announcements(session, course_id=None):
-    # Get data from announcements url
-    return data("blackboard/execute/announcement", session, {
-        # By default get all course announcements, if course id is sent then only get the sent one
-        "method": "search", "searchSelect": course_id or "announcement.coursesonly.label"
-    })
+# Gets student's list of courses
+def courses_list(session):
+    return __mobile(
+        # Get courses from enrollments data url
+        "enrollments", session,
+        # Specify requested type as "course"
+        {"course_type": "COURSE"}
+    )
