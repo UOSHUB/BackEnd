@@ -59,6 +59,7 @@ class APIRoot(APIView):
             "Layout Details": url("details/"),
             "Updates": url("updates/"),
             "Schedule": url("schedule/"),
+            "Courses": url("courses/"),
             "Emails": url("emails/"),
         })
 
@@ -115,8 +116,8 @@ class Login(APIView):
     def delete(self, request):
         # Clear student session
         request.session.flush()
-        # Indicate success
-        return Response()
+        # Return an empty response indicating success, or go to GET if browser
+        return Response() if client_side(request) else self.get(request)
 
 
 # Website's layout details requests handler
@@ -200,6 +201,29 @@ class Schedule(APIView):
                     # Send term code & myUDC cookies
                     term, request.session["myudc"]
                 )
+            )
+        )
+
+
+# Student's courses requests handler
+class Courses(APIView):
+    server = "blackboard"
+    """
+    Courses API root URL
+    A list of all courses registered in Blackboard
+    """
+    # Returns a list of courses categorized by term
+    @login_required
+    def get(self, request):
+        # Return student's courses
+        return Response(
+            # Get & scrape courses list from Blackboard Mobile
+            blackboard.scrape.courses_list(
+                blackboard.get.courses_list(
+                    # Send Blackboard cookies
+                    request.session["blackboard"]
+                ),  # Send scrape the URL builder
+                request.build_absolute_uri
             )
         )
 

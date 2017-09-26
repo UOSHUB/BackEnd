@@ -26,6 +26,7 @@ def updates(session):
         # Return response if it contains requested data
         if response["sv_streamEntries"]:
             return response
+    # TODO: if loop finishes without response, get updates from mobile API
 
 
 # Get student's basic info (name, major, collage)
