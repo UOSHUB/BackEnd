@@ -1,5 +1,16 @@
 from .values import __types, __events, __terms
 from lxml.etree import fromstring as __parse_xml
+import re
+
+# Regex for selecting English letters and cleaning numbers
+__english = re.compile("[^\w /&.]", re.ASCII)
+__clean_end = re.compile("[0-9]+$")
+
+
+# Cleans course name
+def __clean(name):
+    # From non English letters and from section numbers at the end
+    return __clean_end.sub("", __english.sub("", name).strip()).strip()
 
 
 # Scrapes useful data from updates JSON object
@@ -37,8 +48,28 @@ def updates(response):
     return updates_array
 
 
-# Scrapes student's list of courses
-def courses_list(response, term):
+# Scrapes student's list of all courses categorized by term
+def courses_list(response, url=lambda x: x):
+    terms = {}
+    # Loop through courses registered in Blackboard
+    for course in __parse_xml(response).findall(".//course[@roleIdentifier='S']"):
+        # Extract term id of the following format "FALL2017" from course id
+        term = course.get("courseid").rsplit("_", 1)[-1].split("-")[0]
+        # Split term id to year and term short name
+        year, short = term[-4:], term[:-4]
+        # Get term full name of the following format "Fall 2017-2018"
+        term = "{} {}-{}".format(__terms[short]["name"], year, int(year) + 1)
+        # If term hasn't been added yet
+        if term not in terms:
+            # Initialize it with a link to all courses in this semester (using term code)
+            terms[term] = {"All Courses": url("in/" + year + __terms[short]["code"])}
+        # Add course to the correspondent term as {course name: course link by id} pairs
+        terms[term].update({__clean(course.get("name")): url(course.get("bbid")[1:-2])})
+    return terms
+
+
+# Scrapes student's list of courses by term
+def courses_by_term(response, term):
     # Get Blackboard term name in "FALL2017" format from term code
     term = __terms[term[4:]]["name"] + term[:4]
     return [

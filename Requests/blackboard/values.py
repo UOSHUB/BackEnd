@@ -40,4 +40,16 @@ __terms = {
         "name": "SPR",
         "range": [5, 1]
     },
+    "FALL": {
+        "name": "Fall",
+        "code": "10"
+    },
+    "SPR": {
+        "name": "Spring",
+        "code": "20"
+    },
+    "SUM": {
+        "name": "Summer",
+        "code": "30"
+    },
 }
