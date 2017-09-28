@@ -5,6 +5,9 @@ import re
 # Regex for selecting English letters and cleaning numbers
 __english = re.compile("[^\w /&.]", re.ASCII)
 __clean_end = re.compile("[0-9]+$")
+# Regex for selecting attachment's id and its content id
+__content_id = re.compile("content_id=_([0-9]+)_1")
+__file_id = re.compile("xid-([0-9]+)_1")
 
 
 # Cleans course name
@@ -80,3 +83,46 @@ def courses_by_term(response, term):
         # Only return courses from the requested term and that are with "Student" role
         if term in course.get("courseid") and course.get("roleIdentifier") == "S"
     ]
+
+
+# Scrapes student's specific course data
+def course_data(response, data_type=None):
+    # Store parsed course and returned object structure
+    course = __parse_xml(response)
+    data = {"deadlines": [], "documents": []}
+    # If requested data type isn't "documents"
+    if data_type != "documents":
+        # Scrape deadlines and add them to data
+        data["deadlines"] = [
+            {  # Store deadline's name, due date and content id
+                "name": deadline.get("name"),
+                "due_date": deadline.get("dueDate"),
+                "content_id": deadline.get("contentid")[1:-2]
+            }  # Loop through all course items which have a due date
+            for deadline in course.findall(".//*[@dueDate]")
+        ]
+        # If requested data type is "deadlines"
+        if data_type == "deadlines":
+            # Only return the deadlines
+            return data["deadlines"]
+    # If requested data type isn't "deadlines"
+    if data_type != "deadlines":
+        # Loop through all course documents
+        for document in course.findall(".//attachment"):
+            # Store document's url for later use
+            url = document.get("url")
+            # Add document dictionary to data
+            data["documents"].append({
+                # Store document's name, upload date
+                "name": document.get("name"),
+                "upload_date": document.get("modifiedDate"),
+                # From document's URL, get its id and content id using Regex
+                "content_id": __content_id.search(url).group(1),
+                "file_id": __file_id.search(url).group(1)
+            })
+        # If requested data type is "documents"
+        if data_type == "documents":
+            # Only return the documents
+            return data["documents"]
+    # Return everything if data type isn't specified or invalid
+    return data
