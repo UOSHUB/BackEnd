@@ -1,4 +1,4 @@
-from .general import root_url, mobile as __mobile, api as __api
+from .general import root_url, mobile as __mobile, api as __api, __id
 import requests, time
 
 
@@ -43,9 +43,21 @@ def basic_info(session, sid):
 
 # Gets student's list of courses
 def courses_list(session):
+    # Request form Blackboard Mobile
     return __mobile(
         # Get courses from enrollments data url
         "enrollments", session,
         # Specify requested type as "course"
         {"course_type": "COURSE"}
+    )
+
+
+# Gets student's specific course data
+def course_data(session, course_id):
+    # Request form Blackboard Mobile
+    return __mobile(
+        # Get data from course map url
+        "courseMap", session,
+        # Specify requested course id
+        {"course_id": __id(course_id)}
     )
