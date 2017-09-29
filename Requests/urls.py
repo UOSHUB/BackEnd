@@ -13,7 +13,7 @@ urlpatterns = [
     # Schedule dictionary path (by term code)
     url(r"^schedule(/((?P<term>[0-9]+)/?)?)?$", Schedule.as_view()),
     # Courses path
-    url(r"^courses/?$", Courses.as_view()),
+    url(r"^courses(/(((?P<course>[0-9]+)|(in/(?P<term>[0-9]+)))(/(?P<data_type>[\w]+))?/?)?)?$", Courses.as_view()),
     # Emails path
     url(r"^emails/?$", Emails.as_view()),
     # Emails previews path
