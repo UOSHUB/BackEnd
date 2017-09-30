@@ -50,18 +50,18 @@ class APIRoot(APIView):
     Notice that all API calls require login first except for calendar calls.
     """
     # Returns list of available API calls on GET request
-    def get(self, request):
-        # Provide full API URL to current server
-        url = request.build_absolute_uri
+    def get(self, request, invalid):
+        # Store a URL builder relative to /api/
+        url = lambda path: request.build_absolute_uri("/api/" + path)
         # Display a list of available API calls
-        return Response({
+        return Response(dict({
             "Login": url("login/"),
             "Layout Details": url("details/"),
             "Updates": url("updates/"),
             "Schedule": url("schedule/"),
             "Courses": url("courses/"),
             "Emails": url("emails/"),
-        })
+        }, **({"Error": [request.path + " isn't a supported API call"]} if invalid else {})))
 
 
 # Login requests handler
@@ -82,8 +82,8 @@ class Login(APIView):
         # Store submitted credentials
         sid = request.data.get("sid")
         pin = request.data.get("pin")
-        # Try logging in to Blackboard
-        try: request.session.update({
+        try:  # Try logging in to Blackboard
+            request.session.update({
                 # Store its cookies in session
                 "blackboard": blackboard.login(sid, pin),
                 # Store login timestamp
@@ -189,7 +189,7 @@ class Schedule(APIView):
             # Return all terms as {term code: term name} pairs
             return Response(terms if client_side(request) else {
                 # Unless it's a browser, then make it {term name: term url} pairs
-                name: request.build_absolute_uri(code)
+                name: request.build_absolute_uri(code) + "/"
                 # By looping through all terms and formatting them
                 for code, name in terms.items()
             })
@@ -261,7 +261,7 @@ class Courses(APIView):
                     # Send Blackboard cookies
                     request.session["blackboard"]
                 ),  # Send scrape the URL builder
-                request.build_absolute_uri
+                lambda path: request.build_absolute_uri(path + "/")
             )
         )
 
@@ -274,10 +274,6 @@ class Emails(APIView):
     # Returns list of email related API calls on GET request
     @login_required
     def get(self, request):
-        # If URL isn't ending with trailing slash
-        if not request.path.endswith("/"):
-            # Redirect to one with trailing slash
-            return redirect("emails/")
         # Provide emails API URL
         url = request.build_absolute_uri
         # Display a list of available email related API calls
