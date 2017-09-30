@@ -21,6 +21,10 @@ urlpatterns = [
     url(r"^emails/$", Emails.as_view()),
     # Outlook emails previews path
     url(r"^emails/previews/$", Emails.Previews.as_view()),
+    # Homepage's calendar path
+    # /api/calendar returns a list of terms available in academic calendar
+    # /api/schedule/<term> returns specified term's calendar events
+    url(r"^calendar/((?P<term>[0-9]+)/)?", Calendar.as_view()),
     # API root path
     url(r"^(.*)", APIRoot.as_view()),
 ]

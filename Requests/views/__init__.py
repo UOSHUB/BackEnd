@@ -5,3 +5,4 @@ from .updates import Updates
 from .schedule import Schedule
 from .courses import Courses
 from .emails import Emails
+from .calendar import Calendar

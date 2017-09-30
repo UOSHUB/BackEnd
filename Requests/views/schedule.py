@@ -15,7 +15,7 @@ class Schedule(APIView):
     # Returns schedule dictionary of requested term on GET request
     @login_required
     def get(self, request, term=None):
-        # If accessing "/schedule" without specifying term
+        # If accessing "/schedule/" without specifying term
         if not term:
             # Get & scrape all registered terms
             terms = myudc.scrape.registered_terms(
