@@ -6,12 +6,13 @@ from Requests import blackboard
 
 # Website's layout details requests handler
 class LayoutDetails(APIView):
-    server = "blackboard"
     """
     This only returns student's basic info right now,
     but in the future it will have all layout details including:
     theme preferences, student's modifications and other settings
     """
+    server = "blackboard"
+
     # Returns layout details on GET request
     @login_required
     def get(self, request):

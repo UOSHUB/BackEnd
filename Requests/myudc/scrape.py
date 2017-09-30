@@ -38,7 +38,7 @@ def schedule(page):
         course = {
             "title": title,
             "section": section,
-            "crn": cells[1].text,
+            "crn": int(cells[1].text),
             "ch": cells[5].text.strip()[0]
         }
         # Add extra details to course if it's not the Junior/Senior Project

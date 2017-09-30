@@ -6,11 +6,12 @@ from Requests import blackboard
 
 # Student's courses requests handler
 class Courses(APIView):
+    """
+    This returns course' data, which is a list
+    of documents and deadline in the course
+    """
     server = "blackboard"
-    """
-    Courses API root URL
-    A list of all courses registered in Blackboard
-    """
+
     # Returns a list of courses or course's data (with term and data type options)
     @login_required
     def get(self, request, course=None, term=None, data_type=None):
@@ -60,6 +61,6 @@ class Courses(APIView):
                     # Send Blackboard cookies
                     request.session["blackboard"]
                 ),  # Send scrape the URL builder
-                lambda path: request.build_absolute_uri(path + "/")
+                lambda path: request.build_absolute_uri("/api/courses/" + path + "/")
             )
         )

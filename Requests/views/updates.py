@@ -6,12 +6,13 @@ from Requests import blackboard
 
 # Student's updates requests handler
 class Updates(APIView):
-    server = "blackboard"
     """
     This returns student's Blackboard updates,
     which is a dictionary of updates and the
     names of the courses they are coming from.
     """
+    server = "blackboard"
+
     # Returns updates dictionary of all courses on GET request
     @login_required
     def get(self, request):

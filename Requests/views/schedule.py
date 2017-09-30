@@ -6,12 +6,13 @@ from Requests import myudc
 
 # Student's schedule requests handler
 class Schedule(APIView):
-    server = "myudc"
     """
     This returns student's schedule details,
     which's a dictionary of courses that contain:
     course id, title, days, time, crn, location, etc..
     """
+    server = "myudc"
+
     # Returns schedule dictionary of requested term on GET request
     @login_required
     def get(self, request, term=None):

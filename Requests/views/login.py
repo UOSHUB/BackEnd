@@ -9,12 +9,13 @@ from time import time
 
 # Login requests handler
 class Login(APIView):
-    # Register fields description in login API
-    serializer_class = Credentials
     """
     Login to UOSHUB
     {Sid: Student Id, Pin: Password}
     """
+    # Register login fields description
+    serializer_class = Credentials
+
     # Receives credentials data and preforms login on POST request
     def post(self, request):
         # Store submitted credentials

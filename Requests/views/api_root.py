@@ -24,4 +24,3 @@ class APIRoot(APIView):
         }, **(  # If requested path isn't a supported API call, add an error message to indicate it
             {"Error": [request.path + " isn't a supported API call"]} if invalid else {})
         ))
-

@@ -36,8 +36,8 @@ def updates(response):
         updates_array.append({
             # Store all ids related to the update
             "updateId": details["actorId"],
-            "courseId": details["courseId"],
-            "contentId": details["sourceId"],
+            "courseId": int(details["courseId"][1:-2]),
+            "contentId": int(details["sourceId"][1:-2]),
             # Store title, course and time
             "title": item["title"],
             "course": courses_names[details["courseId"]],
@@ -97,7 +97,7 @@ def course_data(response, data_type=None):
             {  # Store deadline's name, due date and content id
                 "name": deadline.get("name"),
                 "due_date": deadline.get("dueDate"),
-                "content_id": deadline.get("contentid")[1:-2]
+                "content_id": int(deadline.get("contentid")[1:-2])
             }  # Loop through all course items which have a due date
             for deadline in course.findall(".//*[@dueDate]")
         ]
@@ -117,8 +117,8 @@ def course_data(response, data_type=None):
                 "name": document.get("name"),
                 "upload_date": document.get("modifiedDate"),
                 # From document's URL, get its id and content id using Regex
-                "content_id": __content_id.search(url).group(1),
-                "file_id": __file_id.search(url).group(1)
+                "content_id": int(__content_id.search(url).group(1)),
+                "file_id": int(__file_id.search(url).group(1))
             })
         # If requested data type is "documents"
         if data_type == "documents":

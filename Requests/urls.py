@@ -16,7 +16,7 @@ urlpatterns = [
     # /api/courses returns a list of registered courses categorized by their terms
     # /api/courses/<course or term> returns course's or term's documents and deadlines
     # /api/courses/<course or term>/<"documents" or "deadlines"> returns course's or term's documents or deadlines
-    url(r"^courses/(((?P<course>[0-9]+)|(in/(?P<term>[0-9]+)))/(?P<data_type>[\w]+)?/)?$", Courses.as_view()),
+    url(r"^courses/(((?P<course>[0-9]+)|in(/(?P<term>[0-9]+))?)/((?P<data_type>[\w]+)/)?)?$", Courses.as_view()),
     # Outlook emails path
     url(r"^emails/$", Emails.as_view()),
     # Outlook emails previews path
