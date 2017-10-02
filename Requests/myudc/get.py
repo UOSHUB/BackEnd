@@ -16,13 +16,13 @@ def __login(sid, pin):
     ).cookies.get_dict()
 
 
-# Gets student's schedule page by term id
-def schedule(term, session):
+# Gets student's schedule page by term code
+def term(term_code, session):
     return requests.post(
         # Get data from detail schedule url
         root_url + "bwskfshd.P_CrseSchdDetl",
-        # Send required term id
-        data={"term_in": term},
+        # Send required term code
+        data={"term_in": term_code},
         # Coming from the same page page
         headers={"referer": root_url + "bwskfshd.P_CrseSchdDetl"},
         # Send login session

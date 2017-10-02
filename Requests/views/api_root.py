@@ -17,7 +17,7 @@ class APIRoot(APIView):
             "Login": url("login/"),
             "Layout Details": url("details/"),
             "Updates": url("updates/"),
-            "Schedule": url("schedule/"),
+            "Terms": url("terms/"),
             "Courses": url("courses/"),
             "Emails": url("emails/"),
             "Calendar": url("calendar/"),

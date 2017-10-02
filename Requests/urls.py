@@ -8,10 +8,10 @@ urlpatterns = [
     url(r"^details/$", LayoutDetails.as_view()),
     # Blackboard updates path
     url(r"^updates/$", Updates.as_view()),
-    # MyUDC schedule path
-    # /api/schedule returns a list of registered terms
-    # /api/schedule/<term> returns specified term's schedule
-    url(r"^schedule/((?P<term>[0-9]+)/)?$", Schedule.as_view()),
+    # MyUDC terms path
+    # /api/terms returns a list of registered terms
+    # /api/terms/<term> returns specified term's data
+    url(r"^schedule/((?P<term>[0-9]+)/)?$", Terms.as_view()),
     # Blackboard Courses path
     # /api/courses returns a list of registered courses categorized by their terms
     # /api/courses/<course or term> returns course's or term's documents and deadlines

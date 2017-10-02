@@ -4,19 +4,18 @@ from rest_framework.views import APIView
 from Requests import myudc
 
 
-# Student's schedule requests handler
-class Schedule(APIView):
+# Student's terms requests handler
+class Terms(APIView):
     """
-    This returns student's schedule details,
-    which's a dictionary of courses that contain:
-    course id, title, days, time, crn, location, etc..
+    This returns student's term details,
+    which's a dictionary of courses' data.
     """
     server = "myudc"
 
-    # Returns schedule dictionary of requested term on GET request
+    # Returns term dictionary of requested term on GET request
     @login_required
     def get(self, request, term=None):
-        # If accessing "/schedule/" without specifying term
+        # If accessing "/terms/" without specifying term
         if not term:
             # Get & scrape all registered terms
             terms = myudc.scrape.registered_terms(
@@ -32,11 +31,11 @@ class Schedule(APIView):
                 # By looping through all terms and formatting them
                 for code, name in terms.items()
             })
-        # Return student's schedule details
+        # Return student's term details
         return Response(
-            # Get & scrape student's schedule from myUDC
-            myudc.scrape.schedule(
-                myudc.get.schedule(
+            # Get & scrape student's term from myUDC
+            myudc.scrape.term(
+                myudc.get.term(
                     # Send term code & myUDC cookies
                     term, request.session["myudc"]
                 )

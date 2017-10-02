@@ -4,9 +4,9 @@ seasons_codes = {"Fall": "10", "Spring": "20", "Summer": "30"}
 
 
 # Returns term code from string of "TERM YYYY-YYYY" format
-def __get_term_code(term):
+def __get_term_code(term_name):
     # Separate season from year and store both
-    season, year = term.split(" ", 1)
+    season, year = term_name.split(" ", 1)
     # Return the first year among the two plus season's code
     return year.split("-")[0] + seasons_codes[season]
 
@@ -15,14 +15,14 @@ def __get_term_code(term):
 def registered_terms(page):
     return {
         # Return a dictionary that contains {term code: term name} pairs
-        __get_term_code(term.text): term.text
+        __get_term_code(term_name.text): term_name.text
         # Loop through tags which contain term name
-        for term in __parse(page).findall(".//span[@class='fieldOrangetextbold']")
+        for term_name in __parse(page).findall(".//span[@class='fieldOrangetextbold']")
     }
 
 
 # Scrapes "Student Detail Schedule" data from page
-def schedule(page):
+def term(page):
     data = {}
     # Store all tables with "datadisplaytable" class
     tables = iter(__parse(page).findall(".//table[@class='datadisplaytable']"))
@@ -48,7 +48,7 @@ def schedule(page):
                 # Add course lab if it has one attached
                 "lab": __extract_data(rows[2].findall("td"), True)
             } if len(rows) > 2 else {})))
-        # If course key is new to schedule
+        # If course key is new to term
         if data.get(key) is None:
             # Store the course with that key
             data[key] = course
