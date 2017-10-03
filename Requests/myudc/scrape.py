@@ -21,6 +21,25 @@ def registered_terms(page):
     }
 
 
+# Scrapes a single course's data
+def course(page):
+    # Store main table's caption and body
+    caption, body = __parse(page).find(".//table[@class='datadisplaytable']").findall("tr")
+    # Split caption to get course's title, crn, key and section
+    title, crn, key, section = caption.text_content().strip().split(" - ")
+    # Return course data dictionary
+    return {  # In {course key: course data} format
+        key.replace(" ", ""): dict({
+            "title": title,
+            "section": section,
+            "crn": int(crn),
+            # Credits hours value isn't structured, so search among the strings to find it
+            "ch": int(body.xpath("td/text()[contains(., 'Credits')]")[0].strip()[0])
+            # Get & add lecture/lab details
+        }, **__get_data(body.findall(".//tr"), title))
+    }
+
+
 # Scrapes "Student Detail Schedule" data
 def term(page):
     data = {}
