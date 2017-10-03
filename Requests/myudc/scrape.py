@@ -21,7 +21,7 @@ def registered_terms(page):
     }
 
 
-# Scrapes "Student Detail Schedule" data from page
+# Scrapes "Student Detail Schedule" data
 def term(page):
     data = {}
     # Store all tables with "datadisplaytable" class
@@ -34,34 +34,42 @@ def term(page):
         key = key.replace(" ", "")
         # Store all table head cells and body rows into arrays
         cells, rows = head.findall(".//td"), body.findall("tr")
-        # Store course info so far
-        course = {
+        # Combine all course data
+        course_data = dict({
             "title": title,
             "section": section,
             "crn": int(cells[1].text),
             "ch": cells[5].text.strip()[0]
-        }
-        # Add extra details to course if it's not the Junior/Senior Project
-        if not ("Junior" in title or "Senior" in title):
-            # Extract more course data and add them
-            course.update(dict(__extract_data(rows[1].findall("td")), **({
-                # Add course lab if it has one attached
-                "lab": __extract_data(rows[2].findall("td"), True)
-            } if len(rows) > 2 else {})))
+            # Get & add lecture/lab details
+        }, **__get_data(rows, title))
         # If course key is new to term
         if data.get(key) is None:
             # Store the course with that key
-            data[key] = course
+            data[key] = course_data
         # If the course already exists
         else:  # Store it as a lab of the previous course
-            data[key]["lab"] = course
+            data[key]["lab"] = course_data
     return data
 
 
-# Returns extracted data from cells as a dict
+# Returns course's lecture (and lab if available) details
+def __get_data(rows, title):
+    data = {}
+    # If course is not the Junior/Senior Project
+    if not ("Junior" in title or "Senior" in title):  # TODO: also if time is TBA
+        # Extract and add lecture details
+        data = __extract_data(rows[1].findall("td"))
+        # If there's a lab (second row)
+        if len(rows) > 2:
+            # Extract and add lab details
+            data["lab"] = __extract_data(rows[2].findall("td"), True)
+    return data
+
+
+# Returns extracted data from lecture/lab cells as a dict
 def __extract_data(cells, lab=False):
     # A function that takes a string and returns all digits in it
-    clean = lambda string: "".join([c for c in string if c.isdigit()])
+    clean = lambda string: "".join([c for c in string if c.isdigit()])  # TODO: this vs re (speed test)
     # Upper case and split time string e.g. ["8:00 AM", "9:15 AM"]
     time = cells[1].text.upper().split(" - ")
     # Store location and doctor
