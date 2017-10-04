@@ -56,33 +56,49 @@ def courses_list(response, url=lambda x: x):
     terms = {}
     # Loop through courses registered in Blackboard
     for course in __parse_xml(response).findall(".//course[@roleIdentifier='S']"):
-        # Extract term id of the following format "FALL2017" from course id
-        term = course.get("courseid").rsplit("_", 1)[-1].split("-")[0]
+        # Extract course key, crn and term from course id
+        key, crn, term = course.get("courseid").split("_")
+        # Make sure that term id is of the following format "FALL2017"
+        term = term.split("-")[0]
         # Split term id to year and term short name
         year, short = term[-4:], term[:-4]
         # Get term full name of the following format "Fall 2017-2018"
         term = "{} {}-{}".format(__terms[short]["name"], year, int(year) + 1)
         # If term hasn't been added yet
         if term not in terms:
-            # Initialize it with a link to all courses in this semester (using term code)
-            terms[term] = {"All Courses": url("in/" + year + __terms[short]["code"])}
-        # Add course to the correspondent term as {course name: course link by id} pairs
-        terms[term].update({__clean(course.get("name")): url(course.get("bbid")[1:-2])})
+            # Initialize it with an empty dictionary
+            terms[term] = {}
+        # Add course to the correspondent term
+        terms[term][__clean(course.get("name"))] = {
+            # Content links to Blackboard's documents and deadlines
+            "content": url(course.get("bbid")[1:-2]),
+            # Details links to MyUDC's course details
+            "details": url("{}/{}/{}".format(crn, key, year + __terms[short]["code"]))
+        }
     return terms
 
 
 # Scrapes student's list of courses by term
 def courses_by_term(response, term):
+    courses = {}
     # Get Blackboard term name in "FALL2017" format from term code
     term = __terms[term[4:]]["name"] + term[:4]
-    return [
-        # Return an array of Blackboard course ids
-        course.get("bbid")[1:-2]
-        # Loop through list of courses in parsed xml
-        for course in __parse_xml(response).find(".//courses")
-        # Only return courses from the requested term and that are with "Student" role
-        if term in course.get("courseid") and course.get("roleIdentifier") == "S"
-    ]
+    # Loop through list of courses in parsed xml
+    for course in __parse_xml(response).find(".//courses"):
+        # Store course's Blackboard code
+        code = course.get("courseid")
+        # Only add courses in the requested term and that are with "Student" role
+        if term in code and course.get("roleIdentifier") == "S":
+            # Extract course key and crn from code
+            key, crn = code.split("_")[:2]
+            # Add course data after cleaning
+            courses[key] = {
+                "title": __clean(course.get("name")),
+                # Store course's Blackboard id
+                "bb": course.get("bbid")[1:-2],
+                "crn": crn
+            }
+    return courses
 
 
 # Scrapes student's specific course data
