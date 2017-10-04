@@ -23,7 +23,7 @@ def term(term_code, session):
         root_url + "bwskfshd.P_CrseSchdDetl",
         # Send required term code
         data={"term_in": term_code},
-        # Coming from the same page page
+        # Coming from the same page
         headers={"referer": root_url + "bwskfshd.P_CrseSchdDetl"},
         # Send login session
         cookies=session
@@ -41,6 +41,25 @@ def transcript(session):
         headers={"referer": root_url + "bwskotrn.P_ViewTermTran"},
         # Send login session
         cookies=session
+    ).text
+
+
+# TODO: test this function on all courses in advanced search
+# Gets a single course's details using its crn, key and term
+def course(session, crn, key, term_code):
+    return requests.get(
+        # Get data from display course url
+        root_url + "bwckschd.p_disp_listcrse",
+        # Coming from "Advanced Search" page
+        headers={"referer": root_url + "bwskfcls.P_GetCrse_Advanced"},
+        # Send all course identifiers
+        params={
+            "term_in": term_code,
+            "subj_in": key[:4],
+            "crse_in": key[4:],
+            "crn_in": crn
+            # Send login session
+        }, cookies=session
     ).text
 
 
