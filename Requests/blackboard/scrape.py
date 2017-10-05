@@ -71,9 +71,9 @@ def courses_list(response, url=lambda x: x):
         # Add course to the correspondent term
         terms[term][__clean(course.get("name"))] = {
             # Content links to Blackboard's documents and deadlines
-            "content": url(course.get("bbid")[1:-2]),
+            "Content": url(course.get("bbid")[1:-2]),
             # Details links to MyUDC's course details
-            "details": url("{}/{}/{}".format(key, crn, year + __terms[short]["code"]))
+            "Details": url("{}/{}/{}".format(key, crn, year + __terms[short]["code"]))
         }
     return terms
 

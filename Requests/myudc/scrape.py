@@ -58,7 +58,7 @@ def term(page):
             "title": title,
             "section": section,
             "crn": int(cells[1].text),
-            "ch": cells[5].text.strip()[0]
+            "ch": int(cells[5].text.strip()[0])
             # Get & add lecture/lab details
         }, **__get_data(rows, title))
         # If course key is new to term

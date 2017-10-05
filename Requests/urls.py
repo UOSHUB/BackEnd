@@ -8,11 +8,14 @@ urlpatterns = [
     url(r"^details/$", LayoutDetails.as_view()),
     # Blackboard updates path
     url(r"^updates/$", Updates.as_view()),
-    # MyUDC terms path
+    # Terms path (Blackboard and MyUDC)
     # /api/terms returns a list of registered terms
-    # /api/terms/<term> returns specified term's data
-    url(r"^schedule/((?P<term>[0-9]+)/)?$", Terms.as_view()),
-    # Blackboard Courses path
+    url(r"^terms/$", Terms.as_view()),
+    # /api/terms/<term> returns specified term's MyUDC Details
+    url(r"^terms/(?P<term>[0-9]{6})/$", Terms.Details.as_view()),
+    # /api/terms/(content or courses) returns specified term's Blackboard content or list of courses
+    url(r"^terms/(?P<term>[0-9]{6})/(?P<data_type>content|courses)/$", Terms.Content.as_view()),
+    # Courses path (Blackboard and MyUDC)
     # /api/courses returns a list of registered courses categorized by their terms
     url(r"^courses/$", Courses.as_view()),
     # /api/courses/<Blackboard id> returns course's documents and deadlines
@@ -25,7 +28,7 @@ urlpatterns = [
     url(r"^emails/previews/$", Emails.Previews.as_view()),
     # Homepage's calendar path
     # /api/calendar returns a list of terms available in academic calendar
-    # /api/schedule/<term> returns specified term's calendar events
+    # /api/calendar/<term> returns specified term's calendar events
     url(r"^calendar/((?P<term>[0-9]+)/)?", Calendar.as_view()),
     # API root path
     url(r"^(.*)", APIRoot.as_view()),
