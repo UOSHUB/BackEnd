@@ -9,7 +9,8 @@ class APIRoot(APIView):
     Notice that all API calls require login first except for calendar calls.
     """
     # Returns list of available API calls on GET request
-    def get(self, request, invalid):
+    @staticmethod
+    def get(request, invalid):
         # Store a URL builder relative to /api/
         url = lambda path: request.build_absolute_uri("/api/" + path)
         # Display a list of available API calls

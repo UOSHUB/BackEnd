@@ -1,59 +1,22 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from Requests import blackboard, myudc
 from .common import login_required
-from Requests import blackboard
+from .api_root import APIRoot
 
 
 # Student's courses requests handler
 class Courses(APIView):
     """
-    This returns course' data, which is a list
+    This returns course's data, which is a list
     of documents and deadline in the course
     """
     server = "blackboard"
 
     # Returns a list of courses or course's data (with term and data type options)
     @login_required
-    def get(self, request, course=None, term=None, data_type=None):
-        # If a specific course is requested
-        if course:
-            # Return requested course's data
-            return Response(
-                # Get & scrape course's data from Blackboard Mobile
-                blackboard.scrape.course_data(
-                    blackboard.get.course_data(
-                        # Send Blackboard cookies
-                        request.session["blackboard"],
-                        # Send course id
-                        course
-                    ),  # Send requested data type
-                    data_type  # "documents" or "deadlines"
-                )
-            )
-        # If all courses in term are requested
-        if term:
-            # Return a dictionary of all courses' data
-            return Response({
-                # Get & scrape course's data from Blackboard Mobile
-                course: blackboard.scrape.course_data(
-                        blackboard.get.course_data(
-                            # Send Blackboard cookies
-                            request.session["blackboard"],
-                            # Send course id
-                            course
-                        ),  # Send requested data type
-                        data_type  # "documents" or "deadlines"
-                    )
-                # Get & scrape then loop through courses in requested term
-                for course in blackboard.scrape.courses_by_term(
-                    blackboard.get.courses_list(
-                        # Send Blackboard cookies
-                        request.session["blackboard"]
-                    ),  # Send term id
-                    term
-                )
-            })
-        # If course and term aren't specified, return student's courses
+    def get(self, request):
+        # Return list of student's courses
         return Response(
             # Get & scrape courses list from Blackboard Mobile
             blackboard.scrape.courses_list(
@@ -64,3 +27,52 @@ class Courses(APIView):
                 lambda path: request.build_absolute_uri("/api/courses/" + path + "/")
             )
         )
+
+    # Course's Blackboard content handler
+    class Content(APIView):
+        """
+        This returns course's Blackboard content,
+        which includes its documents and deadlines
+        """
+        server = "blackboard"
+
+        # Returns course's documents and deadlines
+        @login_required
+        def get(self, request, bb):
+            # Return requested course's data
+            return Response(
+                # Get & scrape course's data from Blackboard Mobile
+                blackboard.scrape.course_data(
+                    blackboard.get.course_data(
+                        # Send Blackboard cookies & course's blackboard id
+                        request.session["blackboard"], bb
+                    )
+                )
+            )
+
+    # Course's MyUDC details handler
+    class Details(APIView):
+        """
+        Returns course's MyUDC details
+        """
+        server = "myudc"
+
+        # Returns a single course's details
+        @login_required
+        def get(self, request, key, crn=None, term=None):
+            # If crn or term aren't sent
+            if not crn or not term:
+                # Return to API root with an error message
+                return APIRoot.get(request, request.path)
+            # Otherwise, return requested course's details
+            return Response(
+                # Get & scrape course's details from MyUDC
+                myudc.scrape.course(
+                    myudc.get.course(
+                        # Send MyUDC session
+                        request.session["myudc"],
+                        # Send course's crn, key and term code
+                        crn, key, term
+                    )
+                )
+            )

@@ -73,7 +73,7 @@ def courses_list(response, url=lambda x: x):
             # Content links to Blackboard's documents and deadlines
             "content": url(course.get("bbid")[1:-2]),
             # Details links to MyUDC's course details
-            "details": url("{}/{}/{}".format(crn, key, year + __terms[short]["code"]))
+            "details": url("{}/{}/{}".format(key, crn, year + __terms[short]["code"]))
         }
     return terms
 

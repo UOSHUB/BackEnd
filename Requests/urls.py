@@ -14,9 +14,11 @@ urlpatterns = [
     url(r"^schedule/((?P<term>[0-9]+)/)?$", Terms.as_view()),
     # Blackboard Courses path
     # /api/courses returns a list of registered courses categorized by their terms
-    # /api/courses/<course or term> returns course's or term's documents and deadlines
-    # /api/courses/<course or term>/<"documents" or "deadlines"> returns course's or term's documents or deadlines
-    url(r"^courses/(((?P<course>[0-9]+)|in(/(?P<term>[0-9]+))?)/((?P<data_type>[\w]+)/)?)?$", Courses.as_view()),
+    url(r"^courses/$", Courses.as_view()),
+    # /api/courses/<Blackboard id> returns course's documents and deadlines
+    url(r"^courses/(?P<bb>[0-9]{5})/$", Courses.Content.as_view()),
+    # /api/courses/<MyUDC key>/<CRN>/<term code> returns course's details from MyUDC
+    url(r"^courses/(?P<key>[0-9]{7})/((?P<crn>[0-9]{5})/)?((?P<term>[0-9]{6})/)?$", Courses.Details.as_view()),
     # Outlook emails path
     url(r"^emails/$", Emails.as_view()),
     # Outlook emails previews path
