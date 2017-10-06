@@ -75,19 +75,19 @@ class Terms(APIView):
                 # Return a dictionary of all courses' content
                 return Response({
                     # Get & scrape course's data from Blackboard Mobile
-                    course["bb"]: blackboard.scrape.course_data(
+                    key: dict(course, **blackboard.scrape.course_data(
                         blackboard.get.course_data(
                             # Send Blackboard cookies & course blackboard id
                             request.session["blackboard"], course["bb"]
                         )
-                    )
+                    ))
                     # Get & scrape then loop through courses in requested term
-                    for course in blackboard.scrape.courses_by_term(
+                    for key, course in blackboard.scrape.courses_by_term(
                         blackboard.get.courses_list(
                             # Send Blackboard cookies
                             request.session["blackboard"]
                         ), term  # Send term id
-                    ).values()
+                    ).items()
                 })
             # If data type requested is "courses"
             elif data_type == "courses":

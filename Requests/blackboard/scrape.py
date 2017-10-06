@@ -110,10 +110,10 @@ def course_data(response, data_type=None):
     if data_type != "documents":
         # Scrape deadlines and add them to data
         data["deadlines"] = [
-            {  # Store deadline's name, due date and content id
-                "name": deadline.get("name"),
-                "due_date": deadline.get("dueDate"),
-                "content_id": int(deadline.get("contentid")[1:-2])
+            {  # Store deadline's title, due date and content id
+                "title": deadline.get("name"),
+                "dueDate": deadline.get("dueDate"),
+                "contentId": int(deadline.get("contentid")[1:-2])
             }  # Loop through all course items which have a due date
             for deadline in course.findall(".//*[@dueDate]")
         ]
@@ -129,12 +129,13 @@ def course_data(response, data_type=None):
             url = document.get("url")
             # Add document dictionary to data
             data["documents"].append({
-                # Store document's name, upload date
-                "name": document.get("name"),
-                "upload_date": document.get("modifiedDate"),
+                # Store document's title, upload date
+                "title": document.getparent().getparent().get("name"),
+                "file": document.get("name"),
+                "uploadDate": document.get("modifiedDate"),
                 # From document's URL, get its id and content id using Regex
-                "content_id": int(__content_id.search(url).group(1)),
-                "file_id": int(__file_id.search(url).group(1))
+                "contentId": int(__content_id.search(url).group(1)),
+                "fileId": int(__file_id.search(url).group(1))
             })
         # If requested data type is "documents"
         if data_type == "documents":
