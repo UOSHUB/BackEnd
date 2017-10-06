@@ -16,7 +16,7 @@ class Calendar(APIView):
             # Return all terms in academic calendar
             return Response({
                 # Format terms in {term name: term URL} pairs
-                name: request.build_absolute_uri(code) + "/"
+                name: request.build_absolute_uri(code + "/")
                 # Loop through all terms scraped from calendar
                 for name, code in calendar.all_terms(
                     # Get academic calendar page

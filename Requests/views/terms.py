@@ -21,10 +21,14 @@ class Terms(APIView):
                 request.session["myudc"]
             )
         )
-        # Return all terms as {term code: term name} pairs
-        return Response(terms if client_side(request) else {
-            # Unless it's a browser, then make it {term name: term url} pairs
-            name: request.build_absolute_uri(code) + "/"
+        # Return all terms
+        return Response({
+            # In {term code: {}} pairs
+            term: {} for term in terms.keys()
+            # If requested from the client side
+        } if client_side(request) else {
+            # Then make it in {term name: term url} pairs
+            name: request.build_absolute_uri(code + "/")
             # By looping through all terms and formatting them
             for code, name in terms.items()
         })
