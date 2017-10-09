@@ -30,6 +30,8 @@ urlpatterns = [
     # /api/calendar returns a list of terms available in academic calendar
     # /api/calendar/<term> returns specified term's calendar events
     url(r"^calendar/((?P<term>[0-9]+)/)?", Calendar.as_view()),
+    # MyUDC holds path
+    url(r"^holds/$", Holds.as_view()),
     # API root path
     url(r"^(.*)", APIRoot.as_view()),
 ]
