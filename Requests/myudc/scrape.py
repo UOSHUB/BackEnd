@@ -110,3 +110,20 @@ def __extract_data(cells, lab=False):
         "email": "To Be Announced"
         # Unless it's a lab, in which case keep it empty
     } if not lab else {}))
+
+
+# Scrapes student's holds
+def holds(page):
+    data = []
+    # Loop through holds table's rows which contain data
+    for hold in __parse(page).findall(".//table[@class='datadisplaytable']/tr")[1:]:
+        # Store hold's row cells
+        cells = hold.findall("td")
+        # Add holds type, reason, start & end dates
+        data.append({
+            "type": cells[0].text,
+            "start": cells[1].text,
+            "end": cells[2].text,
+            "reason": cells[4].text
+        })
+    return data
