@@ -1,13 +1,12 @@
 from .values import __types, __events, __terms
 from lxml.etree import fromstring as __parse_xml
+from .general import root_url
 import re
 
 # Regex for selecting English letters and cleaning numbers
 __english = re.compile("[^\w /&.]", re.ASCII)
 __clean_end = re.compile("[0-9]+$")
-# Regex for selecting attachment's id and its content id
-__content_id = re.compile("content_id=_([0-9]+)_1")
-__file_id = re.compile("xid-([0-9]+)_1")
+root_url = root_url[:-1]
 
 
 # Cleans course name
@@ -110,11 +109,11 @@ def course_data(response, data_type=None):
     if data_type != "documents":
         # Scrape deadlines and add them to data
         data["deadlines"] = [
-            {  # Store deadline's title, due date and content id
+            {   # Store deadline's title, due date and content id
                 "title": deadline.get("name"),
                 "dueDate": deadline.get("dueDate"),
                 "contentId": int(deadline.get("contentid")[1:-2])
-            }  # Loop through all course items which have a due date
+            }   # Loop through all course items which have a due date
             for deadline in course.findall(".//*[@dueDate]")
         ]
         # If requested data type is "deadlines"
@@ -123,20 +122,17 @@ def course_data(response, data_type=None):
             return data["deadlines"]
     # If requested data type isn't "deadlines"
     if data_type != "deadlines":
-        # Loop through all course documents
-        for document in course.findall(".//attachment"):
-            # Store document's url for later use
-            url = document.get("url")
-            # Add document dictionary to data
-            data["documents"].append({
-                # Store document's title, upload date
+        # Scrape documents and add them to data
+        data["documents"] = [
+            {   # Store document's title, upload date
                 "title": document.getparent().getparent().get("name"),
                 "file": document.get("name"),
                 "uploadDate": document.get("modifiedDate"),
                 # From document's URL, get its id and content id using Regex
-                "contentId": int(__content_id.search(url).group(1)),
-                "fileId": int(__file_id.search(url).group(1))
-            })
+                "url": root_url + document.get("url")
+            }   # Loop through all course documents
+            for document in course.findall(".//attachment")
+        ]
         # If requested data type is "documents"
         if data_type == "documents":
             # Only return the documents

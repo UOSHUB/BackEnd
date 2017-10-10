@@ -21,23 +21,10 @@ class Login(APIView):
         # Store submitted credentials
         sid = request.data.get("sid")
         pin = request.data.get("pin")
-        try:  # Try logging in to Blackboard
-            request.session.update({
-                # Store its cookies in session
-                "blackboard": blackboard.login(sid, pin),
-                # Store login timestamp
-                "blackboard_time": time()
-            })
-        # If login to Blackboard fails
-        except ConnectionError as error:
+        # Login to outlook, if credentials are wrong
+        if not outlook.login(sid, pin):
             # Return error message with BAD_REQUEST status
-            return Response(error.args[0], status=400)
-        # If Blackboard is down
-        except NoConnectionError:
-            # Login to outlook, if credentials are wrong
-            if not outlook.login(sid, pin):
-                # Return error message with BAD_REQUEST status
-                return Response("Wrong Credentials!", status=400)
+            return Response("Wrong Credentials!", status=400)
         # Store submitted credentials in session
         request.session.update({"sid": sid, "pin": pin})
         # Return an empty response indicating success, or go to GET if browser
