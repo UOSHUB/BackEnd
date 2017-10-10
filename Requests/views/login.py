@@ -45,7 +45,7 @@ class Login(APIView):
 
     # Returns login session/status on GET request
     def get(self, request):
-        # Return "You're not logged in!" if so, otherwise return session id
+        # Return "You're not logged in!" if so, otherwise return session
         return Response({
             "sessionId": request.session.session_key or "You're not logged in!"
         })

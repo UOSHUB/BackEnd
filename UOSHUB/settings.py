@@ -20,22 +20,24 @@ for interface in netifaces.interfaces():
     if netifaces.AF_INET in addrs:
         ALLOWED_HOSTS.append(addrs[netifaces.AF_INET][0]["addr"])
 
-# Application definition
+# Installed applications
 INSTALLED_APPS = [
+    # UOS HUB applications
     "Requests.apps.RequestsConfig",
     "Website.apps.WebsiteConfig",
-    # Django Admin App and its dependencies
+    # Django Admin app and its dependencies
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Third Party Apps
+    # Third party apps
     "rest_framework",
     "compressor"
 ]
 
+# Used middleware
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -45,7 +47,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# Configure Django Compressor
+# Django compressor configurations
 COMPRESS_ENABLED = True
 COMPRESS_OUTPUT_DIR = "min"
 COMPRESS_ROOT = os.path.join(BASE_DIR, "Website/static/")
@@ -55,11 +57,11 @@ STATICFILES_FINDERS = (
     "compressor.finders.CompressorFinder",
 )
 
-# In Development
+# In development
 if DEBUG:
     # Combine static files without compression
     COMPRESS_JS_FILTERS = []
-else:  # In Production
+else:  # In production
     # Enable offline compression
     COMPRESS_OFFLINE = True
     COMPRESS_CSS_FILTERS = ["compressor.filters.cssmin.rCSSMinFilter"]
@@ -68,6 +70,9 @@ else:  # In Production
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True
+
+# Configure Django to use cookie based sessions
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
 # Configure Django templates (only for /admin/ pages)
 TEMPLATES = [
@@ -86,6 +91,7 @@ TEMPLATES = [
     },
 ]
 
+# Setup URLs for the WSGI application and project root
 WSGI_APPLICATION = "UOSHUB.wsgi.application"
 ROOT_URLCONF = "UOSHUB.urls"
 
