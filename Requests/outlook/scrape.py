@@ -1,3 +1,12 @@
+from Requests import clean_course_name as __clean
+import re
+
+# Regex expression to extract required details from Blackboard generated emails
+__content = re.compile("(.+): (?P<title>.+) has been added to course: (?P<course>.+)\. Click")
+__assignment = re.compile("Assignment: (?P<title>.+) in course: (?P<course>.+) is due: .+, (.{3}).* ([0-9]+),")
+__announcement = re.compile("(?:New Announcement Available in course )?(?P<course>.+?): (?P<title>.+)")
+
+
 # Scrapes basic info about emails for preview purposes
 def emails_previews(emails):
     # Array to store email previews
