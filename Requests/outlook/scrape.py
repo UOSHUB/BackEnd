@@ -34,3 +34,37 @@ def emails_previews(emails):
                 "sender": email["Sender"]["EmailAddress"]["Name"]
             })
     return previews
+
+
+# Scrapes Blackboard generated courses emails
+def courses_emails(raw_emails):
+    # Array to store emails
+    emails = []
+    # Loop through raw emails
+    for email in raw_emails:
+        # Store email preview and subject
+        preview = email["BodyPreview"]
+        subject = email["Subject"]
+        # Match content details and format email event
+        # When email is about an assignment due
+        if subject.startswith("Assignment:"):
+            match = __assignment.match(subject)
+            event = "Assignment Due " + match.group(3) + " " + match.group(4)
+        # When email is about an assignment or content item being added
+        elif preview.startswith("Content Item:") or preview.startswith("Assignment:"):
+            match = __content.match(preview)
+            event = "New {}".format(match.group(1).split()[0])
+        else:  # When email is about an announcement
+            match = __announcement.match(subject)
+            event = "New Announcement"
+        # Add extracted email data to emails
+        emails.append({
+            "event": event,
+            # Extract title and course using Regex matches
+            "title": match.group("title"),
+            "course": __clean(match.group("course")),
+            # Get email time and body directly
+            "time": email["DateTimeSent"],
+            "body": email["Body"]["Content"]
+        })
+    return emails
