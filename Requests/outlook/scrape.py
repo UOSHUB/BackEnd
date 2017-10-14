@@ -1,10 +1,11 @@
 from Requests import clean_course_name as __clean
 import re
 
-# Regex expression to extract required details from Blackboard generated emails
+# Regex expression to extract required details from generated emails
 __content = re.compile("(.+): (?P<title>.+) has been added to course: (?P<course>.+)\. Click")
 __assignment = re.compile("Assignment: (?P<title>.+) in course: (?P<course>.+) is due: .+, (.{3}).* ([0-9]+),")
 __announcement = re.compile("(?:New Announcement Available in course )?(?P<course>.+?): (?P<title>.+)")
+__clean_event = re.compile("^(?:New Announcement: |إعلان جديد :)")
 
 
 # Scrapes basic info about emails for preview purposes
@@ -68,3 +69,16 @@ def courses_emails(raw_emails):
             "body": email["Body"]["Content"]
         })
     return emails
+
+
+# Scrapes university events related emails
+def events_emails(raw_emails):
+    # Return an array of emails dictionaries
+    return [
+        {   # Extract and add event body, time and cleaned title
+            "title": __clean_event.sub("", email["Subject"]),
+            "time": email["DateTimeSent"],
+            "body": email["Body"]["Content"]
+        }   # Loop through raw emails
+        for email in raw_emails
+    ]
