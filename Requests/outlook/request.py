@@ -5,11 +5,11 @@ root_url = "https://outlook.office365.com/api/v1.0/me/"
 email = "{}@sharjah.ac.ae"
 __search_queries = {
     # Search for university announcements/events emails
-    "Events": "from:no-reply@sharjah.ac.ae",
+    "events": "from:no-reply@sharjah.ac.ae",
     # Search Blackboard generated notifications about courses related events
-    "Courses": "from:do-not-reply@sharjah.uos.edu",
+    "courses": "from:do-not-reply@sharjah.uos.edu",
     # Search for everything else, which we consider as personal emails
-    "Personal": "NOT from:do-not-reply@sharjah.uos.edu AND NOT from:no-reply@sharjah.ac.ae"
+    "personal": "NOT from:do-not-reply@sharjah.uos.edu AND NOT from:no-reply@sharjah.ac.ae"
 }
 
 

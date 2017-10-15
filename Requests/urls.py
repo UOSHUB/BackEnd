@@ -23,7 +23,10 @@ urlpatterns = [
     # /api/courses/<MyUDC key>/<CRN>/<term code> returns course's details from MyUDC
     url(r"^courses/(?P<key>[0-9]{7})/((?P<crn>[0-9]{5})/)?((?P<term>[0-9]{6})/)?$", Courses.Details.as_view()),
     # Outlook emails path
-    url(r"^emails/$", Emails.as_view()),
+    # /api/emails returns a list of available emails categories
+    # /api/emails/<category> returns 20 of specified category's emails
+    # /api/emails/<category>/<count> returns <count> of specified category's emails
+    url(r"^emails/((?P<category>personal|courses|events)/((?P<count>[0-9]{1,3})/)?)?$", Emails.as_view()),
     # Homepage's calendar path
     # /api/calendar returns a list of terms available in academic calendar
     # /api/calendar/<term> returns specified term's calendar events
