@@ -1,16 +1,5 @@
+from .values import root_url, email, __search_queries
 import requests
-
-# Commonly used outlook api link and email domain name
-root_url = "https://outlook.office365.com/api/v1.0/me/"
-email = "{}@sharjah.ac.ae"
-__search_queries = {
-    # Search for university announcements/events emails
-    "events": "from:no-reply@sharjah.ac.ae",
-    # Search Blackboard generated notifications about courses related events
-    "courses": "from:do-not-reply@sharjah.uos.edu",
-    # Search for everything else, which we consider as personal emails
-    "personal": "NOT from:do-not-reply@sharjah.uos.edu AND NOT from:no-reply@sharjah.ac.ae"
-}
 
 
 # Login to outlook

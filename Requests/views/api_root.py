@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from .common import client_side
 
 
 # API root (/api/) requests handler
@@ -13,8 +14,8 @@ class APIRoot(APIView):
     def get(request, invalid):
         # Store a URL builder relative to /api/
         url = lambda path: request.build_absolute_uri("/api/" + path)
-        # Display a list of available API calls
-        return Response(dict({
+        # Display a list of available API calls to browser or nothing if client
+        return Response({} if client_side(request) else dict({
             "Login": url("login/"),
             "Layout Details": url("details/"),
             "Updates": url("updates/"),

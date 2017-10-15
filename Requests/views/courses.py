@@ -53,15 +53,16 @@ class Courses(APIView):
     # Course's MyUDC details handler
     class Details(APIView):
         """
-        Returns course's MyUDC details
+        Returns course's MyUDC details,
+        which includes its location, time, doctor, etc...
         """
         server = "myudc"
 
         # Returns a single course's details
         @login_required
-        def get(self, request, key, crn=None, term=None):
+        def get(self, request, key, crn, term):
             # If crn or term aren't sent
-            if not crn or not term:
+            if not (crn and term):
                 # Return to API root with an error message
                 return APIRoot.get(request, request.path)
             # Otherwise, return requested course's details

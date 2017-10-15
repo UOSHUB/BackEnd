@@ -1,14 +1,5 @@
+from .values import __split_subject, __events, __assignment, __content, __announcement, __clean_event
 from Requests import clean_course_name as __clean
-import re
-
-# Dictionary & Regex to extract "Reply" & "Forward" emails
-__events = {"re": "Reply", "fw": "Forward"}
-__split_subject = re.compile("^(?:(re|fw|fwd): )?(.*)$", re.IGNORECASE)
-# Regex expression to extract required details from generated emails
-__content = re.compile("(.+): (?P<title>.+) has been added to course: (?P<course>.+)\. Click")
-__assignment = re.compile("Assignment: (?P<title>.+) in course: (?P<course>.+) is due: .+, (.{3}).* ([0-9]+),")
-__announcement = re.compile("(?:New Announcement Available in course )?(?P<course>.+?): (?P<title>.+)")
-__clean_event = re.compile("^(?:New Announcement: |إعلان جديد :)")
 
 
 # Scrapes personal emails details
