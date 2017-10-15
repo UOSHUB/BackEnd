@@ -24,8 +24,6 @@ urlpatterns = [
     url(r"^courses/(?P<key>[0-9]{7})/((?P<crn>[0-9]{5})/)?((?P<term>[0-9]{6})/)?$", Courses.Details.as_view()),
     # Outlook emails path
     url(r"^emails/$", Emails.as_view()),
-    # Outlook emails previews path
-    url(r"^emails/previews/$", Emails.Previews.as_view()),
     # Homepage's calendar path
     # /api/calendar returns a list of terms available in academic calendar
     # /api/calendar/<term> returns specified term's calendar events
