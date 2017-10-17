@@ -19,7 +19,7 @@ class Emails(APIView):
             return Response(
                 # Get & scrape emails from requested category
                 getattr(outlook.scrape, category + "_emails")(
-                    outlook.get_emails(
+                    outlook.get.emails(
                         # Send student id and password
                         request.session["sid"],
                         request.session["pin"],
