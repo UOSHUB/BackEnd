@@ -16,12 +16,10 @@ def personal_emails(raw_emails):
             # Extract event and title using Regex matches
             "title": title,
             "event": __events[event[:2].lower()] if event else "New Email",
-            # Get sender name and email
-            "sender": sender["Name"],
-            "from": sender["Address"],
-            # Get email time and body directly
+            # Get time, sender name and email
             "time": email["DateTimeSent"],
-            "body": email["Body"]["Content"],
+            "sender": sender["Name"],
+            "from": sender["Address"]
         })
     return emails
 
@@ -53,21 +51,24 @@ def courses_emails(raw_emails):
             # Extract title and course using Regex matches
             "title": match.group("title"),
             "course": __clean(match.group("course")),
-            # Get email time and body directly
-            "time": email["DateTimeSent"],
-            "body": email["Body"]["Content"]
+            # Get email time directly
+            "time": email["DateTimeSent"]
         })
     return emails
 
 
 # Scrapes university events related emails
 def events_emails(raw_emails):
-    # Return an array of emails dictionaries
-    return [
-        {   # Extract and add event body, time and cleaned title
+    # Array to store emails
+    emails = []
+    # Loop through raw emails
+    for email in raw_emails:
+        sender = email["Sender"]["EmailAddress"]
+        # Extract and add event cleaned title, time, sender name and email
+        emails.append({
             "title": __clean_event.sub("", email["Subject"]),
             "time": email["DateTimeSent"],
-            "body": email["Body"]["Content"]
-        }   # Loop through raw emails
-        for email in raw_emails
-    ]
+            "sender": sender["Name"],
+            "from": sender["Address"]
+        })
+    return emails
