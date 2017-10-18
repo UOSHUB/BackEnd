@@ -13,6 +13,7 @@ def personal_emails(raw_emails):
         sender = email["Sender"]["EmailAddress"]
         # Add extracted email details to emails
         emails.append({
+            "id": email["Id"][-13:-1],
             # Extract event and title using Regex matches
             "title": title,
             "event": __events[event[:2].lower()] if event else "New Email",
@@ -21,7 +22,10 @@ def personal_emails(raw_emails):
             "sender": sender["Name"],
             "from": sender["Address"]
         })
-    return emails
+    return {
+        "personal": emails,
+        "idRoot": raw_emails[0]["Id"][:-14]
+    }
 
 
 # Scrapes Blackboard generated courses emails
@@ -47,6 +51,7 @@ def courses_emails(raw_emails):
             event = "New Announcement"
         # Add extracted email data to emails
         emails.append({
+            "id": email["Id"][-13:-1],
             "event": event,
             # Extract title and course using Regex matches
             "title": match.group("title"),
@@ -54,7 +59,10 @@ def courses_emails(raw_emails):
             # Get email time directly
             "time": email["DateTimeSent"]
         })
-    return emails
+    return {
+        "courses": emails,
+        "idRoot": raw_emails[0]["Id"][:-14]
+    }
 
 
 # Scrapes university events related emails
@@ -66,9 +74,13 @@ def events_emails(raw_emails):
         sender = email["Sender"]["EmailAddress"]
         # Extract and add event cleaned title, time, sender name and email
         emails.append({
+            "id": email["Id"][-13:-1],
             "title": __clean_event.sub("", email["Subject"]),
             "time": email["DateTimeSent"],
             "sender": sender["Name"],
             "from": sender["Address"]
         })
-    return emails
+    return {
+        "events": emails,
+        "idRoot": raw_emails[0]["Id"][:-14]
+    }
