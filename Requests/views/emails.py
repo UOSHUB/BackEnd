@@ -8,7 +8,7 @@ from Requests import outlook
 class Emails(APIView):
     """
     This returns student's (personal, courses or events) emails,
-    which's an array of emails present in the selected category
+    which's an dictionary of emails present in the selected category
     """
     # Returns emails array by category on GET request
     @login_required

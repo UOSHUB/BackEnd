@@ -5,15 +5,14 @@ from Requests import clean_course_name as __clean
 # Scrapes personal emails details
 def personal_emails(raw_emails):
     # Array to store emails
-    emails = []
+    emails = {}
     # Loop through raw emails
     for email in raw_emails:
         # Match and store email event (if any), title and sender
         event, title = __split_subject.match(email["Subject"]).groups()
         sender = email["Sender"]["EmailAddress"]
         # Add extracted email details to emails
-        emails.append({
-            "id": email["Id"][-13:-1],
+        emails[email["Id"][-13:-1]] = {
             # Extract event and title using Regex matches
             "title": title,
             "event": __events[event[:2].lower()] if event else "New Email",
@@ -21,7 +20,7 @@ def personal_emails(raw_emails):
             "time": email["DateTimeSent"],
             "sender": sender["Name"],
             "from": sender["Address"]
-        })
+        }
     return {
         "personal": emails,
         "idRoot": raw_emails[0]["Id"][:-14]
@@ -31,7 +30,7 @@ def personal_emails(raw_emails):
 # Scrapes Blackboard generated courses emails
 def courses_emails(raw_emails):
     # Array to store emails
-    emails = []
+    emails = {}
     # Loop through raw emails
     for email in raw_emails:
         # Store email preview and subject
@@ -50,15 +49,14 @@ def courses_emails(raw_emails):
             match = __announcement.match(subject)
             event = "New Announcement"
         # Add extracted email data to emails
-        emails.append({
-            "id": email["Id"][-13:-1],
+        emails[email["Id"][-13:-1]] = {
             "event": event,
             # Extract title and course using Regex matches
             "title": match.group("title"),
             "course": __clean(match.group("course")),
             # Get email time directly
             "time": email["DateTimeSent"]
-        })
+        }
     return {
         "courses": emails,
         "idRoot": raw_emails[0]["Id"][:-14]
@@ -68,18 +66,17 @@ def courses_emails(raw_emails):
 # Scrapes university events related emails
 def events_emails(raw_emails):
     # Array to store emails
-    emails = []
+    emails = {}
     # Loop through raw emails
     for email in raw_emails:
         sender = email["Sender"]["EmailAddress"]
         # Extract and add event cleaned title, time, sender name and email
-        emails.append({
-            "id": email["Id"][-13:-1],
+        emails[email["Id"][-13:-1]] = {
             "title": __clean_event.sub("", email["Subject"]),
             "time": email["DateTimeSent"],
             "sender": sender["Name"],
             "from": sender["Address"]
-        })
+        }
     return {
         "events": emails,
         "idRoot": raw_emails[0]["Id"][:-14]
