@@ -19,7 +19,7 @@ class Emails(APIView):
             return Response(
                 # Get & scrape emails from requested category
                 getattr(outlook.scrape, category + "_emails")(
-                    outlook.get.emails(
+                    outlook.get.emails_list(
                         # Send student id and password
                         request.session["sid"],
                         request.session["pin"],
@@ -39,3 +39,26 @@ class Emails(APIView):
             "Courses": url("courses/"),
             "Events": url("events/")
         })
+
+    # Email's body requests handler
+    class Body(APIView):
+        """
+        This returns email's HTML content,
+        after embedding its images in it (if any)
+        """
+        # Returns email's HTML content on GET request
+        @login_required
+        def get(self, request, message_id):
+            # Return email's body string
+            return Response(
+                # Get & scrape email's body
+                outlook.scrape.email_body(
+                    outlook.get.email_body(
+                        # Send student id and password
+                        request.session["sid"],
+                        request.session["pin"],
+                        # Specify message id
+                        message_id
+                    )
+                )
+            )

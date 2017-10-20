@@ -27,6 +27,8 @@ urlpatterns = [
     # /api/emails/<category> returns 20 of specified category's emails
     # /api/emails/<category>/<count> returns <count> of specified category's emails
     url(r"^emails/((?P<category>personal|courses|events)/((?P<count>[0-9]{1,3})/)?)?$", Emails.as_view()),
+    # /api/emails/<message id> returns a single email's HTML body content
+    url(r"^emails/(?P<message_id>[\w-]+)/$", Emails.Body.as_view()),
     # Homepage's calendar path
     # /api/calendar returns a list of terms available in academic calendar
     # /api/calendar/<term> returns specified term's calendar events

@@ -17,7 +17,7 @@ def api(sid, pin, params, sub_url=""):
 
 
 # Gets the latest emails of a user
-def emails(sid, pin, count=25, offset=0, search=None):
+def emails_list(sid, pin, count=25, offset=0, search=None):
     # Request from API using credentials and parameters
     return api(sid, pin, dict(
         {   # $top: number of requested emails
