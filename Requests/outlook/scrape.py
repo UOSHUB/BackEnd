@@ -1,5 +1,6 @@
 from .values import __split_subject, __events, __assignment, __content, __announcement, __clean_event
 from Requests import clean_course_name as __clean
+import re
 
 
 # Scrapes personal emails details
@@ -81,3 +82,23 @@ def events_emails(raw_emails):
         "events": emails,
         "idRoot": raw_emails[0]["Id"][:-14]
     }
+
+
+# Scrapes a single email's body and embeds its images
+def email_body(message):
+    # Store email's HTML body
+    body = message["Body"]["Content"]
+    # If email has images attached
+    if "Attachments" in message:
+        # Loop through attached images
+        for image in message["Attachments"]:
+            # Use Regex to replace image id by its bytes
+            body = re.sub(
+                # Search for src="cid:<ContentId>"
+                "src=\"cid:" + image["ContentId"] + "\"",
+                # Replace it with src="data:<ContentType>;base64,<ContentBytes>"
+                "src=\"data:" + image["ContentType"] + ";base64," + image["ContentBytes"] + "\"",
+                # Do that in HTML body and only once
+                body, 1
+            )
+    return body
