@@ -12,6 +12,7 @@ class Credentials(Serializer):
     pin = CharField()
 
 
+# TODO: put blackboard and myudc in separate functions from login_required decorator
 # A decorator for methods that require login
 def login_required(method):
     # Checks login status and responds accordingly
@@ -27,6 +28,7 @@ def login_required(method):
                 return Response("You're not logged in!", status=401)
         # If method is dependent on server's session and it's been more that 14 minutes
         elif hasattr(api, "server") and time() - session.get(api.server + "_time", 0) > 14*60:
+            # TODO: keep blackboard and myudc cookies on the client side and get them from it
             # Update session's login cookies and timestamp
             session.update({
                 # Login to server again depending on the method

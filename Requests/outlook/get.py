@@ -23,7 +23,7 @@ def emails_list(sid, pin, count=25, offset=0, search=None):
         {   # $top: number of requested emails
             "$top": count,
             # $select: returns selected fields only (required ones)
-            "$select": "DateTimeSent,Subject,BodyPreview,Sender"
+            "$select": "DateTimeReceived,Subject,BodyPreview,Sender"
         }, **(  # If a search query is required, send it in the request. Otherwise $skip: number of skipped emails
             {"$search": "\"{}\"".format(__search_queries[search])} if search else {"$skip": offset}
         )

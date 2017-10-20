@@ -1,7 +1,7 @@
 Django==1.11.5
-lxml==4.0.0
+lxml==4.1.0
 requests==2.18.4
 netifaces==0.10.6
-djangorestframework==3.7.0
+djangorestframework==3.7.1
 django-compressor==2.1.1
 slimit==0.8.1
