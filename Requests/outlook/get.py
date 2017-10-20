@@ -1,4 +1,4 @@
-from .values import root_url, email, __search_queries
+from .values import root_url, email, __file, __search_queries
 import requests
 
 
@@ -13,7 +13,7 @@ def api(sid, pin, params, sub_url=""):
         # Send all necessary request parameters
         params=params
         # Return data in JSON format
-    ).json()["value"]
+    ).json()
 
 
 # Gets the latest emails of a user
@@ -27,5 +27,18 @@ def emails(sid, pin, count=25, offset=0, search=None):
         }, **(  # If a search query is required, send it in the request. Otherwise $skip: number of skipped emails
             {"$search": "\"{}\"".format(__search_queries[search])} if search else {"$skip": offset}
         )
-    ))
+    ))["value"]
 
+
+# Gets a single email's body and its images
+def email_body(sid, pin, message_id):
+    # Request email HTML body using credentials and message id
+    message = api(sid, pin, {"$select": "Body,HasAttachments"}, message_id + "=")
+    # If message contains images
+    if "cid:" in message["Body"]["Content"]:
+        # Request email attachments and append it to message
+        message["Attachments"] = api(sid, pin, {
+            # Only get attachment's content id and type but not the actual file
+            "$select": "{0}ContentId,{0}ContentBytes,ContentType".format(__file)
+        }, message_id + "=/attachments")["value"]
+    return message

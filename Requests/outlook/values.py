@@ -3,6 +3,7 @@ import re
 # Commonly used outlook api link and email domain name
 root_url = "https://outlook.office365.com/api/v1.0/me/"
 email = "{}@sharjah.ac.ae"
+__file = "Microsoft.OutlookServices.FileAttachment/"
 # Form a string of blocked emails in the personal category
 __black_list = " OR ".join([
     email.format(sender) for sender in [
