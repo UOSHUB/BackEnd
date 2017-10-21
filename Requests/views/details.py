@@ -11,10 +11,8 @@ class LayoutDetails(APIView):
     but in the future it will have all layout details including:
     theme preferences, student's modifications and other settings
     """
-    server = "blackboard"
-
     # Returns layout details on GET request
-    @login_required
+    @login_required("blackboard")
     def get(self, request):
         # Return student's basic info as of now
         return Response({

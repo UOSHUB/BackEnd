@@ -10,10 +10,8 @@ class Holds(APIView):
     This returns student's holds,
     which's an array of holds' data.
     """
-    server = "myudc"
-
     # Returns student's array of holds on GET request
-    @login_required
+    @login_required("myudc")
     def get(self, request):
         # Return an array of holds
         return Response(

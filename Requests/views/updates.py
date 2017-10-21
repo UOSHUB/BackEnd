@@ -11,10 +11,8 @@ class Updates(APIView):
     which is a dictionary of updates and the
     names of the courses they are coming from.
     """
-    server = "blackboard"
-
     # Returns updates dictionary of all courses on GET request
-    @login_required
+    @login_required("blackboard")
     def get(self, request):
         # Return updates object
         return Response(

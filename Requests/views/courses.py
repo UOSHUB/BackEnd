@@ -11,10 +11,8 @@ class Courses(APIView):
     This returns course's data, which is a list
     of documents and deadline in the course
     """
-    server = "blackboard"
-
     # Returns a list of courses or course's data (with term and data type options)
-    @login_required
+    @login_required("blackboard")
     def get(self, request):
         # Return list of student's courses
         return Response(
@@ -34,10 +32,8 @@ class Courses(APIView):
         This returns course's Blackboard content,
         which includes its documents and deadlines
         """
-        server = "blackboard"
-
         # Returns course's documents and deadlines
-        @login_required
+        @login_required("blackboard")
         def get(self, request, bb):
             # Return requested course's data
             return Response(
@@ -56,10 +52,8 @@ class Courses(APIView):
         Returns course's MyUDC details,
         which includes its location, time, doctor, etc...
         """
-        server = "myudc"
-
         # Returns a single course's details
-        @login_required
+        @login_required("myudc")
         def get(self, request, key, crn, term):
             # If crn or term aren't sent
             if not (crn and term):

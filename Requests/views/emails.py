@@ -11,7 +11,7 @@ class Emails(APIView):
     which's an dictionary of emails present in the selected category
     """
     # Returns emails array by category on GET request
-    @login_required
+    @login_required()
     def get(self, request, category, count):
         # If emails category is requested
         if category:
@@ -47,7 +47,7 @@ class Emails(APIView):
         after embedding its images in it (if any)
         """
         # Returns email's HTML content on GET request
-        @login_required
+        @login_required()
         def get(self, request, message_id):
             # Return email's body string
             return Response(

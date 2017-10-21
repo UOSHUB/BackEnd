@@ -38,7 +38,7 @@ class Login(APIView):
         })
 
     # Logout by deleting login session
-    @login_required
+    @login_required()
     def delete(self, request):
         # Clear student session
         request.session.flush()

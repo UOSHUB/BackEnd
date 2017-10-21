@@ -9,10 +9,8 @@ class Terms(APIView):
     """
     This returns a list of student's registered terms.
     """
-    server = "myudc"
-
     # Returns term dictionary of requested term on GET request
-    @login_required
+    @login_required("myudc")
     def get(self, request):
         # Get & scrape all registered terms
         terms = myudc.scrape.registered_terms(
@@ -39,10 +37,8 @@ class Terms(APIView):
         This returns student's term details,
         which's a dictionary of courses' data.
         """
-        server = "myudc"
-
         # Returns specified term's details
-        @login_required
+        @login_required("myudc")
         def get(self, request, term):
             # Return student's term details
             return Response(dict({} if client_side(request) else {
@@ -65,10 +61,8 @@ class Terms(APIView):
         which's a dictionary of courses' documents & deadlines
         or a list of term's courses with all their ids.
         """
-        server = "blackboard"
-
         # Returns term's content or courses as per request
-        @login_required
+        @login_required("blackboard")
         def get(self, request, term, data_type):
             # If data type requested is "content"
             if data_type == "content":
