@@ -2,6 +2,7 @@ from .common import login_required, client_side
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Requests import myudc, blackboard
+from threading import Thread
 
 
 # Student's terms requests handler
@@ -66,23 +67,36 @@ class Terms(APIView):
         def get(self, request, term, data_type):
             # If data type requested is "content"
             if data_type == "content":
-                # Return a dictionary of all courses' content
-                return Response({
-                    # Get & scrape course's data from Blackboard Mobile
-                    key: dict(course, **blackboard.scrape.course_data(
-                        blackboard.get.course_data(
-                            # Send Blackboard cookies & course blackboard id
-                            request.session["blackboard"], course["bb"]
+                # Initialize empty objects & store Blackboard cookies
+                content, threads = {}, []
+                cookies = request.session["blackboard"]
+
+                # A single course's content fetching function for threading
+                def course_data(course_key, course_info):
+                    # Add course's content to dictionary
+                    content[course_key] = dict(
+                        # Get & scrape course's data and join it to its general info
+                        course_info, **blackboard.scrape.course_data(
+                            blackboard.get.course_data(
+                                # Send Blackboard cookies & course blackboard id
+                                cookies, course_info["bb"]
+                            )
                         )
-                    ))
-                    # Get & scrape then loop through courses in requested term
-                    for key, course in blackboard.scrape.courses_by_term(
-                        blackboard.get.courses_list(
-                            # Send Blackboard cookies
-                            request.session["blackboard"]
-                        ), term  # Send term id
-                    ).items()
-                })
+                    )
+                # Get & scrape then loop through Blackboard courses in term
+                for key, course in blackboard.scrape.courses_by_term(
+                    # Send Blackboard cookies to "get" and term id to "scrape"
+                    blackboard.get.courses_list(cookies), term
+                ).items():
+                    # Construct a thread to get each course's data in parallel
+                    thread = Thread(target=course_data, args=(key, course))
+                    # Start the thread and add it to threads
+                    thread.start()
+                    threads.append(thread)
+                # Loop through all threads and join them to main thread
+                [thread.join() for thread in threads]
+                # Return all courses' content after all threads are done
+                return Response(content)
             # If data type requested is "courses"
             elif data_type == "courses":
                 # Return a dictionary of courses ids
