@@ -40,6 +40,20 @@ def updates(response):
     return updates_array
 
 
+# Scrapes student's list of all terms available in Blackboard
+def terms_list(response):
+    terms = {}
+    # Loop through courses registered in Blackboard
+    for course in __parse_xml(response).findall(".//course[@roleIdentifier='S']"):
+        # Extract term's from course id in "FALL2017" format
+        term = course.get("courseid").rsplit("_", 1)[-1].split("-")[0]
+        # Split term id to year and term semester
+        year, semester = term[-4:], __terms[term[:-4]]
+        # Store term in terms in {"Fall 2017-2018": "201710"} pairs
+        terms["{} {}-{}".format(semester["name"], year, int(year) + 1)] = year + semester["code"]
+    return terms
+
+
 # Scrapes student's list of all courses categorized by term
 def courses_list(response, url=lambda x: x):
     terms = {}
@@ -49,10 +63,10 @@ def courses_list(response, url=lambda x: x):
         key, crn, term = course.get("courseid").split("_")
         # Make sure that term id is of the following format "FALL2017"
         term = term.split("-")[0]
-        # Split term id to year and term short name
-        year, short = term[-4:], term[:-4]
+        # Split term id to year and semester
+        year, semester = term[-4:], __terms[term[:-4]]
         # Get term full name of the following format "Fall 2017-2018"
-        term = "{} {}-{}".format(__terms[short]["name"], year, int(year) + 1)
+        term = "{} {}-{}".format(semester["name"], year, int(year) + 1)
         # If term hasn't been added yet
         if term not in terms:
             # Initialize it with an empty dictionary
@@ -62,7 +76,7 @@ def courses_list(response, url=lambda x: x):
             # Content links to Blackboard's documents and deadlines
             "Content": url(course.get("bbid")[1:-2]),
             # Details links to MyUDC's course details
-            "Details": url("{}/{}/{}".format(key, crn, year + __terms[short]["code"]))
+            "Details": url("{}/{}/{}".format(key, crn, year + semester["code"]))
         }
     return terms
 
@@ -73,7 +87,7 @@ def courses_by_term(response, term):
     # Get Blackboard term name in "FALL2017" format from term code
     term = __terms[term[4:]]["name"] + term[:4]
     # Loop through list of courses in parsed xml
-    for course in __parse_xml(response).find(".//courses"):
+    for course in __parse_xml(response).find("courses"):
         # Store course's Blackboard code
         code = course.get("courseid")
         # Only add courses in the requested term and that are with "Student" role
