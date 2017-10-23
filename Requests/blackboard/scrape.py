@@ -143,3 +143,24 @@ def course_data(response, data_type=None):
             return data["documents"]
     # Return everything if data type isn't specified or invalid
     return data
+
+
+# Scrapes student's specific course grades
+def course_grades(response):
+    grades = []
+    # Loop through grades in available in course
+    for grade in __parse_xml(response).find("grades"):
+        # Store last modified time
+        time = grade.get("lastInstructorActivity")
+        # If it's a graded items
+        if time:
+            # Add grade dictionary to grades
+            grades.append({
+                # Add item's title and grade
+                "title": grade.get("name"),
+                "grade": float(grade.get("grade")),
+                # Add total grade and uploaded time
+                "outOf": float(grade.get("pointspossible")),
+                "time": time
+            })
+    return grades

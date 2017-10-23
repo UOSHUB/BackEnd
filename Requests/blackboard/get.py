@@ -61,3 +61,17 @@ def course_data(session, course_id):
         # Specify requested course id
         {"course_id": __id(course_id)}
     )
+
+
+# Gets student's specific course grades
+def course_grades(session, course_id):
+    # Request form Blackboard Mobile
+    return __mobile(
+        # Get data from course data url
+        "courseData", session, {
+            # Specify section as "grades"
+            "course_section": "GRADES",
+            # Specify requested course id
+            "course_id": __id(course_id)
+        }
+    )
