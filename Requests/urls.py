@@ -15,6 +15,8 @@ urlpatterns = [
     url(r"^terms/(?P<term>[0-9]{6})/$", Terms.Details.as_view()),
     # /api/terms/(content or courses) returns specified term's Blackboard content or list of courses
     url(r"^terms/(?P<term>[0-9]{6})/(?P<data_type>content|courses)/$", Terms.Content.as_view()),
+    # /api/grades/<term> returns specified term's Blackboard courses grades
+    url(r"^grades/((?P<term>[0-9]{6})/)?$", Grades.as_view()),
     # Courses path (Blackboard and MyUDC)
     # /api/courses returns a list of registered courses categorized by their terms
     url(r"^courses/$", Courses.as_view()),

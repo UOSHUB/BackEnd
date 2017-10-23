@@ -3,6 +3,7 @@ from .login import Login
 from .details import LayoutDetails
 from .updates import Updates
 from .terms import Terms
+from .grades import Grades
 from .courses import Courses
 from .emails import Emails
 from .calendar import Calendar

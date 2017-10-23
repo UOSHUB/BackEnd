@@ -20,6 +20,7 @@ class APIRoot(APIView):
             "Layout Details": url("details/"),
             "Updates": url("updates/"),
             "Terms": url("terms/"),
+            "Grades": url("grades/"),
             "Courses": url("courses/"),
             "Emails": url("emails/"),
             "Calendar": url("calendar/"),
