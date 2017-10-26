@@ -17,7 +17,7 @@ def login_required(server=None):
     # A decorator for methods that require login
     def decorator(method):
         # Checks login status and responds accordingly
-        def checker(self, request, *args, **kwargs):
+        def checker(request, *args, **kwargs):
             session = request.session
             # If student has never logged in
             if not session.get("sid"):
@@ -40,7 +40,7 @@ def login_required(server=None):
                     ), server + "_time": time()
                 })
             # Once logged in, proceed to method execution
-            return method(self, request, *args, **kwargs)
+            return method(request, *args, **kwargs)
         return checker
     return decorator
 

@@ -11,8 +11,9 @@ class Holds(APIView):
     which's an array of holds' data.
     """
     # Returns student's array of holds on GET request
+    @staticmethod
     @login_required("myudc")
-    def get(self, request):
+    def get(request):
         # Return an array of holds
         return Response(
             # Get & scrape holds data from MyUDC

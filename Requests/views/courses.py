@@ -12,8 +12,9 @@ class Courses(APIView):
     of documents and deadline in the course
     """
     # Returns a list of courses or course's data (with term and data type options)
+    @staticmethod
     @login_required("blackboard")
-    def get(self, request):
+    def get(request):
         # Return list of student's courses
         return Response(
             # Get & scrape courses list from Blackboard Mobile
@@ -33,8 +34,9 @@ class Courses(APIView):
         which includes its documents and deadlines
         """
         # Returns course's documents and deadlines
+        @staticmethod
         @login_required("blackboard")
-        def get(self, request, bb):
+        def get(request, bb):
             # Return requested course's data
             return Response(
                 # Get & scrape course's data from Blackboard Mobile
@@ -53,8 +55,9 @@ class Courses(APIView):
         which includes its location, time, doctor, etc...
         """
         # Returns a single course's details
+        @staticmethod
         @login_required("myudc")
-        def get(self, request, key, crn, term):
+        def get(request, key, crn, term):
             # If crn or term aren't sent
             if not (crn and term):
                 # Return to API root with an error message

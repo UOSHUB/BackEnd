@@ -12,8 +12,9 @@ class Updates(APIView):
     names of the courses they are coming from.
     """
     # Returns updates dictionary of all courses on GET request
+    @staticmethod
     @login_required("blackboard")
-    def get(self, request):
+    def get(request):
         # Return updates object
         return Response(
             # Get & scrape student's updates from Blackboard

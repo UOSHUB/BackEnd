@@ -12,8 +12,9 @@ class LayoutDetails(APIView):
     theme preferences, student's modifications and other settings
     """
     # Returns layout details on GET request
+    @staticmethod
     @login_required("blackboard")
-    def get(self, request):
+    def get(request):
         # Return student's basic info as of now
         return Response({
             # Get student's basic info from Blackboard

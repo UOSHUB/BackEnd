@@ -10,7 +10,8 @@ class Calendar(APIView):
     which's an array of events in a specific term
     """
     # Returns term's events array on GET request
-    def get(self, request, term=None):
+    @staticmethod
+    def get(request, term=None):
         # If accessing "/calendar/" without specifying term
         if not term:
             # Return all terms in academic calendar

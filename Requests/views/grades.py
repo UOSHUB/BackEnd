@@ -12,8 +12,9 @@ class Grades(APIView):
     which's an array of grades' details.
     """
     # Returns student's array of grades on GET request
+    @staticmethod
     @login_required("blackboard")
-    def get(self, request, term):
+    def get(request, term):
         # If requesting grades of a term
         if term:
             # Initialize empty objects & store Blackboard cookies

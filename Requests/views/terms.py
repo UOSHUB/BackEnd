@@ -11,8 +11,9 @@ class Terms(APIView):
     This returns a list of student's registered terms.
     """
     # Returns term dictionary of requested term on GET request
+    @staticmethod
     @login_required("myudc")
-    def get(self, request):
+    def get(request):
         # Get & scrape all registered terms
         terms = myudc.scrape.registered_terms(
             myudc.get.reg_history(
@@ -39,8 +40,9 @@ class Terms(APIView):
         which's a dictionary of courses' data.
         """
         # Returns specified term's details
+        @staticmethod
         @login_required("myudc")
-        def get(self, request, term):
+        def get(request, term):
             # Return student's term details
             return Response(dict({} if client_side(request) else {
                 # Add links to term's content and courses if browser
@@ -63,8 +65,9 @@ class Terms(APIView):
         or a list of term's courses with all their ids.
         """
         # Returns term's content or courses as per request
+        @staticmethod
         @login_required("blackboard")
-        def get(self, request, term, data_type):
+        def get(request, term, data_type):
             # If data type requested is "content"
             if data_type == "content":
                 # Initialize empty objects & store Blackboard cookies
