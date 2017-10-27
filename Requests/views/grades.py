@@ -24,21 +24,19 @@ class Grades(APIView):
             # A single course's grades fetching function for threading
             def course_grades(course_key, blackboard_id):
                 # Get & scrape then add course's grades to dictionary
-                grades[course_key] = {
-                    "grades": blackboard.scrape.course_grades(
-                        blackboard.get.course_grades(
-                            # Send Blackboard cookies & course blackboard id
-                            cookies, blackboard_id
-                        )
+                grades[course_key] = blackboard.scrape.course_grades(
+                    blackboard.get.course_grades(
+                        # Send Blackboard cookies & course blackboard id
+                        cookies, blackboard_id
                     )
-                }
+                )
             # Get & scrape then loop through Blackboard courses in term
             for key, course in blackboard.scrape.courses_by_term(
                 # Send Blackboard cookies to "get" and term id to "scrape"
                 blackboard.get.courses_list(cookies), term
             ).items():
                 # Construct a thread to get each course's grades in parallel
-                thread = Thread(target=course_grades, args=(key, course["bb"]))
+                thread = Thread(target=course_grades, args=(key, course["courseId"]))
                 # Start the thread and add it to threads
                 thread.start()
                 threads.append(thread)

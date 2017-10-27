@@ -68,42 +68,11 @@ class Terms(APIView):
         @staticmethod
         @login_required("blackboard")
         def get(request, term, data_type):
-            # If data type requested is "content"
-            if data_type == "content":
-                # Initialize empty objects & store Blackboard cookies
-                content, threads = {}, []
-                cookies = request.session["blackboard"]
-
-                # A single course's content fetching function for threading
-                def course_data(course_key, course_info):
-                    # Add course's content to dictionary
-                    content[course_key] = dict(
-                        # Get & scrape course's data and join it to its general info
-                        course_info, **blackboard.scrape.course_data(
-                            blackboard.get.course_data(
-                                # Send Blackboard cookies & course blackboard id
-                                cookies, course_info["bb"]
-                            )
-                        )
-                    )
-                # Get & scrape then loop through Blackboard courses in term
-                for key, course in blackboard.scrape.courses_by_term(
-                    # Send Blackboard cookies to "get" and term id to "scrape"
-                    blackboard.get.courses_list(cookies), term
-                ).items():
-                    # Construct a thread to get each course's data in parallel
-                    thread = Thread(target=course_data, args=(key, course))
-                    # Start the thread and add it to threads
-                    thread.start()
-                    threads.append(thread)
-                # Loop through all threads and join them to main thread
-                [thread.join() for thread in threads]
-                # Return all courses' content after all threads are done
-                return Response(content)
             # If data type requested is "courses"
-            elif data_type == "courses":
+            if data_type == "courses":
                 # Return a dictionary of courses ids
                 return Response(
+                    # Get & scrape courses' ids from Blackboard by term
                     blackboard.scrape.courses_by_term(
                         blackboard.get.courses_list(
                             # Send Blackboard cookies
@@ -111,3 +80,32 @@ class Terms(APIView):
                         ), term  # Send term id
                     )
                 )
+            # If data type requested is "deadlines" or "documents"
+            else:
+                # Initialize empty objects & store Blackboard cookies
+                content, threads = {}, []
+                cookies = request.session["blackboard"]
+
+                # A single course's content fetching function for threading
+                def course_data(course_key, blackboard_id):
+                    # Get & scrape course's data and add it to dictionary
+                    content[course_key] = blackboard.scrape.course_data(
+                        blackboard.get.course_data(
+                            # Send Blackboard cookies & course blackboard id
+                            cookies, blackboard_id
+                        ), data_type
+                    )
+                # Get & scrape then loop through Blackboard courses in term
+                for key, course in blackboard.scrape.courses_by_term(
+                    # Send Blackboard cookies to "get" and term id to "scrape"
+                    blackboard.get.courses_list(cookies), term
+                ).items():
+                    # Construct a thread to get each course's data in parallel
+                    thread = Thread(target=course_data, args=(key, course["courseId"]))
+                    # Start the thread and add it to threads
+                    thread.start()
+                    threads.append(thread)
+                # Loop through all threads and join them to main thread
+                [thread.join() for thread in threads]
+                # Return all courses' content after all threads are done
+                return Response(content)
