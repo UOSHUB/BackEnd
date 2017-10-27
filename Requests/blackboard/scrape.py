@@ -6,30 +6,26 @@ root_url = root_url[:-1]
 
 
 # Scrapes useful data from updates JSON object
-def updates(response):
-    # Array to store updates
-    updates_array = []
-    # Dictionary of courses names for later use
-    courses_names = {
-        # Loop through courses and store their name and id
-        course["id"]: course["name"].split("-")[0]
-        for course in response["sv_extras"]["sx_courses"]
-    }
+def updates(response, courses):
+    # Dictionary to store updates data
+    data = {}
     # Loop through updates
     for update in response["sv_streamEntries"]:
-        # Store repeatedly used references of the object
-        event = update["extraAttribs"]["event_type"].split(":")
         item = update["itemSpecificData"]
-        details = item["notificationDetails"]
-        # Append the update as a dictionary to updates array
-        updates_array.append({
-            # Store all ids related to the update
-            "updateId": details["actorId"],
-            "courseId": int(details["courseId"][1:-2]),
-            "contentId": int(details["sourceId"][1:-2]),
-            # Store title, course and time
+        # Extract Blackboard id and store its equivalent MyUDC id
+        course = courses.get(item["notificationDetails"]["courseId"][1:-2])
+        # Skip non-student courses
+        if not course: continue
+        # If course isn't in data yet
+        if course not in data:
+            # Declare it as an empty array
+            data[course] = []
+        # Store update's event parts
+        event = update["extraAttribs"]["event_type"].split(":")
+        # Append the update as a dictionary to data
+        data[course].append({
+            # Store title and time
             "title": item["title"],
-            "course": courses_names[details["courseId"]],
             "time": update["se_timestamp"],
             # Get meaningful equivalent of event from stored values
             "event": __types[event[0]] + (
@@ -37,7 +33,7 @@ def updates(response):
                 " " + __events.get(event[1].split("_")[-1], "") if event[0] != "AN" else ""
             )
         })
-    return updates_array
+    return data
 
 
 # Scrapes student's list of all terms available in Blackboard
@@ -81,7 +77,7 @@ def courses_list(response, url=lambda x: x):
     return terms
 
 
-# Scrapes student's list of courses by term
+# Scrapes student's list of courses' ids by term
 def courses_by_term(response, term):
     courses = {}
     # Get Blackboard term name in "FALL2017" format from term code
@@ -90,16 +86,12 @@ def courses_by_term(response, term):
     for course in __parse_xml(response).find("courses"):
         # Store course's Blackboard code
         code = course.get("courseid")
-        # Only add courses in the requested term and that are with "Student" role
+        # Only add courses in the requested term and in which the user is a student
         if term in code and course.get("roleIdentifier") == "S":
-            # Extract course key and crn from code
-            key, crn = code.split("_")[:2]
-            # Add course data after cleaning
-            courses[key] = {
-                "title": __clean(course.get("name")),
+            # Add course ids in {MyUDC id: Blackboard id} pairs
+            courses[code.split("_", 1)[0]] = {
                 # Store course's Blackboard id
-                "bb": course.get("bbid")[1:-2],
-                "crn": crn
+                "courseId": course.get("bbid")[1:-2],
             }
     return courses
 
@@ -113,10 +105,9 @@ def course_data(response, data_type=None):
     if data_type != "documents":
         # Scrape deadlines and add them to data
         data["deadlines"] = [
-            {   # Store deadline's title, due date and content id
+            {   # Store deadline's title, due date
                 "title": deadline.get("name"),
                 "dueDate": deadline.get("dueDate"),
-                "contentId": int(deadline.get("contentid")[1:-2])
             }   # Loop through all course items which have a due date
             for deadline in course.findall(".//*[@dueDate]")
         ]
