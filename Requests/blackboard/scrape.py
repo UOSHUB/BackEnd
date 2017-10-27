@@ -36,6 +36,16 @@ def updates(response, courses):
     return data
 
 
+# Scrapes all courses' ids dictionary
+def courses_dictionary(response):
+    return {
+        # Store courses ids in {Blackboard id: MyUDC id} pairs
+        course.get("bbid")[1:-2]: course.get("courseid").split("_", 1)[0]
+        # Loop through all courses in Blackboard in which the user is a student
+        for course in __parse_xml(response).findall(".//course[@roleIdentifier='S']")
+    }
+
+
 # Scrapes student's list of all terms available in Blackboard
 def terms_list(response):
     terms = {}
