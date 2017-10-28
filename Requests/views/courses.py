@@ -36,15 +36,15 @@ class Courses(APIView):
         # Returns course's documents and deadlines
         @staticmethod
         @login_required("blackboard")
-        def get(request, bb):
+        def get(request, key, course):
             # Return requested course's data
             return Response(
                 # Get & scrape course's data from Blackboard Mobile
                 blackboard.scrape.course_data(
                     blackboard.get.course_data(
-                        # Send Blackboard cookies & course's blackboard id
-                        request.session["blackboard"], bb
-                    )
+                        # Send Blackboard cookies & course's id
+                        request.session["blackboard"], course
+                    ), key
                 )
             )
 

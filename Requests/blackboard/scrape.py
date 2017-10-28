@@ -2,13 +2,14 @@ from .values import __types, __events, __terms
 from lxml.etree import fromstring as __parse_xml
 from Requests import clean_course_name as __clean
 from .general import root_url
+from math import ceil
 root_url = root_url[:-1]
 
 
 # Scrapes useful data from updates JSON object
 def updates(response, courses):
     # Dictionary to store updates data
-    data = {}
+    data = []
     # Loop through updates
     for update in response["sv_streamEntries"]:
         item = update["itemSpecificData"]
@@ -16,15 +17,12 @@ def updates(response, courses):
         course = courses.get(item["notificationDetails"]["courseId"][1:-2])
         # Skip non-student courses
         if not course: continue
-        # If course isn't in data yet
-        if course not in data:
-            # Declare it as an empty array
-            data[course] = []
         # Store update's event parts
         event = update["extraAttribs"]["event_type"].split(":")
         # Append the update as a dictionary to data
-        data[course].append({
-            # Store title and time
+        data.append({
+            # Store title, time & course key
+            "course": course,
             "title": item["title"],
             "time": update["se_timestamp"],
             # Get meaningful equivalent of event from stored values
@@ -80,7 +78,7 @@ def courses_list(response, url=lambda x: x):
         # Add course to the correspondent term
         terms[term][__clean(course.get("name"))] = {
             # Content links to Blackboard's documents and deadlines
-            "Content": url(course.get("bbid")[1:-2]),
+            "Content": url(key + "/" + course.get("bbid")[1:-2]),
             # Details links to MyUDC's course details
             "Details": url("{}/{}/{}".format(key, crn, year + semester["code"]))
         }
@@ -107,7 +105,7 @@ def courses_by_term(response, term):
 
 
 # Scrapes student's specific course data
-def course_data(response, data_type=None):
+def course_data(response, key, data_type=None):
     # Store parsed course and returned object structure
     course = __parse_xml(response)
     data = {"deadlines": [], "documents": []}
@@ -115,7 +113,8 @@ def course_data(response, data_type=None):
     if data_type != "documents":
         # Scrape deadlines and add them to data
         data["deadlines"] = [
-            {   # Store deadline's title, due date
+            {   # Store deadline's title, due date & course key
+                "course": key,
                 "title": deadline.get("name"),
                 "dueDate": deadline.get("dueDate"),
             }   # Loop through all course items which have a due date
@@ -129,7 +128,8 @@ def course_data(response, data_type=None):
     if data_type != "deadlines":
         # Scrape documents and add them to data
         data["documents"] = [
-            {   # Store document's title, upload date
+            {   # Store document's title, upload date & course key
+                "course": key,
                 "title": document.getparent().getparent().get("name"),
                 "file": document.get("name"),
                 "uploadDate": document.get("modifiedDate"),
@@ -147,7 +147,7 @@ def course_data(response, data_type=None):
 
 
 # Scrapes student's specific course grades
-def course_grades(response):
+def course_grades(response, key):
     grades = []
     # Loop through grades in available in course
     for grade in __parse_xml(response).find("grades"):
@@ -157,11 +157,12 @@ def course_grades(response):
         if time:
             # Add grade dictionary to grades
             grades.append({
-                # Add item's title and grade
+                # Add item's title, grade & course key
+                "course": key,
                 "title": grade.get("name"),
-                "grade": float(grade.get("grade")),
+                "grade": ceil(float(grade.get("grade"))),
                 # Add total grade and uploaded time
-                "outOf": float(grade.get("pointspossible")),
+                "outOf": ceil(float(grade.get("pointspossible"))),
                 "time": time
             })
     return grades

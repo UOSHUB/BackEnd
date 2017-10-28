@@ -18,16 +18,18 @@ class Grades(APIView):
         # If requesting grades of a term
         if term:
             # Initialize empty objects & store Blackboard cookies
-            grades, threads = {}, []
+            grades, threads = [], []
             cookies = request.session["blackboard"]
 
             # A single course's grades fetching function for threading
-            def course_grades(course_key, blackboard_id):
+            def course_grades(course_key, course_id):
                 # Get & scrape then add course's grades to dictionary
-                grades[course_key] = blackboard.scrape.course_grades(
-                    blackboard.get.course_grades(
-                        # Send Blackboard cookies & course blackboard id
-                        cookies, blackboard_id
+                grades.extend(
+                    blackboard.scrape.course_grades(
+                        blackboard.get.course_grades(
+                            # Send Blackboard cookies & course id
+                            cookies, course_id
+                        ), course_key
                     )
                 )
             # Get & scrape then loop through Blackboard courses in term

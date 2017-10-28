@@ -14,16 +14,16 @@ urlpatterns = [
     # /api/terms/<term> returns specified term's MyUDC Details
     url(r"^terms/(?P<term>[0-9]{6})/$", Terms.Details.as_view()),
     # /api/terms/(content or courses) returns specified term's Blackboard content or list of courses
-    url(r"^terms/(?P<term>[0-9]{6})/(?P<data_type>deadlines|documents|content|courses)/$", Terms.Content.as_view()),
+    url(r"^terms/(?P<term>[0-9]{6})/(?P<data_type>deadlines|documents|courses)/$", Terms.Content.as_view()),
     # /api/grades/<term> returns specified term's Blackboard courses grades
     url(r"^grades/((?P<term>[0-9]{6})/)?$", Grades.as_view()),
     # Courses path (Blackboard and MyUDC)
     # /api/courses returns a list of registered courses categorized by their terms
     url(r"^courses/$", Courses.as_view()),
     # /api/courses/<Blackboard id> returns course's documents and deadlines
-    url(r"^courses/(?P<bb>[0-9]{5})/$", Courses.Content.as_view()),
+    url(r"^courses/(?P<key>[0-9]{7})/((?P<course>[0-9]{5})/)?$", Courses.Content.as_view()),
     # /api/courses/<MyUDC key>/<CRN>/<term code> returns course's details from MyUDC
-    url(r"^courses/(?P<key>[0-9]{7})/((?P<crn>[0-9]{5})/((?P<term>[0-9]{6})/)?)?$", Courses.Details.as_view()),
+    url(r"^courses/(?P<key>[0-9]{7})/(?P<crn>[0-9]{5})/((?P<term>[0-9]{6})/)?$", Courses.Details.as_view()),
     # Outlook emails path
     # /api/emails returns a list of available emails categories
     # /api/emails/<category> returns 20 of specified category's emails
