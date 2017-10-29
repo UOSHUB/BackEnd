@@ -13,3 +13,18 @@ def study_plan_courses(study_plan):
         course_grade = course.find("CF_COURSE_GRADE").text
         course_taken = course.find("CF_IS_PASSED").text
     return all_courses
+
+def disabled_courses(all_courses):
+    # Dictionary to store all the past passed courses
+    past_passed_courses = {}
+    # Dictionary to store all the current courses
+    current_courses = {}
+
+    # Loop through all the courses and extract the past passed courses
+    for course in all_courses:
+        if (course.course_taken == 'Y' & course.course_grade!= NULL):
+            print("Add this passed course!")#add this course to the former dict.
+        elif (course.course_taken == 'Y' & course.course_grade == NULL):
+            print("Add this current course!")#add this course to the latter dict.
+    return past_passed_courses, current_courses
+
