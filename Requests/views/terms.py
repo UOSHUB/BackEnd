@@ -46,8 +46,7 @@ class Terms(APIView):
             # Return student's term details
             return Response(dict({} if client_side(request) else {
                 # Add links to term's contents and courses if browser
-                "Deadlines": request.build_absolute_uri("deadlines/"),
-                "Documents": request.build_absolute_uri("documents/"),
+                "Deadlines": request.build_absolute_uri("content/"),
                 "Courses": request.build_absolute_uri("courses/")
             },  # Get & scrape student's term from myUDC
                 **myudc.scrape.term(
@@ -83,22 +82,28 @@ class Terms(APIView):
                 )
             # If data type requested is "deadlines" or "documents"
             else:
-                # Initialize empty arrays & store Blackboard cookies
-                content, threads = [], []
+                # Initialize empty objects & store Blackboard cookies
+                threads = []
+                content = {"documents": [], "deadlines": []} if data_type == "content" else []
                 cookies = request.session["blackboard"]
 
                 # A single course's content fetching function for threading
                 def course_data(course_key, course_id):
-                    # Get & scrape course's data then add it to content
-                    content.extend(
-                        blackboard.scrape.course_data(
-                            blackboard.get.course_data(
-                                # Send Blackboard cookies & course id to get
-                                cookies, course_id
-                                # Send requested type & MyUDC course id to scrape
-                            ), course_key, data_type
-                        )
+                    # Get & scrape course's data
+                    data = blackboard.scrape.course_data(
+                        blackboard.get.course_data(
+                            # Send Blackboard cookies & course id to get
+                            cookies, course_id
+                            # Send requested type & MyUDC course id to scrape
+                        ), course_key, data_type
                     )
+                    # If requested type is "content"
+                    if data_type == "content":
+                        # Add documents and deadlines to content dictionary
+                        content["documents"].extend(data["documents"])
+                        content["deadlines"].extend(data["deadlines"])
+                    # Otherwise, directly add data to array
+                    else: content.extend(data)
                 # Get & scrape then loop through Blackboard courses in term
                 for key, course in blackboard.scrape.courses_by_term(
                     # Send Blackboard cookies to "get" and term id to "scrape"
