@@ -93,13 +93,14 @@ def courses_by_term(response, term):
     # Loop through list of courses in parsed xml
     for course in __parse_xml(response).find("courses"):
         # Store course's Blackboard code
-        code = course.get("courseid")
+        key, crn, full_term = course.get("courseid").split("_")
         # Only add courses in the requested term and in which the user is a student
-        if term in code and course.get("roleIdentifier") == "S":
+        if full_term.startswith(term) and course.get("roleIdentifier") == "S":
             # Add course ids in {MyUDC id: Blackboard id} pairs
-            courses[code.split("_", 1)[0]] = {
+            courses[key] = {
                 # Store course's Blackboard id
                 "courseId": course.get("bbid")[1:-2],
+                "crn": crn
             }
     return courses
 

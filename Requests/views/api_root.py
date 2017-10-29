@@ -14,8 +14,12 @@ class APIRoot(APIView):
     def get(request, invalid):
         # Store a URL builder relative to /api/
         url = lambda path: request.build_absolute_uri("/api/" + path)
-        # Display a list of available API calls to browser or nothing if client
-        return Response({} if client_side(request) else dict({
+        # If client side is accessing an invalid path
+        if client_side(request) and invalid:
+            # Return an error message with NOT_FOUND status
+            return Response("API path not found!", status=404)
+        # Otherwise, display a list of available API calls
+        return Response(dict({
             "Login": url("login/"),
             "Layout Details": url("details/"),
             "Updates": url("updates/"),
