@@ -37,6 +37,8 @@ urlpatterns = [
     url(r"^calendar/((?P<term>[0-9]+)/)?$", Calendar.as_view()),
     # MyUDC holds path
     url(r"^holds/$", Holds.as_view()),
+    # Refresh data path
+    url(r"^refresh/((?P<date>\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d)/)?$", Refresh.as_view()),
     # API root path
     url(r"^(.*)", APIRoot.as_view()),
 ]
