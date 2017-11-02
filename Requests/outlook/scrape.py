@@ -19,7 +19,7 @@ def personal_emails(raw_emails):
             "title": title,
             "event": __events[event[:2].lower()] if event else "New Email",
             # Get time, sender name and email
-            "time": email["DateTimeReceived"],
+            "time": email["DateTimeReceived"][:-1],
             "sender": sender["Name"],
             "from": sender["Address"]
         })
@@ -58,7 +58,7 @@ def courses_emails(raw_emails):
             "title": match.group("title"),
             "course": __clean(match.group("course")),
             # Get email time directly
-            "time": email["DateTimeReceived"]
+            "time": email["DateTimeReceived"][:-1]
         })
     return {
         "courses": emails,
@@ -77,7 +77,7 @@ def events_emails(raw_emails):
         emails.append({
             "id": email["Id"][-13:-1],
             "title": __clean_event.sub("", email["Subject"]),
-            "time": email["DateTimeReceived"],
+            "time": email["DateTimeReceived"][:-1],
             "sender": sender["Name"],
             "from": sender["Address"]
         })

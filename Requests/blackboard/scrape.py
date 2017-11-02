@@ -2,8 +2,10 @@ from .values import __types, __events, __terms
 from lxml.etree import fromstring as __parse_xml
 from Requests import clean_course_name as __clean
 from .general import root_url
+from datetime import datetime
 from math import ceil
 root_url = root_url[:-1]
+timestamp = datetime.fromtimestamp
 
 
 # Scrapes useful data from updates JSON object
@@ -24,7 +26,7 @@ def updates(response, courses):
             # Store title, time & course key
             "course": course,
             "title": item["title"],
-            "time": update["se_timestamp"],
+            "time": timestamp(update["se_timestamp"] / 1000).strftime("%Y-%m-%dT%H:%M:%S"),
             # Get meaningful equivalent of event from stored values
             "event": __types[event[0]] + (
                 # Add event type as long as it's not an announcement
@@ -117,7 +119,8 @@ def course_data(response, key, data_type=None):
             {   # Store deadline's title, due date & course key
                 "course": key,
                 "title": deadline.get("name"),
-                "dueDate": deadline.get("dueDate"),
+                "dueDate": deadline.get("dueDate")[:-5],
+                "time": deadline.get("createdDate")[:-5]
             }   # Loop through all course items which have a due date
             for deadline in course.findall(".//*[@dueDate]")
         ]
@@ -133,7 +136,7 @@ def course_data(response, key, data_type=None):
                 "course": key,
                 "title": document.getparent().getparent().get("name"),
                 "file": document.get("name"),
-                "uploadDate": document.get("modifiedDate"),
+                "time": document.get("modifiedDate")[:-5],
                 # From document's URL, get its id and content id using Regex
                 "url": root_url + document.get("url")
             }   # Loop through all course documents
@@ -164,6 +167,6 @@ def course_grades(response, key):
                 "grade": ceil(float(grade.get("grade"))),
                 # Add total grade and uploaded time
                 "outOf": ceil(float(grade.get("pointspossible"))),
-                "time": time
+                "time": time[:-5]
             })
     return grades
