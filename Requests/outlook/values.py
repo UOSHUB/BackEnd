@@ -1,9 +1,12 @@
-import re
+import re, datetime
 
 # Commonly used outlook api link and email domain name
 root_url = "https://outlook.office365.com/api/v1.0/me/"
 email = "{}@sharjah.ac.ae"
 __file = "Microsoft.OutlookServices.FileAttachment/"
+# Timezone offset (+4) and date conversion method
+__offset = datetime.timedelta(0, 14400)
+__convert_date = datetime.datetime.strptime
 # Form a string of blocked emails in the personal category
 __black_list = " OR ".join([
     email.format(sender) for sender in [

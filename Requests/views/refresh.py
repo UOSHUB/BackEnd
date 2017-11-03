@@ -2,8 +2,10 @@ from . import Emails, Updates, Terms, Grades
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .common import login_required
+from Requests import date_format
 from threading import Thread
 from datetime import datetime
+
 # Calculate term of "201710" format
 this = datetime.today()
 term = str(this.year) + (
@@ -70,17 +72,15 @@ class Refresh(APIView):
 
 # A class to add new items to data
 class Add:
-    # Date format e.g. "2017-12-31T23:59:59"
-    date_format = "%Y-%m-%dT%H:%M:%S"
-
     # Class constructor that sets request and timestamp
     def __init__(self, request, date):
         self.request = request
         self.timestamp = self.get_timestamp(date)
 
     # Converts date string to timestamp (int)
-    def get_timestamp(self, date):
-        return datetime.strptime(date, self.date_format).timestamp()
+    @staticmethod
+    def get_timestamp(date):
+        return datetime.strptime(date, date_format).timestamp()
 
     # Returns new items by comparing every item's time to the timestamp
     def get_new_items(self, items):
