@@ -1,3 +1,4 @@
+from .general import root_url
 # This file contains possible values of Blackboard variables
 
 __lists = {
@@ -53,3 +54,6 @@ __terms = {
         "code": "30"
     },
 }
+
+# Store Blackboard stream url
+__stream_url = root_url + "webapps/streamViewer/streamViewer"

@@ -45,14 +45,14 @@ class Refresh(APIView):
             # Loop through requested category(s) if any. Otherwise, loop through all of them
             for category in queries["emails"].split(",") if queries["emails"] else ["personal", "courses", "events"]:
                 # Start a thread to grab the new items of each category
-                start(add.new_dict, data["emails"], [category], Emails.get, [category, 10])
+                start(add.new_list, data["emails"], category, Emails.get, [category, 10])
         # If querying content
         if "content" in queries:
             content = queries["content"]
             # If content type is not specified
             if not content:
                 # Start a thread to grab new documents and deadlines
-                start(add.new_dict, data, ["documents", "deadlines"], Terms.Content.get, [term, "content"])
+                start(add.new_dict, data, Terms.Content.get, [term, "content"])
             # If it is either documents or deadlines
             elif content in ["documents", "deadlines"]:
                 # Start a thread to grab new items in specified content type
@@ -91,6 +91,6 @@ class Add:
         dictionary[query] = self.get_new_items(api(self.request, *args).data)
 
     # Adds new items from API calls which returns a dictionary of items lists
-    def new_dict(self, dictionary, queries, api, args):
-        response = api(self.request, *args).data
-        dictionary.update({query: self.get_new_items(response[query]) for query in queries})
+    def new_dict(self, dictionary, api, args):
+        for query, items in api(self.request, *args).data.items():
+            dictionary[query] = self.get_new_items(items)

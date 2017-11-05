@@ -18,7 +18,7 @@ class Updates(APIView):
     def get(request):
         # Store Blackboard cookies and empty dictionaries
         cookies = request.session["blackboard"]
-        updates, courses = {}, {}
+        updates, courses = [], {}
         # Instantiate a thread that gets courses dictionary
         courses_thread = Thread(target=lambda: courses.update(
             # Get & scrape courses dictionary from Blackboard
@@ -27,7 +27,7 @@ class Updates(APIView):
             )
         ))
         # Instantiate a thread that gets raw updates object
-        updates_thread = Thread(target=lambda: updates.update(
+        updates_thread = Thread(target=lambda: updates.extend(
             # Get student's updates object from Blackboard
             blackboard.get.updates(cookies)
         ))

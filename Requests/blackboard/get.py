@@ -1,13 +1,12 @@
-from .general import root_url, mobile as __mobile, api as __api, __id
+from .general import mobile as __mobile, api as __api, __id
+from .values import __stream_url
 import requests, time
 
 
 # Gets updates and announcements in a JSON object
 def updates(session):
-    # Store Blackboard stream url
-    stream_url = root_url + "webapps/streamViewer/streamViewer"
     # Request updates from Blackboard stream and store returned cookies
-    stream_cookies = requests.get(stream_url, cookies=session, params={
+    stream_cookies = requests.get(__stream_url, cookies=session, params={
         "cmd": "view",
         "streamName": "alerts"
     }).cookies
@@ -16,7 +15,7 @@ def updates(session):
     # Loop until they are ready or something happens
     for _ in range(8):
         # Request updates using previous cookies, and convert response to JSON
-        response = requests.post(stream_url, cookies=stream_cookies, data={
+        response = requests.post(__stream_url, cookies=stream_cookies, data={
             # Pass required parameters
             "cmd": "loadStream",
             "streamName": "alerts",
@@ -24,8 +23,10 @@ def updates(session):
             "providers": "{}",
         }).json()
         # Return response if it contains requested data
-        if response["sv_streamEntries"]:
-            return response
+        if response.get("sv_streamEntries"):
+            return response["sv_streamEntries"]
+    # If loop finishes with no data, return an empty array
+    return []
     # TODO: if loop finishes without response, get updates from mobile API
 
 

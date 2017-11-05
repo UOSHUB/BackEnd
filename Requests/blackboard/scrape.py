@@ -1,6 +1,6 @@
-from .values import __types, __events, __terms
-from lxml.etree import fromstring as __parse_xml
 from Requests import clean_course_name as __clean
+from lxml.etree import fromstring as __parse_xml
+from .values import __types, __events, __terms
 from .general import root_url
 from datetime import datetime
 from math import ceil
@@ -9,11 +9,11 @@ timestamp = datetime.fromtimestamp
 
 
 # Scrapes useful data from updates JSON object
-def updates(response, courses):
+def updates(raw_updates, courses):
     # Dictionary to store updates data
     data = []
     # Loop through updates
-    for update in response["sv_streamEntries"]:
+    for update in raw_updates:
         item = update["itemSpecificData"]
         # Extract Blackboard id and store its equivalent MyUDC id
         course = courses.get(item["notificationDetails"]["courseId"][1:-2])

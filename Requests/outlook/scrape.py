@@ -16,7 +16,7 @@ def __common(email, sender, title):
     } if sender else {},
         # Add email title, id and ISO formatted time
         title=title,
-        id=email["Id"][-13:-1],
+        id=email["Id"],
         time=(__convert_date(
             # Convert time string and add timezone offset
             email["DateTimeReceived"][:-1], __date_format
@@ -38,10 +38,7 @@ def personal_emails(raw_emails):
             # Extract event using Regex matches then add it
             event=__events[event[:2].lower()] if event else "New Email",
         ))
-    return {
-        "personal": emails,
-        "idRoot": raw_emails[0]["Id"][:-14]
-    }
+    return emails
 
 
 # Scrapes Blackboard generated courses emails
@@ -71,23 +68,18 @@ def courses_emails(raw_emails):
             # Add event and extract title using Regex matches
             event=event, course=__clean(match.group("course")),
         ))
-    return {
-        "courses": emails,
-        "idRoot": raw_emails[0]["Id"][:-14]
-    }
+    return emails
 
 
 # Scrapes university events related emails
 def events_emails(raw_emails):
-    return {
-        "events": [
-            __common(  # Extract and add email's common fields
-                email, email["Sender"]["EmailAddress"],
-                __clean_event.sub("", email["Subject"])
-            )  # Loop through raw emails
-            for email in raw_emails
-        ], "idRoot": raw_emails[0]["Id"][:-14]
-    }
+    return [
+        __common(  # Extract and add email's common fields
+            email, email["Sender"]["EmailAddress"],
+            __clean_event.sub("", email["Subject"])
+        )  # Loop through raw emails
+        for email in raw_emails
+    ]
 
 
 # Scrapes a single email's body and embeds its images
