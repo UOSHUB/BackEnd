@@ -1,10 +1,6 @@
-from Requests import clean_course_name as __clean, date_format as __date_format
+from .values import __split_subject, __events, __assignment, __content, __announcement, __clean_event
+from Requests import clean_course_name as __clean
 from re import sub as __replace
-from .values import (
-    __convert_date, __offset, __split_subject,
-    __events, __assignment, __content,
-    __announcement, __clean_event
-)
 
 
 # Returns common email details in a dictionary
@@ -14,13 +10,10 @@ def __common(email, sender, title):
         "from": sender["Address"]
         # Add sender name & address if available
     } if sender else {},
-        # Add email title, id and ISO formatted time
+        # Add email title, id and time with timezone
         title=title,
         id=email["Id"],
-        time=(__convert_date(
-            # Convert time string and add timezone offset
-            email["DateTimeReceived"][:-1], __date_format
-        ) + __offset).isoformat()
+        time=email["DateTimeReceived"][:-1] + "+0000"
     )
 
 

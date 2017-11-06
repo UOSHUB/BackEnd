@@ -46,7 +46,7 @@ class Terms(APIView):
             # Return student's term details
             return Response(dict({} if client_side(request) else {
                 # Add links to term's contents and courses if browser
-                "Deadlines": request.build_absolute_uri("content/"),
+                "Content": request.build_absolute_uri("content/"),
                 "Courses": request.build_absolute_uri("courses/")
             },  # Get & scrape student's term from myUDC
                 **myudc.scrape.term(

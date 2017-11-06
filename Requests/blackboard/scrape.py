@@ -26,7 +26,7 @@ def updates(raw_updates, courses):
             # Store title, time & course key
             "course": course,
             "title": item["title"],
-            "time": timestamp(update["se_timestamp"] / 1000).strftime("%Y-%m-%dT%H:%M:%S"),
+            "time": timestamp(update["se_timestamp"] / 1000).strftime("%Y-%m-%dT%H:%M:%S") + "+0400",
             # Get meaningful equivalent of event from stored values
             "event": __types[event[0]] + (
                 # Add event type as long as it's not an announcement
@@ -119,8 +119,8 @@ def course_data(response, key, data_type=None):
             {   # Store deadline's title, due date & course key
                 "course": key,
                 "title": deadline.get("name"),
-                "dueDate": deadline.get("dueDate")[:-5],
-                "time": deadline.get("createdDate")[:-5]
+                "dueDate": deadline.get("dueDate"),
+                "time": deadline.get("createdDate")
             }   # Loop through all course items which have a due date
             for deadline in course.findall(".//*[@dueDate]")
         ]
@@ -136,7 +136,7 @@ def course_data(response, key, data_type=None):
                 "course": key,
                 "title": document.getparent().getparent().get("name"),
                 "file": document.get("name"),
-                "time": document.get("modifiedDate")[:-5],
+                "time": document.get("modifiedDate"),
                 # From document's URL, get its id and content id using Regex
                 "url": root_url + document.get("url")
             }   # Loop through all course documents
@@ -167,6 +167,6 @@ def course_grades(response, key):
                 "grade": ceil(float(grade.get("grade"))),
                 # Add total grade and uploaded time
                 "outOf": ceil(float(grade.get("pointspossible"))),
-                "time": time[:-5]
+                "time": time
             })
     return grades
