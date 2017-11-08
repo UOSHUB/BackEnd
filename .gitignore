@@ -8,6 +8,8 @@ __pycache__/
 # Ignore Django Static Files folder
 static
 
+# Ignore Our Test Files
+try.py
 
 # To Ignore DB Changes, Use This Command:
 ## git update-index --assume-unchanged db.sqlite3
