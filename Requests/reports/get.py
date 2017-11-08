@@ -124,3 +124,27 @@ def unofficial_transcript(sid):
         # Student id
         "P_ID": sid.upper()
     }).content
+
+# Gets offered courses by CS for Spring 2017
+def offered_201720_courses(dept):
+    return report({
+        # Report cipher
+        "REPORT": "SYRSCHE_REP",
+        # Campus abbreviation
+        "CAMP": "UOS",
+        # Collage number
+        "COLL": "14",
+        # Department short name
+        "DEPT": dept,
+        # Degree level initials
+        "LEVL": "UG",
+        # Major registration restrictions
+        "P_IND": "ALL",
+        # Availability for web add/drop
+        "P_WEB": "Y",
+        # Class capacity range (min, max)
+        "MAX": "258",
+        "MIN": "0",
+        # term code
+        "TERM": 201720
+    }).content
