@@ -42,17 +42,20 @@ The `UOSHUB` folder is the Django project root which contains the general config
 
 There're a lot of thing we still need to do in the back-end:
 
-- Finish writing the Requests of the different pages we need from UOS Websites.
-- Write the scraping logic of the data fetched from  UOS Websites.
-- Provide a RESTful API that the front-end can communicate with in a stateless manner.
-- Login once to access to all UOS websites without time limit (UDC limits to 15 mins)
-- Implement the logic needed to allow easy designing experience of the student schedule
-- Filter emails from repeated emails and from spam
-- Build the tasks system to allow adding events, quizzes, tasks, etc.
-- Integrate Blackboard announcements and due dates on schedule
-- View and notify about courses grades as they come out and calculate GPA
-- Allow changing password and profile photo without affecting the original ones
-- Add the ability to mark all spam emails as read at once
+- [x] Finish writing the Requests of the different pages we need from UOS Websites.
+- [x] Write the scraping logic of the data fetched from UOS Websites.
+- [x] Provide a RESTful API that the front-end can communicate with in a stateless manner.
+- [x] Login once to access to all UOS websites without time limit (UDC limits to 15 mins).
+- [ ] Implement the logic needed to allow easy designing experience of the student schedule.
+- [x] Filter emails from repeated emails and from spam.
+- [ ] Build the tasks system to allow adding events, quizzes, tasks, etc.
+- [ ] Integrate Blackboard announcements and due dates on schedule.
+- [ ] View and notify about courses grades as they come out and calculate GPA.
+- [ ] Allow changing password and profile photo without affecting the original ones.
+- [ ] Add the ability to mark all spam emails as read at once.
+- [ ] Allow pushing information to UOS Websites, like dismissing an update or submitting a HW.
+- [x] Compress static files before sending them to the client-side.
+- [x] Add a refresh mechanism to update the content of the website every 5 minutes or so.
 
 ***
 
