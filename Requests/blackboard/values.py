@@ -55,5 +55,7 @@ __terms = {
     },
 }
 
-# Store Blackboard stream url
-__stream_url = root_url + "webapps/streamViewer/streamViewer"
+# Store Blackboard stream urls
+__stream_root_url = root_url + "webapps/streamViewer/"
+__stream_url = __stream_root_url + "streamViewer"
+__dismiss_update_url = __stream_root_url + "dwr_open/call/plaincall/NautilusViewService.removeRecipient.dwr"

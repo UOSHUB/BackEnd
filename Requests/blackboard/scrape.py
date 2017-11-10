@@ -14,18 +14,21 @@ def updates(raw_updates, courses):
     data = []
     # Loop through updates
     for update in raw_updates:
+        # Keep a reference of used object indexes
         item = update["itemSpecificData"]
+        details = item["notificationDetails"]
         # Extract Blackboard id and store its equivalent MyUDC id
-        course = courses.get(item["notificationDetails"]["courseId"][1:-2])
+        course = courses.get(details["courseId"][1:-2])
         # Skip non-student courses
         if not course: continue
         # Store update's event parts
         event = update["extraAttribs"]["event_type"].split(":")
         # Append the update as a dictionary to data
         data.append({
-            # Store title, time & course key
+            # Store title, time, dismiss id & course key
             "course": course,
             "title": item["title"],
+            "dismiss": details["actorId"],
             "time": timestamp(update["se_timestamp"] / 1000).strftime("%Y-%m-%dT%H:%M:%S") + "+0400",
             # Get meaningful equivalent of event from stored values
             "event": __types[event[0]] + (
