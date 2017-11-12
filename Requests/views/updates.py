@@ -1,6 +1,6 @@
+from .common import login_required, client_side
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .common import login_required
 from Requests import blackboard
 from threading import Thread
 
@@ -15,7 +15,7 @@ class Updates(APIView):
     # Returns updates dictionary of all courses on GET request
     @staticmethod
     @login_required("blackboard")
-    def get(request):
+    def get(request, update=None):
         # Store Blackboard cookies and empty dictionaries
         cookies = request.session["blackboard"]
         updates, courses = [], {}
@@ -45,3 +45,17 @@ class Updates(APIView):
                 updates, courses
             )
         )
+
+    # Deletes an update if specified, otherwise deletes all updates
+    @staticmethod
+    @login_required("blackboard")
+    def delete(request, update):
+        # Loop through all updates or a single update if specified
+        for update in [{"dismiss": update}] if update else Updates.get(request).data:
+            # Request a Blackboard edit to dismiss the update
+            blackboard.edit.dismiss_update(
+                # Send Blackboard cookies and update id
+                request.session["blackboard"], update["dismiss"]
+            )
+        # Return successful response. But on browser, return updated list
+        return Response() if client_side(request) else Updates.get(request)

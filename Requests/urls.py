@@ -7,7 +7,7 @@ urlpatterns = [
     # Layout details path
     url(r"^details/$", LayoutDetails.as_view()),
     # Blackboard updates path
-    url(r"^updates/$", Updates.as_view()),
+    url(r"^updates/((?P<update>[0-9]{8})/)?$", Updates.as_view()),
     # Terms path (Blackboard and MyUDC)
     # /api/terms returns a list of registered terms
     url(r"^terms/$", Terms.as_view()),
