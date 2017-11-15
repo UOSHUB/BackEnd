@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.http import HttpResponse
 from .common import login_required
 from Requests import outlook
 
@@ -62,5 +63,23 @@ class Emails(APIView):
                         # Specify message id
                         message_id
                     )
+                )
+            )
+
+    # Email's attachments requests handler
+    class Attachment(APIView):
+        # Returns email's attachment on GET request
+        @staticmethod
+        @login_required()
+        def get(request, message_id, attachment_id):
+            # Return email's decoded attachment
+            return HttpResponse(
+                # Get email's attachment from Outlook
+                **outlook.get.email_attachment(
+                    # Send student id and password
+                    request.session["sid"],
+                    request.session["pin"],
+                    # Specify message id & attachment id
+                    message_id, attachment_id
                 )
             )
