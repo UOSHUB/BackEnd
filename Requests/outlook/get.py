@@ -1,4 +1,5 @@
 from .values import root_url, email, __file, __search_queries
+from base64 import b64decode
 import requests
 
 
@@ -42,3 +43,18 @@ def email_body(sid, pin, message_id):
             "$select": "{0}ContentId,{0}ContentBytes,ContentType".format(__file)
         }, message_id + "/attachments")["value"]
     return message
+
+
+# Gets a single email's attachment after decoding it
+def email_attachment(sid, pin, message_id, attachment_id):
+    # Request email attachment using credentials
+    attachment = api(sid, pin, {
+        # Only get the attachment itself and its type
+        "$select": __file + "ContentBytes,ContentType"
+        # Specify message id and attachment id
+    }, message_id + "/attachments/" + attachment_id)
+    # Return attachment encoded bytes and type
+    return {
+        "content": b64decode(attachment["ContentBytes"].encode()),
+        "content_type": attachment["ContentType"]
+    }
