@@ -34,13 +34,13 @@ def emails_list(sid, pin, count=25, offset=0, search=None):
 # Gets a single email's body and its images
 def email_body(sid, pin, message_id):
     # Request email HTML body using credentials and message id
-    message = api(sid, pin, {"$select": "Body,HasAttachments"}, message_id)
+    message = api(sid, pin, {"$select": "Body"}, message_id)
     # If message contains images
     if "cid:" in message["Body"]["Content"]:
         # Request email attachments and append it to message
         message["Attachments"] = api(sid, pin, {
-            # Only get attachment's content id and type but not the actual file
-            "$select": "{0}ContentId,{0}ContentBytes,ContentType".format(__file)
+            # Only get attachments' content ids
+            "$select": __file + "ContentId"
         }, message_id + "/attachments")["value"]
     return message
 

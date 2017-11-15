@@ -75,7 +75,7 @@ def events_emails(raw_emails):
     ]
 
 
-# Scrapes a single email's body and embeds its images
+# Scrapes a single email's body containing images URLs
 def email_body(message):
     # Store email's HTML body
     body = message["Body"]["Content"]
@@ -83,13 +83,15 @@ def email_body(message):
     if "Attachments" in message:
         # Loop through attached images
         for image in message["Attachments"]:
-            # Use Regex to replace image id by its bytes
-            body = __replace(
-                # Search for src="cid:<ContentId>"
-                "src=\"cid:" + image["ContentId"] + "\"",
-                # Replace it with src="data:<ContentType>;base64,<ContentBytes>"
-                "src=\"data:" + image["ContentType"] + ";base64," + image["ContentBytes"] + "\"",
-                # Do that in HTML body and only once
-                body, 1
-            )
+            # Make sure it's an image
+            if image["ContentId"]:
+                # Use Regex to replace image id by its URL
+                body = __replace(
+                    # Search for src="cid:<ContentId>"
+                    "src=\"cid:" + image["ContentId"] + "\"",
+                    # Replace it with src="/api/emails/<message id>/<attachment id>"
+                    "src=\"/api/emails/" + message["Id"] + "/" + image["Id"] + "/\"",
+                    # Do that in HTML body and only once
+                    body, 1
+                )
     return body
