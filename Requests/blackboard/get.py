@@ -30,15 +30,17 @@ def updates(session):
     # TODO: if loop finishes without response, get updates from mobile API
 
 
-# Get student's basic info (name, major, collage)
+# Get student's basic info (name, major, college)
 def basic_info(session, sid):
     # Request data from API url while passing student id
     student = __api("users/userName:" + sid, session, {"fields": "name,job"})
     # Extract and return a dictionary of student info
     return {
-        "name": student["name"]["given"],
+        "firstName": student["name"]["given"],
+        "lastName": student["name"]["family"].rsplit(" ", 1)[-1],
         "major": student["job"]["department"],
-        "collage": student["job"]["company"]
+        "college": student["job"]["company"],
+        "studentId": sid
     }
 
 

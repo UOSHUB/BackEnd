@@ -42,9 +42,9 @@ def core_details(transcript):
     soup = __parse_xml(transcript).find(".//G_SGBSTDN")
     # Create a dictionary of straight forward to reach info
     details = {
-        # Store student's name, collage, major and terms
+        # Store student's name, college, major and terms
         "name": soup.find("STUDENT_NAME").text.strip(),
-        "collage": soup.find("CURR_COLL_CODE").text,
+        "college": soup.find("CURR_COLL_CODE").text,
         "major": soup.find("CURR_MAJR_CODE").text,
         "terms": {
             # Initialize in progress term

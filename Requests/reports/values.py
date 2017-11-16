@@ -19,7 +19,7 @@ campuses = {
     "UOS Women's Campus": "MAW"
 }
 
-collages = {
+colleges = {
     "Shari'a & Islamic Studies": "01",
     "Arts, Humanities & Social Sci.": "02",
     "Business Administration": "03",
