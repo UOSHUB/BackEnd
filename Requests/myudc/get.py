@@ -1,30 +1,18 @@
 import requests
 
 # Root url of myUDC
-root_url = "https://uos.sharjah.ac.ae:9050/prod_enUS/"
-
-
-# Logs in myUDC and returns the session
-def __login(sid, pin):
-    return requests.post(
-        # Post data to login url
-        root_url + "twbkwbis.P_ValLogin",
-        # Send student id and password
-        data={"sid": sid, "PIN": pin},
-        # Required cookie for myUDC login
-        cookies={"TESTID": "set"}
-    ).cookies.get_dict()
+__root_url = "https://uos.sharjah.ac.ae:9050/prod_enUS/"
 
 
 # Gets student's schedule page by term code
 def term(term_code, session):
     return requests.post(
         # Get data from detail schedule url
-        root_url + "bwskfshd.P_CrseSchdDetl",
+        __root_url + "bwskfshd.P_CrseSchdDetl",
         # Send required term code
         data={"term_in": term_code},
         # Coming from the same page
-        headers={"referer": root_url + "bwskfshd.P_CrseSchdDetl"},
+        headers={"referer": __root_url + "bwskfshd.P_CrseSchdDetl"},
         # Send login session
         cookies=session
     ).text
@@ -34,11 +22,11 @@ def term(term_code, session):
 def transcript(session):
     return requests.post(
         # Get data from academic transcript url
-        root_url + "bwskotrn.P_ViewTran",
+        __root_url + "bwskotrn.P_ViewTran",
         # Get "Non Official Transcript"
         data={"tprt": "NOF"},
         # Coming from "Academic Transcript Options" page
-        headers={"referer": root_url + "bwskotrn.P_ViewTermTran"},
+        headers={"referer": __root_url + "bwskotrn.P_ViewTermTran"},
         # Send login session
         cookies=session
     ).text
@@ -49,9 +37,9 @@ def transcript(session):
 def course(session, crn, key, term_code):
     return requests.get(
         # Get data from display course url
-        root_url + "bwckschd.p_disp_listcrse",
+        __root_url + "bwckschd.p_disp_listcrse",
         # Coming from "Advanced Search" page
-        headers={"referer": root_url + "bwskfcls.P_GetCrse_Advanced"},
+        headers={"referer": __root_url + "bwskfcls.P_GetCrse_Advanced"},
         # Send all course identifiers
         params={
             "term_in": term_code,
@@ -67,9 +55,9 @@ def course(session, crn, key, term_code):
 def page(link, referer, session):
     return requests.get(
         # Get data from root url + sub url
-        root_url + link,
+        __root_url + link,
         # Coming from "referer" page (required by myUDC)
-        headers={"referer": root_url + "twbkwbis.P_GenMenu?name=bmenu.P_" + referer},
+        headers={"referer": __root_url + "twbkwbis.P_GenMenu?name=bmenu.P_" + referer},
         # Send login session
         cookies=session
     ).text
