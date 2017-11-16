@@ -66,6 +66,23 @@ class Emails(APIView):
                 )
             )
 
+        # Deletes an email on DELETE request
+        @staticmethod
+        @login_required()
+        def delete(request, message_id):
+            # Return an empty response with status
+            # of whether the emails was deleted or not
+            return Response(
+                # Delete the specified email
+                status=outlook.edit.delete_email(
+                    # Send student id and password
+                    request.session["sid"],
+                    request.session["pin"],
+                    # Specify message id
+                    message_id
+                )
+            )
+
     # Email's attachments requests handler
     class Attachment(APIView):
         # Returns email's attachment on GET request
