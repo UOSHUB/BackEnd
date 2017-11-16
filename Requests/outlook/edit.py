@@ -34,3 +34,17 @@ def send_email(sid, pin, subject, body, recipients):
         }
         # Return the response status
     ).status_code
+
+
+# Deletes an email (but keeps it in trash)
+def delete_email(sid, pin, message_id):
+    # Request to send email to trash
+    return requests.post(
+        # Using outlook-api/messages/<message id>/move
+        __root_url + "messages/" + message_id + "/move",
+        # Basic authentication using sid(@sharjah.ac.ae) & pin
+        auth=(__email.format(sid), pin),
+        # Move email to Deleted Items folder
+        json={"DestinationId": "DeletedItems"}
+        # Return the response status
+    ).status_code
