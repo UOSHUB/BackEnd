@@ -1,4 +1,4 @@
-from .values import root_url, email, __file, __search_queries
+from .values import __root_url, __email, __file, __search_queries
 from base64 import b64decode
 import requests
 
@@ -8,9 +8,9 @@ def api(sid, pin, params, sub_url=""):
     # HTTP GET request to Outlook API
     return requests.get(
         # From outlook-api/messages/<sub_url>
-        root_url + "messages/" + sub_url,
+        __root_url + "messages/" + sub_url,
         # Basic authentication using sid(@sharjah.ac.ae) & pin
-        auth=(email.format(sid), pin),
+        auth=(__email.format(sid), pin),
         # Send all necessary request parameters
         params=params
         # Return data in JSON format
