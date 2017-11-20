@@ -1,11 +1,7 @@
 from Requests import clean_course_name as __clean
 from lxml.etree import fromstring as __parse_xml
-from .values import __types, __events, __terms
-from .general import root_url
-from datetime import datetime
+from .values import __types, __events, __terms, __root_url_no_slash, __timestamp
 from math import ceil
-root_url = root_url[:-1]
-timestamp = datetime.fromtimestamp
 
 
 # Scrapes useful data from updates JSON object
@@ -29,7 +25,7 @@ def updates(raw_updates, courses):
             "course": course,
             "title": item["title"],
             "dismiss": details["actorId"],
-            "time": timestamp(update["se_timestamp"] / 1000).strftime("%Y-%m-%dT%H:%M:%S") + "+0400",
+            "time": __timestamp(update["se_timestamp"] / 1000).strftime("%Y-%m-%dT%H:%M:%S") + "+0400",
             # Get meaningful equivalent of event from stored values
             "event": __types[event[0]] + (
                 # Add event type as long as it's not an announcement
@@ -141,7 +137,7 @@ def course_data(response, key, data_type=None):
                 "file": document.get("name"),
                 "time": document.get("modifiedDate"),
                 # From document's URL, get its id and content id using Regex
-                "url": root_url + document.get("url")
+                "url": __root_url_no_slash + document.get("url")
             }   # Loop through all course documents
             for document in course.findall(".//attachment")
         ]
