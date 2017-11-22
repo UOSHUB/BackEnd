@@ -2,7 +2,7 @@ from .general import root_url
 from datetime import datetime
 from re import compile
 
-# This file contains possible values of Blackboard variables
+# These are the possible values of Blackboard variables
 
 __lists = {
     "Announcements": 1,
@@ -58,12 +58,16 @@ __terms = {
     },
 }
 
-# Store Blackboard stream urls
+__root_url_no_slash = root_url[:-1]
+__timestamp = datetime.fromtimestamp
+
+# Blackboard stream URLs
 __stream_root_url = root_url + "webapps/streamViewer/"
 __stream_url = __stream_root_url + "streamViewer"
 __dismiss_update_url = __stream_root_url + "dwr_open/call/plaincall/NautilusViewService.removeRecipient.dwr"
+
+# Blackboard assignment submission URLs
 __submit_files_url = root_url + "webapps/assignment/uploadAssignment?action=submit"
 __new_submission_url = __submit_files_url[:-6] + "newAttempt&course_id={}&content_id={}"
+# Regex to get assignment's nonce ids from Blackboard's new assignment's page
 __get_nonce = compile("value='([\w-]{36})'.*\n.*id=\"ajaxNonceId\".*value=\"([\w-]{36})\"")
-__root_url_no_slash = root_url[:-1]
-__timestamp = datetime.fromtimestamp
