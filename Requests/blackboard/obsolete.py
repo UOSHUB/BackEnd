@@ -1,6 +1,6 @@
 from lxml.html import fromstring as __parse_html, tostring as __get_html
 from .general import root_url, web, mobile, api, __id
-from .values import __lists, __terms
+from .values import __terms
 import requests
 
 
@@ -29,7 +29,16 @@ def list_of(session, query):
         # Get list through AJAX
         "action": "refreshAjaxModule",
         # Get list of one of these options
-        "modId": __id(__lists[query]),
+        "modId": __id({
+            "Announcements": 1,
+            "Courses": 4,
+            "Organizations": 5,
+            "Tasks": 7,
+            "Notes": 12,
+            "Grades": 20,
+            "Collages": 28,
+            "Surveys": 257
+        }[query]),
         # Required parameter
         "tabId": __id(1),
     })
