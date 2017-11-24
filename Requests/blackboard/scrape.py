@@ -107,7 +107,7 @@ def courses_by_term(response, term):
 
 
 # Scrapes student's specific course data
-def course_data(response, key, data_type=None):
+def course_data(response, key, course_id, data_type=None):
     # Store parsed course and returned object structure
     course = __parse_xml(response)
     data = {"deadlines": [], "documents": []}
@@ -115,11 +115,12 @@ def course_data(response, key, data_type=None):
     if data_type != "documents":
         # Scrape deadlines and add them to data
         data["deadlines"] = [
-            {   # Store deadline's title, due date & course key
-                "course": key,
+            {   # Store deadline's title, due date & other information
                 "title": deadline.get("name"),
                 "dueDate": deadline.get("dueDate"),
-                "time": deadline.get("createdDate")
+                "time": deadline.get("createdDate"),
+                "course": key, "courseId": course_id,
+                "contentId": deadline.get("contentid")[1:-2]
             }   # Loop through all course items which have a due date
             for deadline in course.findall(".//*[@dueDate]")
         ]

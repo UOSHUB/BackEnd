@@ -44,7 +44,7 @@ class Courses(APIView):
                     blackboard.get.course_data(
                         # Send Blackboard cookies & course's id
                         request.session["blackboard"], course
-                    ), key
+                    ), key, course
                 )
             )
 

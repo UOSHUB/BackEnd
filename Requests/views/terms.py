@@ -94,8 +94,8 @@ class Terms(APIView):
                         blackboard.get.course_data(
                             # Send Blackboard cookies & course id to get
                             cookies, course_id
-                            # Send requested type & MyUDC course id to scrape
-                        ), course_key, data_type
+                            # Send requested type & MyUDC course key & id to scrape
+                        ), course_key, course_id, data_type
                     )
                     # If requested type is "content"
                     if data_type == "content":
