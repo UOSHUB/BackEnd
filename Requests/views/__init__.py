@@ -8,4 +8,5 @@ from .courses import Courses
 from .emails import Emails
 from .calendar import Calendar
 from .holds import Holds
+from .submit import Submit
 from .refresh import Refresh

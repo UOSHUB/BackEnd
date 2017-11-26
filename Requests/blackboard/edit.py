@@ -50,10 +50,7 @@ def submit_files(session, course_id, content_id, files):
             ("newFile_linkTitle", file[0]),
             ("newFile_attachmentType", "L")
         ])
-        # Loop though files while keeping index
-    )[0] for index, file in enumerate(
-        # Make files into an array if it isn't already
-        files if isinstance(files, list) else [files]
-    )]
-    # Post file(s) to Blackboard submission URL while passing cookies and data
-    requests.post(__submit_files_url, cookies=session, files=files, data=data)
+        # Loop though files while counting
+    )[0] for index, file in enumerate(files)]
+    # Post file(s) to Blackboard submission URL while passing cookies & data and return status
+    return requests.post(__submit_files_url, cookies=session, files=files, data=data).status_code
