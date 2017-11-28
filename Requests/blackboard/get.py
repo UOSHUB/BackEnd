@@ -22,9 +22,16 @@ def updates(session):
             "forOverview": "false",
             "providers": "{}",
         }).json()
-        # Return response if it contains requested data
-        if response.get("sv_streamEntries"):
-            return response["sv_streamEntries"]
+        # Get & store updates from response
+        data = response.get("sv_streamEntries")
+        # If any of the updates is a course update
+        if data and any(
+            # Check if updates isn't a Blackboard assignment
+            update["providerId"] != "bb-announcement"
+            # Loop through updates
+            for update in data
+            # Return response if it contains requested data
+        ): return data
     # If loop finishes with no data, return an empty array
     return []
     # TODO: if loop finishes without response, get updates from mobile API
