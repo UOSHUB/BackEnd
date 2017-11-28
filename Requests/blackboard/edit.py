@@ -4,7 +4,7 @@ import requests
 
 
 # Dismisses an update in Blackboard
-def dismiss_update(session, update):
+def dismiss_update(session, update_id):
     # Post a request to dismiss an update on Blackboard stream viewer
     requests.post(__dismiss_update_url, cookies=session, data={
         # Send all mandatory fields
@@ -14,7 +14,7 @@ def dismiss_update(session, update):
         "c0-methodName": "removeRecipient",
         "c0-id": "0",
         # Specify update id to be dismissed
-        "c0-param0": "string:" + str(update),
+        "c0-param0": "string:" + str(update_id),
         "batchId": "0"
     })
 

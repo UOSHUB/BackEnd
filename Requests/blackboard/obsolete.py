@@ -115,10 +115,10 @@ def get_courses_list(session, sid):
 
 
 # Scrapes student's list of courses
-def scrape_courses_list(response, term):
+def scrape_courses_list(response, term_code):
     # Store term year and months range start and end
-    start, end = __terms[term[4:]]["range"]
-    year = term[:4]
+    start, end = __terms[term_code[4:]]["range"]
+    year = term_code[:4]
     return [
         # Return an array of courses ids
         course["courseId"][1:-2]

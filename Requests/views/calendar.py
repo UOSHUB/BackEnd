@@ -11,9 +11,9 @@ class Calendar(APIView):
     """
     # Returns term's events array on GET request
     @staticmethod
-    def get(request, term=None):
+    def get(request, term_code=None):
         # If accessing "/calendar/" without specifying term
-        if not term:
+        if not term_code:
             # Return all terms in academic calendar
             return Response({
                 # Format terms in {term name: term URL} pairs
@@ -31,6 +31,6 @@ class Calendar(APIView):
                 # Get academic calendar page
                 homepage.academic_calendar(),
                 # Send specified term code
-                term
+                term_code
             )
         )

@@ -15,5 +15,7 @@ For further details and a holistic overview of the project, checkout [the main r
     - Full Year is the year in 4 digits
     - Season Number is one of these values {10: Fall, 20: Spring, 30: Summer}
     - For example, Fall 2017 term's code is `201710`
-> Reports specific values are listed in `./reports/values.py`
+- Course Key: Course's MyUDC identifier, which is a 7 digits number
+- Course Id: Course's Blackboard identifier, which is a 5 digits number
+> Package's specific values are listed in `./<package>/values.py`
 

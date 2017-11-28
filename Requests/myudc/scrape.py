@@ -26,10 +26,10 @@ def course(page):
     # Store main table's caption and body
     caption, body = __parse(page).find(".//table[@class='datadisplaytable']").findall("tr")
     # Split caption to get course's title, crn, key and section
-    title, crn, key, section = caption.text_content().strip().split(" - ")
+    title, crn, course_key, section = caption.text_content().strip().split(" - ")
     # Return course data dictionary
     return {  # In {course key: course data} format
-        key.replace(" ", ""): dict({
+        course_key.replace(" ", ""): dict({
             "title": title,
             "section": section,
             "crn": int(crn),
@@ -48,9 +48,9 @@ def term(page):
     # Loop through every two tables as one (head and body)
     for head, body in zip(tables, tables):
         # Split table caption into three parts ["title", "key", "section"]
-        title, key, section = head.find("caption").text.split(" - ")
+        title, course_key, section = head.find("caption").text.split(" - ")
         # Remove spaces from course key
-        key = key.replace(" ", "")
+        course_key = course_key.replace(" ", "")
         # Store all table head cells and body rows into arrays
         cells, rows = head.findall(".//td"), body.findall("tr")
         # Combine all course data
@@ -62,12 +62,12 @@ def term(page):
             # Get & add lecture/lab details
         }, **__get_data(rows, title))
         # If course key is new to term
-        if data.get(key) is None:
+        if data.get(course_key) is None:
             # Store the course with that key
-            data[key] = course_data
+            data[course_key] = course_data
         # If the course already exists
         else:  # Store it as a lab of the previous course
-            data[key]["lab"] = course_data
+            data[course_key]["lab"] = course_data
     return data
 
 

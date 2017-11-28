@@ -47,19 +47,19 @@ def schedule(sid, term):
 
 
 # Gets student's final exams schedule
-def final_exams(sid, term):
+def final_exams(sid, term_code):
     return report({
         # Report cipher
         "REPORT": "SYRSSFE_REP",
         # Student id
         "P_ID": sid.upper(),
         # term code
-        "P_TERM_CODE": term
+        "P_TERM_CODE": term_code
     }).content
 
 
 # Gets student's whole study plan
-def study_plan(sid, reg_term):
+def study_plan(sid, reg_term_code):
     return report({
         # Report cipher
         "REPORT": "SYRSPOS_REP",
@@ -75,12 +75,12 @@ def study_plan(sid, reg_term):
         # Student id
         "P_STUDENT_ID": sid.upper(),
         # Student enrollment term code
-        "P_TERM_CODE": reg_term
+        "P_TERM_CODE": reg_term_code
     }).content
 
 
 # Gets offered courses catalog for a term
-def offered_courses(department="%", term="201720"):
+def offered_courses(department="%", term_code="201720"):
     return report({
         # Report cipher
         "REPORT": "SYRSCHE_REP",
@@ -100,7 +100,7 @@ def offered_courses(department="%", term="201720"):
         "MAX": "258",
         "MIN": "0",
         # term code
-        "TERM": term
+        "TERM": term_code
     }).content
 
 

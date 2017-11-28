@@ -15,7 +15,7 @@ class Updates(APIView):
     # Returns updates dictionary of all courses on GET request
     @staticmethod
     @login_required("blackboard")
-    def get(request, update=None):
+    def get(request, update_id=None):
         # Store Blackboard cookies and empty dictionaries
         cookies = request.session["blackboard"]
         updates, courses = [], {}
@@ -49,9 +49,9 @@ class Updates(APIView):
     # Deletes an update if specified, otherwise deletes all updates
     @staticmethod
     @login_required("blackboard")
-    def delete(request, update):
+    def delete(request, update_id):
         # Loop through all updates or a single update if specified
-        for update in [{"dismiss": update}] if update else Updates.get(request).data:
+        for update in [{"dismiss": update_id}] if update_id else Updates.get(request).data:
             # Request a Blackboard edit to dismiss the update
             blackboard.edit.dismiss_update(
                 # Send Blackboard cookies and update id

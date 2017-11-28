@@ -36,15 +36,15 @@ class Courses(APIView):
         # Returns course's documents and deadlines
         @staticmethod
         @login_required("blackboard")
-        def get(request, key, course):
+        def get(request, course_key, course_id):
             # Return requested course's data
             return Response(
                 # Get & scrape course's data from Blackboard Mobile
                 blackboard.scrape.course_data(
                     blackboard.get.course_data(
                         # Send Blackboard cookies & course's id
-                        request.session["blackboard"], course
-                    ), key, course
+                        request.session["blackboard"], course_id
+                    ), course_key, course_id
                 )
             )
 
@@ -57,9 +57,9 @@ class Courses(APIView):
         # Returns a single course's details
         @staticmethod
         @login_required("myudc")
-        def get(request, key, crn, term):
+        def get(request, course_key, crn, term_code):
             # If crn or term aren't sent
-            if not (crn and term):
+            if not (crn and term_code):
                 # Return to API root with an error message
                 return APIRoot.get(request, request.path)
             # Otherwise, return requested course's details
@@ -69,8 +69,8 @@ class Courses(APIView):
                     myudc.get.course(
                         # Send MyUDC session
                         request.session["myudc"],
-                        # Send course's crn, key and term code
-                        crn, key, term
+                        # Send course's key, crn and term code
+                        crn, course_key, term_code
                     )
                 )
             )

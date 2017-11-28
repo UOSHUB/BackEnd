@@ -33,8 +33,8 @@ def transcript(session):
 
 
 # TODO: test this function on all courses in advanced search
-# Gets a single course's details using its crn, key and term
-def course(session, crn, key, term_code):
+# Gets a single course's details using its course key, crn and term
+def course(session, crn, course_key, term_code):
     return requests.get(
         # Get data from display course url
         __root_url + "bwckschd.p_disp_listcrse",
@@ -43,8 +43,8 @@ def course(session, crn, key, term_code):
         # Send all course identifiers
         params={
             "term_in": term_code,
-            "subj_in": key[:4],
-            "crse_in": key[4:],
+            "subj_in": course_key[:4],
+            "crse_in": course_key[4:],
             "crn_in": crn
             # Send login session
         }, cookies=session

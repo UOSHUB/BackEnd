@@ -24,13 +24,13 @@ class Terms(APIView):
         # Return all terms
         return Response({
             # In {term code: {}} pairs
-            term: {} for term in terms.keys()
+            term_code: {} for term_code in terms.keys()
             # If requested from the client side
         } if client_side(request) else {
             # Then make it in {term name: term url} pairs
-            name: request.build_absolute_uri(code + "/")
+            term_name: request.build_absolute_uri(term_code + "/")
             # By looping through all terms and formatting them
-            for code, name in terms.items()
+            for term_code, term_name in terms.items()
         })
 
     # Term's Blackboard content handler
@@ -42,7 +42,7 @@ class Terms(APIView):
         # Returns specified term's details
         @staticmethod
         @login_required("myudc")
-        def get(request, term):
+        def get(request, term_code):
             # Return student's term details
             return Response(dict({} if client_side(request) else {
                 # Add links to term's contents and courses if browser
@@ -52,7 +52,7 @@ class Terms(APIView):
                 **myudc.scrape.term(
                     myudc.get.term(
                         # Send term code & myUDC cookies
-                        term, request.session["myudc"]
+                        term_code, request.session["myudc"]
                     )
                 )
             ))
@@ -67,7 +67,7 @@ class Terms(APIView):
         # Returns term's content or courses as per request
         @staticmethod
         @login_required("blackboard")
-        def get(request, term, data_type):
+        def get(request, term_code, data_type):
             # If data type requested is "courses"
             if data_type == "courses":
                 # Return a dictionary of courses ids
@@ -77,7 +77,7 @@ class Terms(APIView):
                         blackboard.get.courses_list(
                             # Send Blackboard cookies
                             request.session["blackboard"]
-                        ), term  # Send term id
+                        ), term_code  # Send term code
                     )
                 )
             # If data type requested is "deadlines" or "documents"
@@ -107,7 +107,7 @@ class Terms(APIView):
                 # Get & scrape then loop through Blackboard courses in term
                 for key, course in blackboard.scrape.courses_by_term(
                     # Send Blackboard cookies to "get" and term id to "scrape"
-                    blackboard.get.courses_list(cookies), term
+                    blackboard.get.courses_list(cookies), term_code
                 ).items():
                     # Construct a thread to get each course's data in parallel
                     thread = Thread(target=course_data, args=(key, course["courseId"]))

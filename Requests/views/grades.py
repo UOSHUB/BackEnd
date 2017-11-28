@@ -14,9 +14,9 @@ class Grades(APIView):
     # Returns student's array of grades on GET request
     @staticmethod
     @login_required("blackboard")
-    def get(request, term):
+    def get(request, term_code):
         # If requesting grades of a term
-        if term:
+        if term_code:
             # Initialize empty objects & store Blackboard cookies
             grades, threads = [], []
             cookies = request.session["blackboard"]
@@ -35,7 +35,7 @@ class Grades(APIView):
             # Get & scrape then loop through Blackboard courses in term
             for key, course in blackboard.scrape.courses_by_term(
                 # Send Blackboard cookies to "get" and term id to "scrape"
-                blackboard.get.courses_list(cookies), term
+                blackboard.get.courses_list(cookies), term_code
             ).items():
                 # Construct a thread to get each course's grades in parallel
                 thread = Thread(target=course_grades, args=(key, course["courseId"]))

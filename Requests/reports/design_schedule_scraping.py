@@ -14,7 +14,6 @@ def study_plan_courses(study_plan):
     return all_courses
 
 
-
 # Scrapes all courses the student needs to fulfill degree reqs from study_plan
 def next_semester_courses(offered_courses, remaining_courses):
     # Dictionary to store all the courses

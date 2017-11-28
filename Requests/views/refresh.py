@@ -7,7 +7,7 @@ from datetime import datetime
 
 # Calculate term of "201710" format
 this = datetime.today()
-term = str(this.year) + (
+term_code = str(this.year) + (
     # Spring: 1st to 5th month, Summer: 6th to 7th and Fall: 8th to 12th
     "10" if this.month > 7 else "20" if this.month < 6 else "30"
 )
@@ -51,11 +51,11 @@ class Refresh(APIView):
             # If content type is not specified
             if not content:
                 # Start a thread to grab new documents and deadlines
-                start(add.new_dict, data, Terms.Content.get, [term, "content"])
+                start(add.new_dict, data, Terms.Content.get, [term_code, "content"])
             # If it is either documents or deadlines
             elif content in ["documents", "deadlines"]:
                 # Start a thread to grab new items in specified content type
-                start(add.new_list, data, content, Terms.Content.get, [term, content])
+                start(add.new_list, data, content, Terms.Content.get, [term_code, content])
         # If querying updates
         if "updates" in queries:
             # Start a thread to grab new updates
@@ -63,7 +63,7 @@ class Refresh(APIView):
         # If querying grades
         if "grades" in queries:
             # Start a thread to grab new grades
-            start(add.new_list, data, "grades", Grades.get, [term])
+            start(add.new_list, data, "grades", Grades.get, [term_code])
         # Loop through threads and join them to the main thread
         [thread.join() for thread in threads]
         return Response(data)
