@@ -27,7 +27,7 @@ class Refresh(APIView):
     def get(request, date):
         # Notify if no date is specified
         if not date:
-            return Response("You didn't specify a date (timestamp)")
+            return Response("You didn't specify a date (timestamp) or queries")
         # Declare required variables
         data, threads = {}, []
         add = Add(request, date)

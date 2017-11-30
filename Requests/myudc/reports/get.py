@@ -1,14 +1,16 @@
+from Requests.myudc import root_url as __root_url
 import requests
+
+# URL of MyUDC reports (extracted from MyUDC root URL)
+__url = __root_url[-10] + "reports/rwservlet"
 
 
 # General report request with common attributes
 def report(options):
     # HTTP post request
     return requests.post(
-        # Root UOS reports url
-        url="https://uos.sharjah.ac.ae:9050/reports/rwservlet",
-        # Parameters used across all report requests
-        data=dict({
+        # UOS reports url & options used across all requests
+        url=__url, data=dict({
             # Request from UOS server
             "server": "RptSvr_uosas5_INB_asinst",
             # Get report in XML format
