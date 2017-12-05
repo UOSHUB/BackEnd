@@ -7,6 +7,7 @@ from .grades import Grades
 from .courses import Courses
 from .emails import Emails
 from .calendar import Calendar
+from .finals import Finals
 from .holds import Holds
 from .submit import Submit
 from .refresh import Refresh

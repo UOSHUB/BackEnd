@@ -22,7 +22,7 @@ urlpatterns = [
     url(r"^courses/$", Courses.as_view()),
     # /api/courses/<MyUDC key>/<Blackboard id> returns course's documents and deadlines
     url(r"^courses/(?P<course_key>[0-9]{7})/((?P<course_id>[0-9]{5})/)?$", Courses.Content.as_view()),
-    # /api/courses/<MyUDC key>/<CRN>/<term code> returns course's details from MyUDC
+    # /api/courses/<MyUDC key>/<CRN>/<term> returns course's details from MyUDC
     url(r"^courses/(?P<course_key>[0-9]{7})/(?P<crn>[0-9]{5})/((?P<term_code>[0-9]{6})/)?$", Courses.Details.as_view()),
     # Outlook emails path
     # /api/emails returns a list of available emails categories
@@ -33,10 +33,14 @@ urlpatterns = [
     url(r"^emails/(?P<message_id>[\w-]+=)/$", Emails.Body.as_view()),
     # /api/emails/<message id>/<attachment id> returns a single email's decoded attachment
     url(r"^emails/(?P<message_id>[\w-]+=)/(?P<attachment_id>[\w-]+=)/$", Emails.Attachment.as_view()),
-    # Homepage's calendar path
+    # Homepage calendar path
     # /api/calendar returns a list of terms available in academic calendar
     # /api/calendar/<term> returns specified term's calendar events
-    url(r"^calendar/((?P<term_code>[0-9]+)/)?$", Calendar.as_view()),
+    url(r"^calendar/((?P<term_code>[0-9]{6})/)?$", Calendar.as_view()),
+    # MyUDC final exams path
+    # /api/finals returns a list of terms that could have finals
+    # /api/finals/<term> returns specified term's final exams
+    url(r"^finals/((?P<term_code>[0-9]{6})/)?$", Finals.as_view()),
     # MyUDC holds path
     url(r"^holds/$", Holds.as_view()),
     # Blackboard assignment submission path

@@ -10,7 +10,7 @@ class Terms(APIView):
     """
     This returns a list of student's registered terms.
     """
-    # Returns term dictionary of requested term on GET request
+    # Returns all registered terms on GET request
     @staticmethod
     @login_required("myudc")
     def get(request):
