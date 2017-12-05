@@ -81,14 +81,20 @@ def holds(session):
     return page("bwskoacc.P_ViewHold", "AdminMnu", session)
 
 
-# Gets student's account summary page
-# ether all terms combined or one by one (by_term=True)
-def account_summary(session, by_term=False):
-    # Coming from "Student Account" page
-    return page("bwskoacc.P_ViewAcct" + ["Total", ''][by_term], "ARMnu", session)
-
-
-# Gets student's admission log card page
-def admission_card(session):
-    # Coming from "My Admission" page
-    return page("uos_admission_card.p_dispadmissioncard", "MyAdmMnu", session)
+# Gets student's final exams page for a specific term
+def final_exams(session, term_code):
+    return page(
+        # Request exams schedule coming from "Registration" page
+        "uos_dispexam.P_DispExamSchdSum", "RegMnu",
+        # Select term and send it's cookies as the session
+        requests.post(
+            # Send selected term to be stored
+            __root_url + "bwcklibs.P_StoreTerm",
+            # Send required term code
+            data={"term_in": term_code},
+            # Coming from the "Select Term" page
+            headers={"referer": __root_url + "bwskflib.P_SelDefTerm"},
+            # Send a copy of login session
+            cookies=session
+        ).cookies.get_dict()
+    )
