@@ -87,19 +87,16 @@ def __get_data(rows, title):
 
 # Returns extracted data from lecture/lab cells as a dict
 def __extract_data(cells, lab=False):
-    # A function that takes a string and returns all digits in it
-    clean = lambda string: "".join([c for c in string if c.isdigit()])  # TODO: this vs re (speed test)
     # Upper case and split time string e.g. ["8:00 AM", "9:15 AM"]
     time = cells[1].text.upper().split(" - ")
-    # Store location and doctor
-    location = cells[3].text.split()
+    # Store doctor
     doctor = cells[6].find("a")
     return dict({  # Return data dictionary
         "start": time[0], "end": time[1],
         # Store class days in chars, e.g. ["M", "W"]
         "days": cells[2].text.replace(" ", ""),
         # Remove extra parts from location details to get e.g. "M10, 007"
-        "location": location[0][0] + clean(location[0][1:]) + ", " + clean(location[-1].split("-")[-1])
+        "location": __extract_location(cells[3].text.split())
         # Also add course doctor
     }, **({  # If doctor info is announced store his name and email
         "doctor": doctor.get("target"),
@@ -110,6 +107,19 @@ def __extract_data(cells, lab=False):
         "email": "To Be Announced"
         # Unless it's a lab, in which case keep it empty
     } if not lab else {}))
+
+
+# A function that takes a string and returns all digits in it
+def __clean_letters(string):
+    return "".join([c for c in string if c.isdigit()])  # TODO: this vs re (speed test)
+
+
+def __extract_location(raw_location):
+    return "".join([
+        raw_location[0][0],
+        __clean_letters(raw_location[0][1:]), ", ",
+        __clean_letters(raw_location[-1].split("-")[-1])
+    ])
 
 
 # Scrapes student's holds
@@ -126,4 +136,25 @@ def holds(page):
             "end": cells[2].text,
             "reason": cells[4].text
         })
+    return data
+
+
+# Scrapes student's final exams
+def final_exams(page):
+    data = []
+    # Loop through finals table's rows which contain data
+    for final in __parse(page).findall(".//table[@class='datadisplaytable'][2]/tr")[1:]:
+        # Store final's row cells
+        cells = final.findall("td")
+        # If final's date is announced (not all asterisk)
+        if any(letter != "*" for letter in cells[2].text):
+            # Add final course key, title, date, start & end time and location
+            data.append({
+                "course": cells[0].text,
+                "title": cells[1].text_content(),
+                "date": cells[2].text,
+                "start": cells[3].text,
+                "end": cells[4].text,
+                "location": __extract_location(cells[5].text.split())
+            })
     return data
