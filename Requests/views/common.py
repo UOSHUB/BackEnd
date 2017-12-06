@@ -1,5 +1,5 @@
 from rest_framework.renderers import BrowsableAPIRenderer as __Browser
-from rest_framework.serializers import Serializer, CharField
+from rest_framework.serializers import Serializer, CharField, EmailField
 from rest_framework.response import Response
 from Requests import blackboard, myudc
 from django.shortcuts import redirect
@@ -10,6 +10,13 @@ from time import time
 class Credentials(Serializer):
     sid = CharField()
     pin = CharField()
+
+
+# Describes an email fields
+class Email(Serializer):
+    subject = CharField()
+    body = CharField()
+    recipients = EmailField()
 
 
 # Returns a login checker decorator by server

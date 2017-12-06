@@ -27,7 +27,7 @@ def send_email(sid, pin, subject, body, recipients):
                 },
                 # Loop through and add recipients of the email
                 "ToRecipients": [
-                    {"EmailAddress": {"Address": __email.format(recipient)}} for recipient in recipients
+                    {"EmailAddress": {"Address": recipient}} for recipient in recipients
                 ]
                 # Whether to show email in "Sent Items" page or not
             }, "SaveToSentItems": "true"

@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import HttpResponse
-from .common import login_required
+from .common import login_required, Email
 from Requests import outlook
 
 
@@ -98,5 +98,28 @@ class Emails(APIView):
                     request.session["pin"],
                     # Specify message id & attachment id
                     message_id, attachment_id
+                )
+            )
+
+    # Email sending requests handler
+    class Send(APIView):
+        # Sends an email on POST request
+        # Register login fields description
+        serializer_class = Email
+
+        @staticmethod
+        @login_required()
+        def post(request):
+            # Return the status Outlook's returned
+            return Response(
+                # Send an email through Outlook
+                outlook.edit.send_email(
+                    # Send student id and password
+                    request.session["sid"],
+                    request.session["pin"],
+                    # Send email subject, body & recipients
+                    request.data["subject"],
+                    request.data["body"],
+                    request.data["recipients"]
                 )
             )
