@@ -1,1 +1,1 @@
-from . import get, scrape, design_schedule_scraping
+from . import get, scrape
