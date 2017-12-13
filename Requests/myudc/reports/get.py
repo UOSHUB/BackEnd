@@ -2,7 +2,7 @@ from Requests.myudc import root_url as __root_url
 import requests
 
 # URL of MyUDC reports (extracted from MyUDC root URL)
-__url = __root_url[-10] + "reports/rwservlet"
+__url = __root_url[:-10] + "reports/rwservlet"
 
 
 # General report request with common attributes

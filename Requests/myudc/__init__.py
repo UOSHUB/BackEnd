@@ -1,6 +1,6 @@
 from requests import post as __login
 from .get import __root_url as root_url
-from . import get, scrape
+from . import get, scrape, reports
 
 
 # Logs in myUDC and returns the session
