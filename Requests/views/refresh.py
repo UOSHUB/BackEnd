@@ -4,13 +4,7 @@ from rest_framework.views import APIView
 from .common import login_required
 from threading import Thread
 from datetime import datetime
-
-# Calculate term of "201710" format
-this = datetime.today()
-term_code = str(this.year) + (
-    # Spring: 1st to 5th month, Summer: 6th to 7th and Fall: 8th to 12th
-    "10" if this.month > 7 else "20" if this.month < 6 else "30"
-)
+from Requests import term_code
 
 
 # Refreshing data requests handler
@@ -27,6 +21,7 @@ class Refresh(APIView):
     def get(request, date):
         # Notify if no date is specified
         if not date:
+            # TODO: Return everything instead to refresh the whole website data
             return Response("You didn't specify a date (timestamp) or queries")
         # Declare required variables
         data, threads = {}, []
