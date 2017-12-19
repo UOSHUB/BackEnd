@@ -23,7 +23,7 @@ for interface in netifaces.interfaces():
 # Installed applications
 INSTALLED_APPS = [
     # UOS HUB applications
-    "Requests.apps.RequestsConfig",
+    "API.apps.APIConfig",
     "Website.apps.WebsiteConfig",
     # Django Admin app and its dependencies
     "django.contrib.admin",

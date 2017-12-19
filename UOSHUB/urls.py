@@ -11,8 +11,8 @@ urlpatterns = [
     url("[^/]$", lambda request: redirect(request.path + "/")),
     # /admin/ links to Django"s built-in admin app
     url(r"^admin/", admin.site.urls),
-    # /api/ is the RESTful api for the Requests logic
-    url(r"^api/", include("Requests.urls")),
+    # /api/ is the RESTful API of UOS HUB
+    url(r"^api/", include("API.urls")),
     # Everything else should link to the front-end
     url(r"^", include("Website.urls")),
 ]

@@ -1,7 +1,7 @@
 ![](https://github.com/requests/requests/raw/749edb35541d7bc008f5db860c798f800881cd2e/docs/_static/requests-sidebar.png)
-# Requests App
+# Requests Package
 
-In this Django app, all the web scraping happens.
+In this package, all the web scraping happens.
 Both getting and posting data from and to UOS websites using Python3-Requests,
 and extracting the required information from the pulled data.
 

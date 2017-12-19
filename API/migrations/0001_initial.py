@@ -27,6 +27,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="knowngrade",
             name="student",
-            field=models.ForeignKey(on_delete=models.deletion.CASCADE, to="Requests.Student"),
+            field=models.ForeignKey(on_delete=models.deletion.CASCADE, to="API.Student"),
         ),
     ]

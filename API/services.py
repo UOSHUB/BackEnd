@@ -1,6 +1,6 @@
-from . import term_code, get_path
-from .myudc import reports
-from .zoho import send
+from Requests import term_code, get_path
+from Requests.myudc import reports
+from Requests.zoho import send
 
 from datetime import datetime
 from threading import Thread

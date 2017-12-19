@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from Requests.models import Student
+from API.models import Student
 from .common import login_required
 
 
