@@ -1,17 +1,24 @@
 import os, requests, re
 
 
-# Store requirements paths
+# Store files and folders paths
 requirements_file = "static/requirements.txt"
-download_folder = "static/libs/"
+css_folder = "static/min/css/"
+css_file = "requirements.css"
+js_folder = "static/min/js/"
+js_file = "requirements.js"
 inner_download_folder = "static/fonts/"
 # Regular expression and dictionary to extract and store inner URLs
 inner_urls_regex = re.compile("url\(['\"]?((?:\.\./|http)[\w:=./-]+?)(?:[#|?].+?)?['\"]?\)")
 inner_urls_folders = {}
+# Variables to combine all files
+css_files, js_files = "", ""
 
-# Create requirements folder if it's not already
-if not os.path.exists(download_folder):
-    os.makedirs(download_folder)
+# Create requirements folders if they're not already
+if not os.path.exists(css_folder):
+    os.makedirs(css_folder)
+if not os.path.exists(js_folder):
+    os.makedirs(js_folder)
 
 
 # Returns a function that handles matched inner URLs
@@ -47,9 +54,14 @@ for requirement in open(requirements_file).read().splitlines():
     # If it's a CSS file
     if name.endswith(".css"):
         # Check, store and replace any inner URL with it's future local path
-        file = inner_urls_regex.sub(get_inner_urls_handler(name[:-4], url), file)
-    # Store file in download folder with "UTF-8" encoding
-    open(os.path.join(download_folder, name), "w", encoding="utf-8").write(file)
+        css_files += inner_urls_regex.sub(get_inner_urls_handler(name[:-4], url), file)
+    # If it's a JS file
+    if name.endswith(".js"):
+        # Just combine it
+        js_files += file
+# Store CSS & JS files in their folders as one file with "UTF-8" encoding
+open(css_folder + css_file, "w", encoding="utf-8").write(css_files)
+open(js_folder + js_file, "w", encoding="utf-8").write(js_files)
 
 # Loop through CSS files with inner URLs
 for inner_folder, inner_urls in inner_urls_folders.items():
