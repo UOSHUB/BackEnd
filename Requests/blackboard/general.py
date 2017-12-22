@@ -7,7 +7,7 @@ __mobile = __web + "Bb-mobile-bb_bb60/"
 
 # Formats an item in Blackboard id format
 def __id(item):
-    return "_{}_1".format(item)
+    return f"_{item}_1"
 
 
 # Logs in Blackboard Mobile and returns the session

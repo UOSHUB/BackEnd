@@ -51,7 +51,7 @@ def courses_emails(raw_emails):
         # When email is about an assignment or content item being added
         elif preview.startswith("Content Item:") or preview.startswith("Assignment:"):
             match = __content.match(preview)
-            event = "New {}".format(match.group(1).split()[0])
+            event = "New " + match.group(1).split()[0]
         else:  # When email is about an announcement
             match = __announcement.match(subject)
             event = "New Announcement"

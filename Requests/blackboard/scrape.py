@@ -55,7 +55,7 @@ def terms_list(response):
         # Split term id to year and term semester
         year, semester = term_string[-4:], __terms[term_string[:-4]]
         # Store term in terms in {"Fall 2017-2018": "201710"} pairs
-        terms["{} {}-{}".format(semester["name"], year, int(year) + 1)] = year + semester["code"]
+        terms[f"{semester['name']} {year}-{int(year) + 1}"] = year + semester["code"]
     return terms
 
 
@@ -71,7 +71,7 @@ def courses_list(response, url=lambda x: x):
         # Split term id to year and semester
         year, semester = term_string[-4:], __terms[term_string[:-4]]
         # Get term full name of the following format "Fall 2017-2018"
-        term_name = "{} {}-{}".format(semester["name"], year, int(year) + 1)
+        term_name = f"{semester['name']} {year}-{int(year) + 1}"
         # If term hasn't been added yet
         if term_name not in terms:
             # Initialize it with an empty dictionary
@@ -81,7 +81,7 @@ def courses_list(response, url=lambda x: x):
             # Content links to Blackboard's documents and deadlines
             "Content": url(course_key + "/" + course.get("bbid")[1:-2]),
             # Details links to MyUDC's course details
-            "Details": url("{}/{}/{}".format(course_key, crn, year + semester["code"]))
+            "Details": url(f"{course_key}/{crn}/{year + semester['code']}")
         }
     return terms
 

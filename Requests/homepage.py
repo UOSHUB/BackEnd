@@ -37,7 +37,7 @@ def term_events(response, term_code):
     # Store term's year
     year = term_code[:4]
     # Format term name in "Fall Semester 2017/2017" format from term code
-    term_name = "{} {}/{}".format(seasons_codes[term_code[4:]], year, int(year) + 1)
+    term_name = f"{seasons_codes[term_code[4:]]} {year}/{int(year) + 1}"
     # Loop through available terms calendars
     for term in __parse(response).findall(".//div[@class='pageTurn']/div/div"):
         # If calendar's label matches requested term name
