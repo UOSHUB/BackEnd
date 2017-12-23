@@ -25,7 +25,7 @@ def grade_announcement(sid, course, grade):
         # Sender is UOS HUB NO-REPLY
         "UOS HUB <no-reply@uoshub.com>",
         # Recipient is the student
-        __email.format(sid),
+        __email(sid),
         # Email subject and body details the grade and the course
         "You got " + article + " " + grade + " in " + course,
         "This is an automated notification from uoshub.com<br><br>" +

@@ -10,7 +10,7 @@ def api(sid, pin, params, sub_url=""):
         # From outlook-api/messages/<sub_url>
         __root_url + "messages/" + sub_url,
         # Basic authentication using sid(@sharjah.ac.ae) & pin
-        auth=(__email.format(sid), pin),
+        auth=(__email(sid), pin),
         # Send all necessary request parameters
         params=params
         # Return data in JSON format

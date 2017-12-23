@@ -1,12 +1,17 @@
 import re
 
-# Commonly used outlook api link and email domain name
+
+# Formats student id into email address
+def __email(sid):
+    return sid + "@sharjah.ac.ae"
+
+
+# Commonly used outlook api link
 __root_url = "https://outlook.office365.com/api/v1.0/me/"
-__email = "{}@sharjah.ac.ae"
 __file = "Microsoft.OutlookServices.FileAttachment/"
 # Form a string of blocked emails in the personal category
 __black_list = " OR ".join([
-    __email.format(sender) for sender in [
+    __email(sender) for sender in [
         "no-reply", "Library", "register", "ITC", "uos-Admission", "chancellor-office"
     ]
 ])

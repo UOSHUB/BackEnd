@@ -13,7 +13,7 @@ def send_email(sid, pin, subject, body, recipients):
         # To outlook-api/sendmail
         __root_url + "sendmail",
         # Basic authentication using sid(@sharjah.ac.ae) & pin
-        auth=(__email.format(sid), pin),
+        auth=(__email(sid), pin),
         # JSON object containing sent email data
         json={
             # Email content and recipients
@@ -43,7 +43,7 @@ def delete_email(sid, pin, message_id):
         # Using outlook-api/messages/<message id>/move
         __root_url + "messages/" + message_id + "/move",
         # Basic authentication using sid(@sharjah.ac.ae) & pin
-        auth=(__email.format(sid), pin),
+        auth=(__email(sid), pin),
         # Move email to Deleted Items folder
         json={"DestinationId": "DeletedItems"}
         # Return the response status
