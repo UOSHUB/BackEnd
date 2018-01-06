@@ -49,6 +49,7 @@ def get_inner_urls_handler(folder_name, root_url):
 for requirement in open(requirements_file).read().splitlines():
     # Extract & store requirement name and URL
     name, url = requirement.split("==", 1)
+    print("Downloading", name)
     # Get requirement file
     file = requests.get(url).text
     # If it's a CSS file
@@ -59,12 +60,14 @@ for requirement in open(requirements_file).read().splitlines():
     if name.endswith(".js"):
         # Just combine it
         js_files += file
+print("Storing CSS & JS files")
 # Store CSS & JS files in their folders as one file with "UTF-8" encoding
 open(css_folder + css_file, "w", encoding="utf-8").write(css_files)
 open(js_folder + js_file, "w", encoding="utf-8").write(js_files)
 
 # Loop through CSS files with inner URLs
 for inner_folder, inner_urls in inner_urls_folders.items():
+    print("Downloading", inner_folder, "files")
     # Store file's downloads folder path
     sub_folder = os.path.join(inner_download_folder, inner_folder) + "/"
     # Create folder if it's not already
@@ -72,5 +75,7 @@ for inner_folder, inner_urls in inner_urls_folders.items():
         os.makedirs(sub_folder)
     # Loop through file's inner URLs
     for inner_url in inner_urls:
-        # Download file from URL and write it to the folder
+        # Download file from URL and store it into the folder
         open(sub_folder + inner_url.rsplit("/", 1)[-1], "wb").write(requests.get(inner_url).content)
+
+print("Done")
