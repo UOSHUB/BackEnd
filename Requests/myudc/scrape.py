@@ -147,7 +147,7 @@ def final_exams(page):
         # Store final's row cells
         cells = final.findall("td")
         # If final's date is announced (not all asterisk)
-        if any(letter != "*" for letter in cells[2].text):
+        if cells and any(letter != "*" for letter in cells[2].text):
             # Add final course key, title, date, start & end time and location
             data.append({
                 "course": cells[0].text,
