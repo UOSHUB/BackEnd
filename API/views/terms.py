@@ -80,41 +80,40 @@ class Terms(APIView):
                         ), term_code  # Send term code
                     )
                 )
-            # If data type requested is "deadlines" or "documents"
-            else:
-                # Initialize empty objects & store Blackboard cookies
-                threads = []
-                content = {"documents": [], "deadlines": []} if data_type == "content" else []
-                cookies = request.session["blackboard"]
+            # Otherwise, if data type requested is "deadlines" or "documents"
+            # Initialize empty objects & store Blackboard cookies
+            threads = []
+            content = {"documents": [], "deadlines": []} if data_type == "content" else []
+            cookies = request.session["blackboard"]
 
-                # A single course's content fetching function for threading
-                def course_data(course_key, course_id):
-                    # Get & scrape course's data
-                    data = blackboard.scrape.course_data(
-                        blackboard.get.course_data(
-                            # Send Blackboard cookies & course id to get
-                            cookies, course_id
-                            # Send requested type & MyUDC course key & id to scrape
-                        ), course_key, course_id, data_type
-                    )
-                    # If requested type is "content"
-                    if data_type == "content":
-                        # Add documents and deadlines to content dictionary
-                        content["documents"].extend(data["documents"])
-                        content["deadlines"].extend(data["deadlines"])
-                    # Otherwise, directly add data to array
-                    else: content.extend(data)
-                # Get & scrape then loop through Blackboard courses in term
-                for key, course in blackboard.scrape.courses_by_term(
-                    # Send Blackboard cookies to "get" and term id to "scrape"
-                    blackboard.get.courses_list(cookies), term_code
-                ).items():
-                    # Construct a thread to get each course's data in parallel
-                    thread = Thread(target=course_data, args=(key, course["courseId"]))
-                    # Start the thread and add it to threads
-                    thread.start()
-                    threads.append(thread)
-                # Loop through all threads and join them to main thread
-                [thread.join() for thread in threads]
-                # Return all courses' content after all threads are done
-                return Response(content)
+            # A single course's content fetching function for threading
+            def course_data(course_key, course_id):
+                # Get & scrape course's data
+                data = blackboard.scrape.course_data(
+                    blackboard.get.course_data(
+                        # Send Blackboard cookies & course id to get
+                        cookies, course_id
+                        # Send requested type & MyUDC course key & id to scrape
+                    ), course_key, course_id, data_type
+                )
+                # If requested type is "content"
+                if data_type == "content":
+                    # Add documents and deadlines to content dictionary
+                    content["documents"].extend(data["documents"])
+                    content["deadlines"].extend(data["deadlines"])
+                # Otherwise, directly add data to array
+                else: content.extend(data)
+            # Get & scrape then loop through Blackboard courses in term
+            for key, course in blackboard.scrape.courses_by_term(
+                # Send Blackboard cookies to "get" and term id to "scrape"
+                blackboard.get.courses_list(cookies), term_code
+            ).items():
+                # Construct a thread to get each course's data in parallel
+                thread = Thread(target=course_data, args=(key, course["courseId"]))
+                # Start the thread and add it to threads
+                thread.start()
+                threads.append(thread)
+            # Loop through all threads and join them to main thread
+            [thread.join() for thread in threads]
+            # Return all courses' content after all threads are done
+            return Response(content)

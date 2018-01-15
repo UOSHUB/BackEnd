@@ -2,6 +2,7 @@ from Requests import clean_course_name as __clean
 from lxml.etree import fromstring as __parse_xml
 from .values import __types, __events, __terms, __root_url_no_slash, __timestamp
 from math import ceil
+import re
 
 
 # Scrapes useful data from updates JSON object
@@ -90,13 +91,13 @@ def courses_list(response, url=lambda x: x):
 def courses_by_term(response, term_code):
     courses = {}
     # Get Blackboard term string in "FALL2017" format from term code
-    term_string = __terms[term_code[4:]]["name"] + term_code[:4]
-    # Loop through list of courses in parsed xml
+    term_string = re.compile("^" + __terms[term_code[4:]]["name"] + "[A-Z]*" + term_code[:4])
+    # Loop through list of courses in parsed XML
     for course in __parse_xml(response).find("courses"):
-        # Store course's Blackboard code
+        # Store course's MyUDC id, CRN and term name
         key, crn, full_term = course.get("courseid").split("_")
         # Only add courses in the requested term and in which the user is a student
-        if full_term.startswith(term_string) and course.get("roleIdentifier") == "S":
+        if term_string.match(full_term) and course.get("roleIdentifier") == "S":
             # Add course ids in {MyUDC id: Blackboard id} pairs
             courses[key] = {
                 # Store course's Blackboard id

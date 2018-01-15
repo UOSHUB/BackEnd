@@ -26,7 +26,7 @@ def updates(session):
         data = response.get("sv_streamEntries")
         # If any of the updates is a course update
         if data and any(
-            # Check if updates isn't a Blackboard assignment
+            # Check if updates isn't a Blackboard announcement
             update["providerId"] != "bb-announcement"
             # Loop through updates
             for update in data

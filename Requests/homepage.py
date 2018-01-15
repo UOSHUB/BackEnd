@@ -48,7 +48,7 @@ def term_events(response, term_code):
                 cells = event.findall("td")
                 # Add event's date and text to events array
                 events.append({
-                    "date": cells[2].text,
+                    "date": cells[2].text_content().strip(),
                     "text": cells[4].text_content().strip()
                 })
             return events
