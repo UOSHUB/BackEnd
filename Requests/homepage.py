@@ -1,14 +1,6 @@
 from lxml.html import fromstring as __parse
+from . import seasons_codes
 import requests
-
-seasons_codes = {
-    "10": "Fall Semester",
-    "20": "Spring Semester",
-    "30": "Summer Session",
-    "Fall": "10",
-    "Spring": "20",
-    "Summer": "30"
-}
 
 
 # Gets this year's Academic Calendar page

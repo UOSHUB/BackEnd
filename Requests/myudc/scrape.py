@@ -1,6 +1,5 @@
 from lxml.html import fromstring as __parse
-
-seasons_codes = {"Fall": "10", "Spring": "20", "Summer": "30"}
+from Requests import seasons_codes
 
 
 # Returns term code from string of "TERM YYYY-YYYY" format
