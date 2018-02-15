@@ -3,7 +3,7 @@ import re
 
 # Formats student id into email address
 def __email(sid):
-    return sid + "@sharjah.ac.ae"
+    return f"{sid}@sharjah.ac.ae"
 
 
 # Commonly used outlook api link
@@ -19,11 +19,11 @@ __black_list = " OR ".join([
 # Emails categories search queries
 __search_queries = {
     # Search for university announcements/events emails
-    "events": "from:(" + __black_list + ")",
+    "events": f"from:({__black_list})",
     # Search Blackboard generated notifications about courses related events
     "courses": "from:do-not-reply@sharjah.uos.edu",
     # Search for everything else, which we consider as personal emails
-    "personal": "NOT from:(do-not-reply@sharjah.uos.edu OR " + __black_list + ")"
+    "personal": f"NOT from:(do-not-reply@sharjah.uos.edu OR {__black_list})"
 }
 
 # Dictionary & Regex to extract "Reply" & "Forward" emails

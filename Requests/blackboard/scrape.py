@@ -123,7 +123,7 @@ def course_data(response, course_key, course_id, data_type=None):
                 "course": course_key, "courseId": course_id,
                 "contentId": deadline.get("contentid")[1:-2]
             }   # Loop through all course items which have a due date
-            for deadline in course.findall(".//*[@dueDate]")
+            for deadline in course.findall(".//*[@dueToday]")
         ]
         # If requested data type is "deadlines"
         if data_type == "deadlines":

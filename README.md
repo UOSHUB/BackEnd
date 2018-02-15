@@ -55,7 +55,7 @@ There're a lot of thing we still need to do in the back-end:
 - [x] Filter emails from repeated emails and from spam.
 - [ ] Build the tasks system to allow adding events, quizzes, tasks, etc.
 - [ ] Integrate Blackboard announcements and due dates on schedule.
-- [ ] View and notify about courses grades as they come out and calculate GPA.
+- [x] View and notify about courses grades as they come out and calculate GPA.
 - [ ] Allow changing password and profile photo without affecting the original ones.
 - [ ] Add the ability to mark all spam emails as read at once.
 - [x] Allow pushing information to UOS Websites, like dismissing an update or submitting a HW.
