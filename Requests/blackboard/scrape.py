@@ -54,7 +54,7 @@ def terms_list(response):
         # Extract term's string from course id in "FALL2017" format
         term_string = course.get("courseid").rsplit("_", 1)[-1].split("-")[0]
         # Split term id to year and term semester
-        year, semester = term_string[-4:], __terms[term_string[:-4]]
+        year, semester = term_string[-4:], __terms[term_string[:3]]
         # Store term in terms in {"Fall 2017-2018": "201710"} pairs
         terms[f"{semester['name']} {year}-{int(year) + 1}"] = year + semester["code"]
     return terms
@@ -70,7 +70,7 @@ def courses_list(response, url=lambda x: x):
         # Make sure that term id is of the following format "FALL2017"
         term_string = term_string.split("-")[0]
         # Split term id to year and semester
-        year, semester = term_string[-4:], __terms[term_string[:-4]]
+        year, semester = term_string[-4:], __terms[term_string[:3]]
         # Get term full name of the following format "Fall 2017-2018"
         term_name = f"{semester['name']} {year}-{int(year) + 1}"
         # If term hasn't been added yet

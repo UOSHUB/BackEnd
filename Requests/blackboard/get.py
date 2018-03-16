@@ -4,7 +4,7 @@ import requests, time
 
 
 # Gets updates and announcements in a JSON object
-def updates(session):
+def updates(session, counter=0):
     # Request updates from Blackboard stream and store returned cookies
     stream_cookies = requests.get(__stream_url, cookies=session, params={
         "cmd": "view",
@@ -32,9 +32,8 @@ def updates(session):
             for update in data
             # Return response if it contains requested data
         ): return data
-    # If loop finishes with no data, return an empty array
-    return []
-    # TODO: if loop finishes without response, get updates from mobile API
+    # If loop finishes with no data, try again or return an empty array
+    return updates(session, counter+1) if counter < 3 else []
 
 
 # Get student's basic info (name, major, college)

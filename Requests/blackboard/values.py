@@ -33,7 +33,7 @@ __terms = {
         "name": "SPR",
         "range": [5, 1]
     },
-    "FALL": {
+    "FAL": {
         "name": "Fall",
         "code": "10"
     },

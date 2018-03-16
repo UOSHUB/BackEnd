@@ -34,7 +34,7 @@ The `Requests` folder contains the code which handles the data retrieval and scr
 > The `Requests/*` folders are packages containing the `get.py` and `scrape.py` modules for UOS Websites.
 
 The `API` folder contains the API app which handles the REST API calls to UOS HUB views, services and database.
-> The `view/*` files contain logic executed when API views are called.
+> The `API/view/*` files contain logic executed when API views are called.
 
 The `Website` folder contains the Website app which handles the static files of the front-end.
 > The `Website/static` folder links to the [FrontEnd](https://github.com/UOSHUB/FrontEnd) repository which contains front-end's static files.
