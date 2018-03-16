@@ -1,6 +1,8 @@
 from lxml.html import fromstring as __parse_html, tostring as __get_html
+from lxml.etree import fromstring as __parse_xml
 from .general import root_url, web, mobile, api, __id
 from .values import __terms
+from math import ceil
 import requests
 
 
@@ -177,3 +179,40 @@ def survey_courses(response):
     import re, json
     # Search for the Json object that contains the course list and parse it
     return json.loads(re.search("json_ecb = ({.*?});", response).group(1))
+
+
+# Gets student's specific course grades
+def get_course_grades(session, course_id):
+    # Request form Blackboard Mobile
+    return mobile(
+        # Get data from course data url
+        "courseData", session, {
+            # Specify section as "grades"
+            "course_section": "GRADES",
+            # Specify requested course id
+            "course_id": __id(course_id)
+        }
+    )
+
+
+# Scrapes student's specific course grades
+def scrape_course_grades(response, course_key):
+    grades = []
+    # Loop through grades in available in course
+    for grade in __parse_xml(response).find("grades"):
+        print(grade.get("name"))
+        # Store last modified time
+        time = grade.get("lastInstructorActivity")
+        # If it's a graded items
+        if time:
+            # Add grade dictionary to grades
+            grades.append({
+                # Add item's title, grade & course key
+                "course": course_key,
+                "title": grade.get("name"),
+                "grade": ceil(float(grade.get("grade"))),
+                # Add total grade and uploaded time
+                "outOf": ceil(float(grade.get("pointspossible"))),
+                "time": time
+            })
+    return grades

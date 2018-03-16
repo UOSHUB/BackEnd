@@ -20,6 +20,7 @@ class Grades(APIView):
             # Initialize empty objects & store Blackboard cookies
             grades, threads = [], []
             cookies = request.session["blackboard"]
+            sid = request.session["sid"]
 
             # A single course's grades fetching function for threading
             def course_grades(course_key, course_id):
@@ -27,8 +28,8 @@ class Grades(APIView):
                 grades.extend(
                     blackboard.scrape.course_grades(
                         blackboard.get.course_grades(
-                            # Send Blackboard cookies & course id
-                            cookies, course_id
+                            # Send Blackboard cookies, sid & course id
+                            cookies, sid, course_id
                         ), course_key
                     )
                 )

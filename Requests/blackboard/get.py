@@ -74,14 +74,22 @@ def course_data(session, course_id):
 
 
 # Gets student's specific course grades
-def course_grades(session, course_id):
-    # Request form Blackboard Mobile
-    return __mobile(
-        # Get data from course data url
-        "courseData", session, {
-            # Specify section as "grades"
-            "course_section": "GRADES",
-            # Specify requested course id
-            "course_id": __id(course_id)
-        }
-    )
+def course_grades(session, sid, course_id):
+    # Construct course root URL
+    course_url = f"courses/{__id(course_id)}/gradebook/"
+    # Request course scores from Blackboard API
+    scores = __api(
+        # Specify current student id
+        course_url + "users/userName:" + sid,
+        # Send session snd required fields
+        session, {"fields": "score,status,columnId"}
+    )["results"]
+    # If any of the course scores is graded
+    if any(score.get("status") == "Graded" for score in scores):
+        # Return the scores alongside with their column names
+        return scores, __api(
+            # Request course grades columns schema
+            course_url + "columns", session,
+            # Specify required fields
+            {"fields": "name,id,score.possible,grading.due"}
+        )["results"]

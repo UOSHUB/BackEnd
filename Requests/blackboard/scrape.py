@@ -151,23 +151,25 @@ def course_data(response, course_key, course_id, data_type=None):
     return data
 
 
-# Scrapes student's specific course grades
 def course_grades(response, course_key):
     grades = []
-    # Loop through grades in available in course
-    for grade in __parse_xml(response).find("grades"):
-        # Store last modified time
-        time = grade.get("lastInstructorActivity")
-        # If it's a graded items
-        if time:
+    # If there are any grades
+    if response:
+        # Split response into scores and schema
+        scores, schema = response
+        # Loop through scores
+        for score in scores:
+            # If score is not graded, then skip it
+            if score.get("status") != "Graded": continue
+            # Get the column corresponding to the current score
+            column = next(column for column in schema if column["id"] == score["columnId"])
             # Add grade dictionary to grades
             grades.append({
-                # Add item's title, grade & course key
+                # Grade's course key and title
                 "course": course_key,
-                "title": grade.get("name"),
-                "grade": ceil(float(grade.get("grade"))),
-                # Add total grade and uploaded time
-                "outOf": ceil(float(grade.get("pointspossible"))),
-                "time": time
+                "title": column["name"],
+                # Grade and full mark rounded up
+                "grade": ceil(float(score["score"])),
+                "outOf": ceil(float(column["score"]["possible"])),
             })
     return grades
