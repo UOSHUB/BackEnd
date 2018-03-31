@@ -52,9 +52,12 @@ def courses_emails(raw_emails):
         elif preview.startswith("Content Item:") or preview.startswith("Assignment:"):
             match = __content.match(preview)
             event = "New " + match.group(1).split()[0]
-        else:  # When email is about an announcement
+        # When email is about an announcement (Not submission)
+        elif subject != "Submission received":
             match = __announcement.match(subject)
             event = "New Announcement"
+        # If invalid, skip it
+        else: continue
         # Add extracted email details to emails
         emails.append(dict(
             __common(email, None, match.group("title")),
