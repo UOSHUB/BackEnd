@@ -1,4 +1,4 @@
-Django==2.0.3
+Django==2.0.4
 lxml==4.2.1
 requests==2.18.4
 netifaces==0.10.6

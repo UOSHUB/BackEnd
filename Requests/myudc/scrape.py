@@ -150,7 +150,6 @@ def final_exams(page):
             # Add final course key, title, date, start & end time and location
             data.append({
                 "course": cells[0].text,
-                "title": cells[1].text_content(),
                 "date": cells[2].text,
                 "start": cells[3].text,
                 "end": cells[4].text,

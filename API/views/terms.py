@@ -33,7 +33,7 @@ class Terms(APIView):
             for term_code, term_name in terms.items()
         })
 
-    # Term's Blackboard content handler
+    # Term's MyUDC details handler
     class Details(APIView):
         """
         This returns student's term details,
