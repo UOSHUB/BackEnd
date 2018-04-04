@@ -44,3 +44,24 @@ def unofficial_transcript(sid):
         # Student id
         "P_ID": sid.upper()
     }).content
+
+
+# Gets student's whole study plan
+def study_plan(sid, reg_term_code):
+    return report({
+        # Report cipher
+        "REPORT": "SYRSPOS_REP",
+        # Still don't know these two
+        "P_PROG_CODE": "ALL",
+        "P_EXP_GRD": "ALL",
+        # Collage number
+        "P_COLL_CODE": "ALL",
+        # Campus abbreviation
+        "P_CAMP_CODE": "ALL",
+        # Degree level initials
+        "P_LEVEL_CODE": "ALL",
+        # Student id
+        "P_STUDENT_ID": sid.upper(),
+        # Student enrollment term code
+        "P_TERM_CODE": reg_term_code
+    }).content
