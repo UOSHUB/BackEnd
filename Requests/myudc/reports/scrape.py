@@ -23,3 +23,16 @@ def new_grades(transcript, term_code, known_grades):
                         course.find("GRDE_CODE_FINAL").text
                     ))
     return grades
+
+
+def remaining_courses(study_plan):
+    plan = __parse_xml(study_plan)
+    return {
+        "crhrs": int(plan.find(".//SMBPOGN_REQ_CREDITS_OVERALL").text)
+            - int(plan.find(".//SMBPOGN_ACT_CREDITS_OVERALL").text),
+        "courses": [
+            course.find("COURSE_NUMB1").text
+            for course in plan.findall(".//G_GROUP_COURSES")
+            if course.find("CF_IS_PASSED").text == "N"
+        ]
+    }

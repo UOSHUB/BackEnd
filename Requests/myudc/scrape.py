@@ -156,3 +156,28 @@ def final_exams(page):
                 "location": __extract_location(cells[5].text.split())
             })
     return data
+
+
+# TODO: Finish implementing these functions
+def registrable_courses_from_all(page, subjects):
+    courses = []
+    # Loop through finals table's rows which contain data
+    for section in __parse(page).findall(".//table[@class='datadisplaytable']")[1:]:
+        # Store final's row cells
+        subject = section.find("./tr[2]/th").text[:4]
+        if subject in subjects:
+            for course in section.findall(".//form[@action='/prod_enUS/bwskfcls.P_GetCrse']"):
+                courses.append(subject)
+    return courses
+
+
+def registrable_courses(page):
+    courses = []
+    # Loop through finals table's rows which contain data
+    for course in __parse(page).findall(".//form[@action='/prod_enUS/bwskfcls.P_GetCrse']"):
+        # Store final's row cells
+        rows = course.findall("tr")
+        if len(rows) <= 2: continue
+        subject = rows[1].find("th").text
+        print(subject)
+    return courses
