@@ -44,6 +44,9 @@ urlpatterns = [
     url(r"^finals/((?P<term_code>[0-9]{6})/)?$", Finals.as_view()),
     # MyUDC holds path
     url(r"^holds/$", Holds.as_view()),
+    # Design Schedule path (MyUDC and its Reports)
+    # /api/design returns a list of registrable courses
+    # url(r"^design/(?P<term_code>[0-9]{6})/$", Design.as_view()),
     # Services subscription path
     # url(r"^subscribe/$", Subscribe.as_view()),
     # Blackboard assignment submission path
