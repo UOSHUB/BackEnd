@@ -40,10 +40,17 @@ def updates(session, counter=0):
 def basic_info(session, sid):
     # Request data from API url while passing student id
     student = __api("users/userName:" + sid, session, {"fields": "name,job"})
+    # Split last two pieces of last name and store them
+    last_name = student["name"]["family"].rsplit(" ", 2)[-2:]
+    # If last name has a two characters prefix (e.g. 'Al', 'El', 'Ba')
+    if len(last_name) == 2 and len(last_name[0]) == 2:
+        # Join the prefix with last name
+        last_name[1] = " ".join(last_name)
+
     # Extract and return a dictionary of student info
     return {
+        "lastName": last_name[-1],
         "firstName": student["name"]["given"],
-        "lastName": student["name"]["family"].rsplit(" ", 1)[-1],
         "major": student["job"]["department"],
         "college": student["job"]["company"],
         "studentId": sid
