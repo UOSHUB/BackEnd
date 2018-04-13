@@ -1,6 +1,6 @@
 from Requests import clean_course_name as __clean
 from lxml.etree import fromstring as __parse_xml
-from .values import __types, __events, __terms, __root_url_no_slash, __timestamp
+from .values import __types, __events, __terms, __timestamp, __document_ids
 from math import ceil
 import re
 
@@ -133,15 +133,15 @@ def course_data(response, course_key, course_id, data_type=None):
     if data_type != "deadlines":
         # Scrape documents and add them to data
         data["documents"] = [
-            {   # Store document's title, upload date & course key
-                "course": course_key,
-                "title": document.getparent().getparent().get("name"),
-                "file": document.get("name"),
-                "time": document.get("modifiedDate"),
-                # From document's URL, get its id and content id using Regex
-                "url": __root_url_no_slash + document.get("url")
-            }   # Loop through all course documents
-            for document in course.findall(".//attachment")
+            dict(  # Extract document xid and content id using Regex from its URL
+                zip(("xid", "contentId"), __document_ids.search(document.get("url")).groups()),
+                # Store document's title, upload date & course key
+                course=course_key,
+                title=document.getparent().getparent().get("name"),
+                file=document.get("name"),
+                time=document.get("modifiedDate"),
+            )   # Loop through all course documents (not more than 20)
+            for document in course.findall(".//attachment")[:20]
         ]
         # If requested data type is "documents"
         if data_type == "documents":
