@@ -115,5 +115,11 @@ class Terms(APIView):
                 threads.append(thread)
             # Loop through all threads and join them to main thread
             [thread.join() for thread in threads]
+            # When viewing documents from browser
+            if data_type == "documents" and not client_side(request):
+                # Loop through documents
+                for document in content:
+                    # Make relative URL into an absolute (clickable) one
+                    document["url"] = request.build_absolute_uri(document.get("url"))
             # Return all courses' content after all threads are done
             return Response(content)

@@ -133,14 +133,14 @@ def course_data(response, course_key, course_id, data_type=None):
     if data_type != "deadlines":
         # Scrape documents and add them to data
         data["documents"] = [
-            dict(  # Extract document xid and content id using Regex from its URL
-                zip(("xid", "contentId"), __document_ids.search(document.get("url")).groups()),
+            {  # Extract document xid and content id using Regex from its URL
+                "url": "/api/document/{1}/{0}/".format(*__document_ids.search(document.get("url")).groups()),
                 # Store document's title, upload date & course key
-                course=course_key,
-                title=document.getparent().getparent().get("name"),
-                file=document.get("name"),
-                time=document.get("modifiedDate"),
-            )   # Loop through all course documents (not more than 20)
+                "course": course_key,
+                "title": document.getparent().getparent().get("name"),
+                "file": document.get("name"),
+                "time": document.get("modifiedDate"),
+            }   # Loop through all course documents (not more than 20)
             for document in course.findall(".//attachment")[:20]
         ]
         # If requested data type is "documents"
