@@ -24,6 +24,8 @@ urlpatterns = [
     url(r"^courses/(?P<course_key>[0-9]{7})/((?P<course_id>[0-9]{5})/)?$", Courses.Content.as_view()),
     # /api/courses/<MyUDC key>/<CRN>/<term> returns course's details from MyUDC
     url(r"^courses/(?P<course_key>[0-9]{7})/(?P<crn>[0-9]{5})/((?P<term_code>[0-9]{6})/)?$", Courses.Details.as_view()),
+    # /api/document/<content id>/<xid> returns a course's document file from Blackboard
+    url(r"^document/(?P<content_id>[0-9]+)/(?P<xid>[0-9]+)/$", Courses.Documents.as_view()),
     # Outlook emails path
     # /api/emails returns a list of available emails categories
     # /api/emails/<category> returns 20 of specified category's emails

@@ -1,3 +1,4 @@
+from django.http.response import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Requests import blackboard, myudc
@@ -74,3 +75,25 @@ class Courses(APIView):
                     )
                 )
             )
+
+    # Course's Blackboard document download handler
+    class Documents(APIView):
+        """
+        Downloads a course's document file
+        """
+        # Returns a course's document file
+        @staticmethod
+        @login_required("blackboard")
+        def get(request, content_id, xid):
+            # Get course document data and name from Blackboard
+            file_data, file_name = blackboard.get.course_document(
+                # Send Blackboard cookies
+                request.session["blackboard"],
+                # Send document content id and xid
+                content_id, xid
+            )
+            # Construct a response with document content and type
+            response = HttpResponse(**file_data)
+            # Specify document file name in response and return it
+            response["Content-Disposition"] = f'attachment; filename="{file_name}"'
+            return response
