@@ -1,4 +1,4 @@
-from .general import mobile as __mobile, api as __api, __id
+from .general import mobile as __mobile, api as __api, __id, __documents
 from .values import __stream_url
 import requests, time
 
@@ -99,3 +99,19 @@ def course_grades(session, sid, course_id):
             # Specify required fields
             {"fields": "name,id,score.possible,grading.due"}
         )["results"]
+
+
+# Download a course's document
+def course_document(session, content_id, xid):
+    document = requests.get(
+        # Get document by content id and xid
+        __documents.format(content_id, xid),
+        # Send login session
+        cookies=session,
+    )
+    # Return document in form ({content, type}, name)
+    return {
+        "content": document.content,
+        "content_type": document.headers.get("Content-Type")
+        # Extract document file name from URL
+    }, document.url.rsplit("/", 1)[1]

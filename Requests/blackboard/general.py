@@ -1,8 +1,10 @@
 import requests
 # Root and sub URLs of UOS Blackboard
 root_url = "https://elearning.sharjah.ac.ae/"
-__web = "webapps/"
-__mobile = __web + "Bb-mobile-bb_bb60/"
+__web = root_url + "webapps/"
+__api = root_url + "learn/api/public/v1/"
+__mobile = root_url + "webapps/Bb-mobile-bb_bb60/"
+__documents = root_url + "bbcswebdav/pid-{0}-dt-content-rid-{1}_1/xid-{1}_1"
 
 
 # Formats an item in Blackboard id format
@@ -15,7 +17,7 @@ def login(sid, pin):
     # Post HTTP request and store its response
     response = requests.post(
         # Post data to login url
-        root_url + __mobile + "sslUserLogin",
+        __mobile + "sslUserLogin",
         # Send student id and password
         data={"username": sid, "password": pin}
     )
@@ -31,7 +33,7 @@ def login(sid, pin):
 def web(link, session, params=None):
     return requests.get(
         # Get data from website url + sub-url
-        root_url + __web + link,
+        __web + link,
         # Send login session
         cookies=session,
         # Send required data
@@ -43,7 +45,7 @@ def web(link, session, params=None):
 def mobile(link, session, params=None):
     return requests.get(
         # Get data from mobile url + sub-url
-        root_url + __mobile + link,
+        __mobile + link,
         # Send login session
         cookies=session,
         # Send required data
@@ -55,7 +57,7 @@ def mobile(link, session, params=None):
 def api(link, session, params=None):
     return requests.get(
         # Get data from api url + api sub-url
-        root_url + "learn/api/public/v1/" + link,
+        __api + link,
         # Send login session
         cookies=session,
         # Send required data
