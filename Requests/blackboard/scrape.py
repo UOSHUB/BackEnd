@@ -134,7 +134,7 @@ def course_data(response, course_key, course_id, data_type=None):
         # Scrape documents and add them to data
         data["documents"] = [
             {  # Extract document xid and content id using Regex from its URL
-                "url": "/api/document/{1}/{0}/".format(*__document_ids.search(document.get("url")).groups()),
+                "id": "_".join(__document_ids.search(document.get("url")).groups()),
                 # Store document's title, upload date & course key
                 "course": course_key,
                 "title": document.getparent().getparent().get("name"),

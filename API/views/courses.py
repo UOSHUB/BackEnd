@@ -78,19 +78,14 @@ class Courses(APIView):
 
     # Course's Blackboard document download handler
     class Documents(APIView):
-        """
-        Downloads a course's document file
-        """
         # Returns a course's document file
         @staticmethod
         @login_required("blackboard")
-        def get(request, content_id, xid):
+        def get(request, document_id):
             # Get course document data and name from Blackboard
             file_data, file_name = blackboard.get.course_document(
-                # Send Blackboard cookies
-                request.session["blackboard"],
-                # Send document content id and xid
-                content_id, xid
+                # Send Blackboard cookies, and document content id and xid
+                request.session["blackboard"], *document_id.split("_")
             )
             # Construct a response with document content and type
             response = HttpResponse(**file_data)

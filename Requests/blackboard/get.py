@@ -1,5 +1,6 @@
 from .general import mobile as __mobile, api as __api, __id, __documents
 from .values import __stream_url
+from urllib.parse import unquote
 import requests, time
 
 
@@ -102,16 +103,20 @@ def course_grades(session, sid, course_id):
 
 
 # Download a course's document
-def course_document(session, content_id, xid):
+def course_document(session, xid, content_id):
     document = requests.get(
         # Get document by content id and xid
         __documents.format(content_id, xid),
         # Send login session
         cookies=session,
     )
-    # Return document in form ({content, type}, name)
-    return {
-        "content": document.content,
-        "content_type": document.headers.get("Content-Type")
-        # Extract document file name from URL
-    }, document.url.rsplit("/", 1)[1]
+    # If document exists
+    if document.status_code == 200:
+        # Return document in form ({content, type}, name)
+        return {
+            "content": document.content,
+            "content_type": document.headers.get("Content-Type")
+            # Extract & decode document file name from URL
+        }, unquote(document.url.rsplit("/", 1)[1])
+    # Otherwise, return nones
+    return None, None
