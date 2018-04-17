@@ -26,6 +26,8 @@ urlpatterns = [
     url(r"^courses/(?P<course_key>[0-9]{7})/(?P<crn>[0-9]{5})/((?P<term_code>[0-9]{6})/)?$", Courses.Details.as_view()),
     # /api/documents/<document id> returns a course's document file from Blackboard
     url(r"^documents/(?P<document_id>[0-9]+_[0-9]+)/$", Courses.Documents.as_view()),
+    # /api/documents/zip/<documents ids>/<zip name> returns a course's documents in a zip file from Blackboard
+    url(r"^documents/zip/(?P<documents_ids>[0-9]+_[0-9]+(?:,[0-9]+_[0-9]+)*)/((?P<zip_name>.+)/)?$", Courses.Documents.Zip.as_view()),
     # Outlook emails path
     # /api/emails returns a list of available emails categories
     # /api/emails/<category> returns 20 of specified category's emails

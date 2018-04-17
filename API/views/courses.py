@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from Requests import blackboard, myudc
 from .common import login_required
 from .api_root import APIRoot
+from threading import Thread
+from zipfile import ZipFile
 
 
 # Student's courses requests handler
@@ -92,3 +94,39 @@ class Courses(APIView):
             # Specify document file name in response and return it
             response["Content-Disposition"] = f'attachment; filename="{file_name}"'
             return response
+
+        # Course's Blackboard documents download as a zip handler
+        class Zip(APIView):
+            # Returns a course's documents in a zip file
+            @staticmethod
+            @login_required("blackboard")
+            def get(request, documents_ids, zip_name):
+                # Create an HTTP response with content type zip
+                response = HttpResponse(content_type="application/x-zip-compressed")
+                # Specify zip file name in response
+                response["Content-Disposition"] = f'attachment; filename="{zip_name or "documents"}.zip"'
+                # Open a zip file that'll contain downloaded documents
+                zip_file = ZipFile(response, mode="w")
+
+                # Downloads and adds document to zip file
+                def download_document(document_id):
+                    # Get course document data and name from Blackboard
+                    file_data, file_name = blackboard.get.course_document(
+                        # Send Blackboard cookies, and document content id and xid
+                        request.session["blackboard"], *document_id.split("_")
+                    )
+                    # Write downloaded document to zip file
+                    zip_file.writestr(file_name, file_data["content"])
+                # Create a threads queue
+                threads = []
+                # Loop through requested documents ids
+                for document_id in documents_ids.split(","):
+                    # Append a new thread to queue that downloads and zips document
+                    threads.append(Thread(target=download_document, args=(document_id,)))
+                    # Start created thread
+                    threads[-1].start()
+                # Join all started threads to main one
+                [thread.join() for thread in threads]
+                # Once done, close zip file and return it
+                zip_file.close()
+                return response
