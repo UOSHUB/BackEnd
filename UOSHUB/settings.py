@@ -1,7 +1,6 @@
 """ Django settings for UOSHUB project. """
 
-import os
-import netifaces
+import os, netifaces, dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -97,9 +96,9 @@ TEMPLATES = [
 WSGI_APPLICATION = "UOSHUB.wsgi.application"
 ROOT_URLCONF = "UOSHUB.urls"
 
-# SQLite Database
+# Database depending on current environment
 DATABASES = {
-    "default": {
+    "default": dj_database_url.config() or {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
