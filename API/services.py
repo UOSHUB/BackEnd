@@ -1,25 +1,23 @@
-from Requests import term_code, get_path
 from Requests.myudc import reports
 from Requests.zoho import send
+from Requests import term_code
 
 from datetime import datetime
 from threading import Thread
-from os.path import exists
 from time import sleep
+import os
 
 
 # Checks for new grades every 20 minutes during the day
-def check_grades(timestamp_path):
+def check_grades():
     # Import database models here to avoid early run errors
     from .models import Student, KnownGrade
     # Loop infinitely
     while True:
         # Store current date & time
         now = datetime.now()
-        # Open the timestamp file
-        with open(timestamp_path, "w") as timestamp:
-            # Write current timestamp number in it
-            timestamp.write(str(now.timestamp()))
+        # Refresh timestamp in environment
+        os.environ["timestamp"] = str(now.timestamp())
         # Loop through all subscribed students
         for student in Student.objects.all():
             # Scrape a list of new grades from reports
@@ -47,9 +45,7 @@ def check_grades(timestamp_path):
 
 # Starts a thread to check grades when first run
 def start_grades_checking():
-    # Store timestamp file path
-    timestamp_path = get_path("timestamp")
-    # If file doesn't exist or it hasn't been 10 seconds since last run (to avoid Django double run)
-    if not exists(timestamp_path) or datetime.now().timestamp() - float(open(timestamp_path).read()) > 10:
+    # If timestamp doesn't exist or it hasn't been 10 seconds since last run (to avoid Django double run)
+    if datetime.now().timestamp() - float(os.environ.get("timestamp", 0)) > 10:
         # Start a thread to check for new grades
-        Thread(target=check_grades, args=[timestamp_path]).start()
+        Thread(target=check_grades).start()
