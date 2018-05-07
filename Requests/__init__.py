@@ -1,5 +1,4 @@
 from datetime import datetime as __datetime
-from os import path as __path
 import re as __regex
 
 # Semesters (code, name) pairs
@@ -28,9 +27,3 @@ term_code = str(__this.year) + seasons_codes[
 def clean_course_name(name):
     # From non English letters and from section numbers at the end
     return __clean_end.sub("", __english.sub("", name).strip()).strip()
-
-
-# Gets a cache file path
-def get_path(file):
-    # Return a path of the file in Requests package's cache folder
-    return __path.join(__path.dirname(__file__), "__pycache__/" + file + ".txt")
