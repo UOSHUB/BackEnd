@@ -1,7 +1,6 @@
 from Requests.myudc import reports
 from Requests.zoho import send
 from Requests import term_code
-
 from datetime import datetime
 from threading import Thread
 from time import sleep
@@ -9,7 +8,7 @@ import os
 
 
 # Checks for new grades every 20 minutes during the day
-def check_grades():
+def check_grades(once=False):
     # Import database models here to avoid early run errors
     from .models import Student, KnownGrade
     # Loop infinitely
@@ -35,8 +34,10 @@ def check_grades():
                     send.grade_announcement(student.sid, course_title, grade)
                     # Add the course of the grade to the database (to be ignored next time)
                     KnownGrade(course_key=course_key, student=student).save()
+        # Break if only once
+        if once: break
         # If it's after midnight
-        if 0 < now.hour < 7:
+        elif 0 < now.hour < 7:
             # Sleep until the morning
             sleep((now.replace(hour=7, minute=0, second=0) - now).total_seconds())
         # Otherwise, sleep for 20 minutes

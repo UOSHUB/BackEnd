@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from API.models import Student
 from .common import login_required
+from ..models import Student
 
 
 # Subscribe requests handler
