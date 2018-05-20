@@ -15,9 +15,10 @@ seasons_codes = {
 __english = __regex.compile("[^\w /&.]", __regex.ASCII)
 __clean_end = __regex.compile("[0-9]+$")
 
-# Calculate term of "201710" format
+# Compute term of "201710" format
 __this = __datetime.today()
-term_code = str(__this.year) + seasons_codes[
+# If it's spring or summer semester, deduct one year to match academic year
+term_code = str(__this.year - (1 if __this.month < 8 else 0)) + seasons_codes[
     # Spring: 1st to 5th month, Summer: 6th to 7th and Fall: 8th to 12th
     "Fall" if __this.month > 7 else "Spring" if __this.month < 6 else "Summer"
 ]
