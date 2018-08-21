@@ -6,4 +6,5 @@ from . import get, scrape, edit
 # Login to outlook
 def login(sid, pin):
     # HTTP get request from api root with basic authentication that returns success or failure
-    return __login(__root_url, auth=(__email(sid), pin)).status_code == 200
+    response = __login(__root_url, auth=(__email(sid), pin))
+    return response.json()["DisplayName"] if response.status_code == 200 else False

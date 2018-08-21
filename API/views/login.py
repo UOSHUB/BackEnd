@@ -20,14 +20,16 @@ class Login(APIView):
         # Store submitted credentials
         sid = request.data.get("sid")
         pin = request.data.get("pin")
-        # Login to outlook, if credentials are wrong
-        if not outlook.login(sid, pin):
+        # Login to outlook
+        name = outlook.login(sid, pin)
+        # If credentials are wrong
+        if not name:
             # Return error message with BAD_REQUEST status
             return Response("Wrong Credentials!", status=400)
         # Store submitted credentials in session
         request.session.update({"sid": sid, "pin": pin})
-        # Return an empty response indicating success, or go to GET if browser
-        return Response() if client_side(request) else redirect(request.path)
+        # Return name and sid indicating success, or go to GET if on browser
+        return Response({"name": name, "studentId": sid}) if client_side(request) else redirect(request.path)
 
     # Returns login session/status on GET request
     @staticmethod
