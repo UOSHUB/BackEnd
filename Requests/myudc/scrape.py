@@ -181,3 +181,16 @@ def registrable_courses(page):
         subject = rows[1].find("th").text
         print(subject)
     return courses
+
+
+# Gets student's basic info from admission card page
+def student_details(page):
+    # Extract tables from page and store major's table
+    tables = __parse(page).findall(".//table[@class='datadisplaytable']/tr")
+    major = tables[3].findall("./td")
+    # Return student's origin, collage and major
+    return {
+        "origin": tables[1].findall("./td")[2].text,
+        "college": major[1].text,
+        "major": major[2].text
+    }

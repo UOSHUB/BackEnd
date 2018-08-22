@@ -129,3 +129,9 @@ def offered_courses_select(session, subjects):
         # Send login session
         cookies=session
     ).text
+
+
+# Gets student's admission application details page
+def admission_card(session):
+    # Coming from "My Admission" page
+    return page("uos_admission_card.p_dispadmissioncard", "MyAdmMnu", session)

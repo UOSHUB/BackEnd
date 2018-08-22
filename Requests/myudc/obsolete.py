@@ -12,9 +12,3 @@ def dir_profile(session):
 def account_summary(session, by_term=False):
     # Coming from "Student Account" page
     return page("bwskoacc.P_ViewAcct" + ["Total", ''][by_term], "ARMnu", session)
-
-
-# Gets student's admission log card page
-def admission_card(session):
-    # Coming from "My Admission" page
-    return page("uos_admission_card.p_dispadmissioncard", "MyAdmMnu", session)
