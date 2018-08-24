@@ -21,7 +21,7 @@ class APIRoot(APIView):
         # Otherwise, display a list of available API calls
         return Response(dict({
             "Login": url("login/"),
-            "Layout Details": url("details/"),
+            "Student": url("details/"),
             "Updates": url("updates/"),
             "Terms": url("terms/"),
             "Grades": url("grades/"),

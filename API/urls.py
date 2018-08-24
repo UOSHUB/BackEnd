@@ -5,7 +5,7 @@ urlpatterns = [
     # Login path
     url(r"^login/$", Login.as_view()),
     # Layout details path
-    url(r"^details/$", LayoutDetails.as_view()),
+    url(r"^details/$", Student.as_view()),
     # Blackboard updates path
     url(r"^updates/((?P<update_id>[0-9]{8})/)?$", Updates.as_view()),
     # Terms path (Blackboard and MyUDC)

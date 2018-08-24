@@ -1,6 +1,6 @@
 from .api_root import APIRoot
 from .login import Login
-from .details import LayoutDetails
+from .details import Student
 from .updates import Updates
 from .terms import Terms
 from .grades import Grades
