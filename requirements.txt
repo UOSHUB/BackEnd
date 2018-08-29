@@ -1,8 +1,8 @@
-Django==2.1.1
+Django==2.1.2
 lxml==4.2.5
-requests==2.19.1
+requests==2.20.0
 netifaces==0.10.7
-djangorestframework==3.8.2
+djangorestframework==3.9.0
 django-compressor==2.2
 slimit==0.8.1
 gunicorn==19.9.0

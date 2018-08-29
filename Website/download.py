@@ -13,6 +13,9 @@ inner_urls_regex = re.compile("url\(['\"]?((?:\.\./|http)[\w:=./-]+?)(?:[#|?].+?
 inner_urls_folders = {}
 # Variables to combine all files
 css_files, js_files = "", ""
+# Regular expressions to detect code comments
+multi_comments_regex = re.compile("/\*[\n!].*?\*/", re.DOTALL)
+single_comments_regex = re.compile("//#.*?\n")
 
 # Create requirements folders if they're not already
 if not os.path.exists(css_folder):
@@ -51,15 +54,20 @@ for requirement in open(requirements_file).read().splitlines():
     name, url = requirement.split("==", 1)
     print("Downloading", name)
     # Get requirement file
-    file = requests.get(url).text
+    response = requests.get(url)
+    if response.status_code != 200:
+        print("ERROR: Couldn't download", name)
+        continue
+    code = multi_comments_regex.sub("", response.text)
     # If it's a CSS file
     if name.endswith(".css"):
         # Check, store and replace any inner URL with it's future local path
-        css_files += inner_urls_regex.sub(get_inner_urls_handler(name[:-4], url), file)
+        css_files += inner_urls_regex.sub(get_inner_urls_handler(name[:-4], url), code)
     # If it's a JS file
     if name.endswith(".js"):
         # Just combine it
-        js_files += file
+        js_files += single_comments_regex.sub("", code)
+
 print("Storing CSS & JS files")
 # Store CSS & JS files in their folders as one file with "UTF-8" encoding
 open(css_folder + css_file, "w", encoding="utf-8").write(css_files)
