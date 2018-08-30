@@ -19,7 +19,7 @@ class Student(APIView):
         return Response(
             # Get & scrape student's basic info from MyUDC
             myudc.scrape.student_details(
-                myudc.get.admission_card(
+                myudc.get.summarized_schedule(
                     # Send MyUDC cookies
                     request.session["myudc"]
                 )

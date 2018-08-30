@@ -81,6 +81,10 @@ def holds(session):
     return page("bwskoacc.P_ViewHold", "AdminMnu", session)
 
 
+def summarized_schedule(session):
+    return page("uos_dispschd.P_DispCrseSchdSum", "RegMnu", session)
+
+
 # Gets student's final exams page for a specific term
 def final_exams(session, term_code):
     return page(
