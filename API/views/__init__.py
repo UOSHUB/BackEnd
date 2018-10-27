@@ -9,6 +9,7 @@ from .emails import Emails
 from .calendar import Calendar
 from .finals import Finals
 from .holds import Holds
+from .reports import Reports
 # from .design import Design
 from .subscribe import Subscribe
 from .submit import Submit

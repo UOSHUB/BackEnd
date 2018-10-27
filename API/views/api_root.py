@@ -30,6 +30,7 @@ class APIRoot(APIView):
             "Calendar": url("calendar/"),
             "Final Exams": url("finals/"),
             "Holds": url("holds/"),
+            "Reports": url("reports/"),
             # "Design Schedule": url("design/"),
             "Refresh": url("refresh/"),
         }, **(  # If requested path isn't a supported API call, add an error message to indicate it

@@ -3,7 +3,7 @@ import requests
 
 # URL of MyUDC reports (extracted from MyUDC root URL)
 __url = __root_url[:-10] + "reports/rwservlet"
-
+_format = "xml"
 
 # General report request with common attributes
 def report(options):
@@ -13,8 +13,8 @@ def report(options):
         url=__url, data=dict({
             # Request from UOS server
             "server": "RptSvr_uosas5_INB_asinst",
-            # Get report in XML format
-            "desformat": "xml",
+            # Get report in specified format
+            "desformat": _format,
             # Cache the report until it's processed
             "destype": "cache",
             # User id of reports server
@@ -25,7 +25,7 @@ def report(options):
 
 
 # Gets student's unofficial transcript
-def unofficial_transcript(sid):
+def unofficial_transcript(sid, _=None):
     return report({
         # Report cipher
         "REPORT": "SYFTRTE_REP",
@@ -64,4 +64,65 @@ def study_plan(sid, reg_term_code):
         "P_STUDENT_ID": sid.upper(),
         # Student enrollment term code
         "P_TERM_CODE": reg_term_code
+    }).content
+
+
+# Gets student's personal information
+def personal_information(sid, _=None):
+    return report({
+        # Report cipher
+        "REPORT": "SYREXDT_REP",
+        # Student id
+        "P_SPRIDEN_ID": sid.upper()
+        # Encode content in utf-8 as it contains Arabic
+    }).content.decode()
+
+
+# Gets student's summarized schedule
+def summarized_schedule(sid, term_code):
+    return report({
+        # Report cipher
+        "REPORT": "SYFSSCE_REP",
+        # Student ids range (from, to)
+        "P_ID_FROM": sid.upper(),
+        "P_ID_TO": sid.upper(),
+        # term code
+        "P_TERM_CODE": term_code,
+    }).content
+
+
+# Gets student's final exams schedule
+def final_exams(sid, term_code):
+    return report({
+        # Report cipher
+        "REPORT": "SYRSSFE_REP",
+        # Student id
+        "P_ID": sid.upper(),
+        # term code
+        "P_TERM_CODE": term_code
+    }).content
+
+
+# Gets offered courses catalog for a term
+def offered_courses(_, term_code):
+    return report({
+        # Report cipher
+        "REPORT": "SYRSCHE_REP",
+        # Campus abbreviation
+        "CAMP": "%",
+        # Collage number
+        "COLL": "%",
+        # Department short name
+        "DEPT": "%",
+        # Degree level initials
+        "LEVL": "ALL",
+        # Major registration restrictions
+        "P_IND": "ALL",
+        # Availability for web add/drop
+        "P_WEB": "Y",
+        # Class capacity range (min, max)
+        "MAX": "258",
+        "MIN": "0",
+        # term code
+        "TERM": term_code
     }).content
