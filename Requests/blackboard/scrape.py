@@ -27,7 +27,9 @@ def updates(raw_updates, courses):
             "title": item["title"],
             "dismiss": details["actorId"],
             "time": __timestamp(update["se_timestamp"] / 1000).strftime("%Y-%m-%dT%H:%M:%S") + "+0400",
-            # Get meaningful equivalent of event from stored values
+            # Store update message body content if present
+            "body": details["announcementBody"] or item["contentExtract"],
+            # Get meaningful equivalent of event type from stored values
             "event": __types[event[0]] + (
                 # Add event type as long as it's not an announcement
                 " " + __events.get(event[1].split("_")[-1], "") if event[0] != "AN" else ""

@@ -33,11 +33,18 @@ class Reports(APIView):
                 description: request.build_absolute_uri(method + "/")
                 for description, method in reports_types.items()
             })
-        # Return student's pdf report if found
-        return HttpResponse(
+        # If report type is not supported
+        if report_type not in reports_types.values():
+            # Return 404 report not found error
+            return Response("Report not found!", status=404)
+        term = term_code or default_term
+        # Get report and create response
+        response = HttpResponse(
             # Get report from MyUDC using sent term code or the default one otherwise
-            getattr(reports, report_type)(request.session["sid"], term_code or default_term),
+            getattr(reports, report_type)(request.session["sid"], term),
             # Specify type as pdf for client handling
             content_type="application/pdf"
-            # Otherwise, return 404 error
-        ) if report_type in reports_types.values() else Response("Report not found!", status=404)
+        )
+        # Name returned pdf report by its type and term
+        response["Content-Disposition"] = f'filename="{report_type}_{term}.pdf"'
+        return response
