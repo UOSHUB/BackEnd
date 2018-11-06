@@ -22,13 +22,13 @@ def emails_list(sid, pin, count=25, offset=0, search=None):
     # Request from API using credentials and parameters
     return api(sid, pin, dict(
         {   # $top: number of requested emails
-            "$top": count,
+            "$top": int(count) + int(offset),
             # $select: returns selected fields only (required ones)
             "$select": "DateTimeReceived,Subject,BodyPreview,Sender"
-        }, **(  # If a search query is required, send it in the request. Otherwise $skip: number of skipped emails
-            {"$search": f"\"{__search_queries[search]}\""} if search else {"$skip": offset}
+        }, **(  # If a search query is required, send it in the request
+            {"$search": f"\"{__search_queries[search]}\""} if search else {}
         )
-    ))["value"]
+    ))["value"][int(offset):]
 
 
 # Gets a single email's body and its images

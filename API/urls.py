@@ -32,7 +32,7 @@ urlpatterns = [
     # /api/emails returns a list of available emails categories
     # /api/emails/<category> returns 20 of specified category's emails
     # /api/emails/<category>/<count> returns <count> of specified category's emails
-    url(r"^emails/((?P<category>personal|courses|events)/((?P<count>[0-9]{1,3})/)?)?$", Emails.as_view()),
+    url(r"^emails/((?P<category>personal|courses|events)/((?P<count>[0-9]{1,3})/((?P<offset>[0-9]{1,3})/)?)?)?$", Emails.as_view()),
     url(r"^emails/send/$", Emails.Send.as_view()),
     # /api/emails/<message id> returns a single email's HTML body content
     url(r"^emails/(?P<message_id>[\w-]+=)/$", Emails.Body.as_view()),
@@ -54,9 +54,11 @@ urlpatterns = [
     # /api/design returns a list of registrable courses
     # url(r"^design/(?P<term_code>[0-9]{6})/$", Design.as_view()),
     # Services subscription path
-    url(r"^subscribe/$", Subscribe.as_view()),
+    # url(r"^subscribe/$", Subscribe.as_view()),
     # Blackboard assignment submission path
     url(r"^submit/(?P<course_id>[0-9]{5})/(?P<content_id>[0-9]{7})/$", Submit.as_view()),
+    # Demo data path
+    url(r"^demo/$", Demo.as_view()),
     # Refresh data path
     url(r"^refresh/((?P<date>\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d)/)?$", Refresh.as_view()),
     # API root path

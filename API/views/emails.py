@@ -14,7 +14,7 @@ class Emails(APIView):
     # Returns emails array by category on GET request
     @staticmethod
     @login_required()
-    def get(request, category, count):
+    def get(request, category, count, offset=0):
         # If emails category is requested
         if category:
             # Return array of requested emails
@@ -28,7 +28,9 @@ class Emails(APIView):
                         # Specify emails category
                         search=category,
                         # Specify emails count (20 by default)
-                        count=count or 20
+                        count=count or 20,
+                        # Specify numbers of emails to skip (0 by default)
+                        offset=offset or 0
                     )
                 )
             )
