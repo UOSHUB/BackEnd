@@ -1,11 +1,12 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime, timedelta
+from random import randint as rand
 from json import loads as json
 from os.path import dirname
-from random import randint as rand
 
 day = timedelta(days=1)
+hour = timedelta(hours=1)
 
 # Demo request handler
 class Demo(APIView):
@@ -15,32 +16,31 @@ class Demo(APIView):
     # Returns demo student data on GET request
     @staticmethod
     def get(request):
-        days = datetime.today() + day + day
+        days = datetime.now().replace(hour=11, minute=59)
         date = lambda d: d.isoformat().split('.')[0] + "+0400"
         with open(dirname(__file__) + "/../demo.json", encoding="utf-8") as demo:
             data = json(demo.read())
         for index, course_id in enumerate(data["courses"].keys()):
-            i = index + 1
             days -= day
+            i = index + 1
             data["deadlines"].append({
                 "title": f"Assignment #{i} Submission",
-                "dueDate": date(days + day),
-                "time": date(days),
+                "dueDate": date(days + day*3),
                 "course": course_id
             })
-            data["documents"].append({
-                "course": course_id,
-                "title": f"Document File #{i}",
-                "file": f"document file #{i}.pdf",
-                "time": date(days)
-            })
+            for j in range(5):
+                data["documents"].append({
+                    "course": course_id,
+                    "title": f"Document File #{i+j}",
+                    "file": f"document file #{i+j}.pdf",
+                })
             exam = rand(12, 18)
             data["finals"].append({
                 "course": course_id,
                 "date": f"{rand(15, 25)}-DEC-2018",
                 "start": f"{rand(12, 18)}:00",
                 "end": f"{exam + 2}:00",
-                "location": f"M{rand(1, 12)}, 10{rand(1, 9)}"
+                "location": f"{['M', 'W'][rand(0, 1)]}{rand(3, 10)}, 10{rand(1, 9)}"
             })
             data["grades"].append({
                 "course": course_id,
@@ -62,7 +62,7 @@ class Demo(APIView):
                     "from": f"sender{i}@sharjah.ac.ae",
                     "id": f"{course_id}{i}",
                     "sender": f"Sender #{i}",
-                    "time": date(days),
+                    "time": date(days + hour * (10 - j)),
                     "title": f"Email Title #{i}"
                 })
                 data["emails"]["body"][f"{course_id}{i}"] = f"Email #{i} Sample Content<br/><br/><br/>This will be filled with email stuff"
