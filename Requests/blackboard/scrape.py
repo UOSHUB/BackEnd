@@ -142,8 +142,8 @@ def course_data(response, course_key, course_id, data_type=None):
                 "title": document.getparent().getparent().get("name"),
                 "file": document.get("name"),
                 "time": document.get("modifiedDate"),
-            }   # Loop through all course documents (not more than 20)
-            for document in course.findall(".//attachment")[:20]
+            }   # Loop through all course documents (not more than 25)
+            for document in course.findall(".//attachment")[:25]
         ]
         # If requested data type is "documents"
         if data_type == "documents":
