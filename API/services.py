@@ -24,7 +24,7 @@ def check_grades(once=False):
                 # Get student's transcript and pass it with the term code
                 reports.get.unofficial_transcript(student.sid), term_code,
                 # Also, pass it a list of student's already known grades from database
-                [grade.course_key for grade in KnownGrade.objects.all()]
+                [grade.course_key for grade in KnownGrade.objects.filter(student=student)]
             )
             # If there are any new grades
             if len(new_grades) > 0:
