@@ -15,7 +15,7 @@ template = '\n<script type="text/ng-template" id="{}">{}</script>'
 # Pages which need html appended to it
 appends = {
     "welcome.html": static("login"),
-    "dashboard.html": static("account", *cards("deadlines", "emails", "finals", "grades", "updates")),
+    "dashboard.html": static("account", *cards("deadlines", "emails", "finals", "holds", "updates")),
     "courses.html": static(*cards("documents", "info", "mailto"))
 }
 

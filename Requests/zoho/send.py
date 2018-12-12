@@ -2,10 +2,10 @@ from Requests.outlook.values import __email
 import os, requests
 
 # Get token from environment and store it in dictionary
-auth = {"Authorization": os.environ.get("TOKEN")}
+auth = {"Authorization": os.getenv("TOKEN")}
 
 # Get account URL from environment and store it
-url = os.environ.get("ACCOUNT")
+url = os.getenv("ACCOUNT")
 
 
 # General function to send an email using Zoho API

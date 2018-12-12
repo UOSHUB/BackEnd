@@ -47,6 +47,6 @@ def check_grades(once=False):
 # Starts a thread to check grades when first run
 def start_grades_checking():
     # If timestamp doesn't exist or it hasn't been 10 seconds since last run (to avoid Django double run)
-    if datetime.now().timestamp() - float(os.environ.get("timestamp", 0)) > 10:
+    if datetime.now().timestamp() - float(os.getenv("timestamp", 0)) > 10:
         # Start a thread to check for new grades
         Thread(target=check_grades).start()

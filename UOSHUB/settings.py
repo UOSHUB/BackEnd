@@ -6,10 +6,10 @@ import os, netifaces, dj_database_url
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Use SECRET_KEY from current machine"s environment, otherwise use this one below
-SECRET_KEY = os.environ.get("SECRET_KEY", "ue3axgr(ny2a027!bb2_exy#040)$vbq8q04(ogs80p76m**2d")
+SECRET_KEY = os.getenv("SECRET_KEY", "ue3axgr(ny2a027!bb2_exy#040)$vbq8q04(ogs80p76m**2d")
 
 # Use DEBUG from current machine"s environment, otherwise set it to True
-DEBUG = os.environ.get("DEBUG") != "False"
+DEBUG = os.getenv("DEBUG") != "False"
 
 # Add machine's IP address to Django"s allowed hosts
 # This is necessary because otherwise Gunicorn will reject the connections
@@ -51,7 +51,7 @@ MIDDLEWARE = [
 # Django compressor configurations
 COMPRESS_ENABLED = True
 COMPRESS_OUTPUT_DIR = "min"
-COMPRESS_ROOT = os.path.join(BASE_DIR, "Website/static/")
+COMPRESS_ROOT = os.path.join(BASE_DIR, "Website", "static")
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",

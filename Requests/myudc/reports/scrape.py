@@ -2,7 +2,7 @@ from lxml.etree import fromstring as __parse_xml
 
 
 # Scrapes new grades from transcript report which aren't in known course
-def new_grades(transcript, term_code, known_grades):
+def new_grades(transcript, term_code, known_grades=()):
     # List to store new grades
     grades = []
     # Loop through the available terms in transcript
