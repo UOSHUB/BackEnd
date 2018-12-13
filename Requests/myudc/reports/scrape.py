@@ -1,28 +1,52 @@
 from lxml.etree import fromstring as __parse_xml
 
+# Grade to GPA value dictionary
+__to_gpa = {
+    "A": 4,
+    "B+": 3.5,
+    "B": 3,
+    "C+": 2.5,
+    "C": 2,
+    "D+": 1.5,
+    "D": 1
+}.get
 
-# Scrapes new grades from transcript report which aren't in known course
-def new_grades(transcript, term_code, known_grades=()):
-    # List to store new grades
+# Scrapes grades and GPA from transcript report
+def grades_and_gpa(transcript, term_code):
+    # Parse xml and declare variables
+    xml = __parse_xml(transcript)
+    try:
+        quality = float(xml.find(".//SHRLGPA_QUALITY_POINTS").text)
+        hours = int(xml.find(".//SHRLGPA_HOURS_EARNED").text)
+    except AttributeError: quality, hours = 0, 0
+    all_hours = hours
+    term_quality = 0
     grades = []
     # Loop through the available terms in transcript
-    for term in __parse_xml(transcript).find(".//LIST_G_ACADEMIC_HIST_TERM"):
+    for term in xml.find(".//LIST_G_ACADEMIC_HIST_TERM") or ():
         # If the term is the selected one
         if term.find("TERM_CODE_KEY").text == term_code:
             # Loop through courses in that term
             for course in term.find("LIST_G_ACADEMIC_HIST_DETAILS"):
-                # Store course key
-                course_key = course.find("SUBJ_CODE").text
-                # If course isn't already among the known grades
-                if course_key not in known_grades:
-                    # Add its grade to the new grades list
-                    grades.append((
-                        # In tuple form of course (key, title, grade)
-                        course_key,
-                        course.find("COURSE_TITLE").text,
-                        course.find("GRDE_CODE_FINAL").text
-                    ))
-    return grades
+                # Store its credit hours and grade
+                crhrs = int(course.find("CREDIT_HOURS").text)
+                grade = course.find("GRDE_CODE_FINAL").text
+                # Add them to total hours and term quality
+                all_hours += crhrs
+                term_quality += __to_gpa(grade, 0) * crhrs
+                # Add course's grade details to the grades list
+                grades.append((
+                    # In tuple form of (key, title, grade)
+                    course.find("SUBJ_CODE").text,
+                    course.find("COURSE_TITLE").text,
+                    grade
+                ))
+    # Calculate and return new grades and (term, new and old GPA)
+    return grades, {
+        "term": term_quality / (all_hours - hours) if all_hours != hours else 0,
+        "new": (term_quality + quality) / all_hours if all_hours else 0,
+        "old": quality / hours if hours else 0
+    }
 
 
 def remaining_courses(study_plan):
