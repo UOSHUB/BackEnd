@@ -17,6 +17,7 @@ def check_grades(once=False):
         now = datetime.now()
         # Refresh timestamp in environment
         os.environ["timestamp"] = str(now.timestamp())
+        reports._format = "xml"
         # Loop through all subscribed students
         for student in Student.objects.all():
             # Scrape a list of new grades from reports

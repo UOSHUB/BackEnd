@@ -2,10 +2,9 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Requests.myudc.reports import get as reports
+from Requests import term_code as default_term
 
-# Some constant config variables
-reports._format = "pdf"
-default_term = "201810"
+# Define list of reports types
 reports_types = {
     report_type: report_type.lower().replace(" ", "_")
     for report_type in (
@@ -37,6 +36,8 @@ class Reports(APIView):
         if report_type not in reports_types.values():
             # Return 404 report not found error
             return Response("Report not found!", status=404)
+        # Set report variables
+        reports._format = "xml"
         term = term_code or default_term
         # Get report and create response
         response = HttpResponse(
