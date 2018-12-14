@@ -112,7 +112,7 @@ USE_I18N = False
 STATIC_URL = "/static/"
 
 # This is necessary so that Nginx can handle requests for static files
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # This adds compression and caching support through WhiteNoise
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
