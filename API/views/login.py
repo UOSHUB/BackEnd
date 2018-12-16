@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import redirect
 from Requests import outlook
+from ..models import Student
 
 
 # Login requests handler
@@ -29,7 +30,9 @@ class Login(APIView):
         # Store submitted credentials in session
         request.session.update({"sid": sid, "pin": pin})
         # Return name and sid indicating success, or go to GET if on browser
-        return Response({"name": name, "studentId": sid}) if client_side(request) else redirect(request.path)
+        return Response({
+            "name": name, "studentId": sid, "subscribed": Student.objects.filter(sid=sid).exists()
+        }) if client_side(request) else redirect(request.path)
 
     # Returns login session/status on GET request
     @staticmethod

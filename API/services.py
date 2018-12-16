@@ -1,6 +1,5 @@
+from Requests import zoho, term_code
 from Requests.myudc import reports
-from Requests.zoho import send
-from Requests import term_code
 from datetime import datetime
 from threading import Thread
 from time import sleep
@@ -17,22 +16,22 @@ def check_grades(once=False):
         now = datetime.now()
         # Refresh timestamp in environment
         os.environ["timestamp"] = str(now.timestamp())
-        reports._format = "xml"
         # Loop through all subscribed students
         for student in Student.objects.all():
             # Scrape a list of new grades from reports
-            new_grades = reports.scrape.new_grades(
+            reports._format = "xml"
+            courses, gpa = reports.scrape.grades_and_gpa(
                 # Get student's transcript and pass it with the term code
                 reports.get.unofficial_transcript(student.sid), term_code,
                 # Also, pass it a list of student's already known grades from database
                 [grade.course_key for grade in KnownGrade.objects.filter(student=student)]
             )
-            # If there are any new grades
-            if len(new_grades) > 0:
-                # Loop though new grades and their courses
-                for course_key, course_title, grade in new_grades:
+            # Loop though new grades and their courses
+            for course_key, course_title, grade, new in courses:
+                # If course grade is new
+                if new:
                     # Send an email announcement to the student about the grade
-                    send.grade_announcement(student.sid, course_title, grade)
+                    zoho.send.grades_summary(student.sid, courses, gpa, (grade, course_title))
                     # Add the course of the grade to the database (to be ignored next time)
                     KnownGrade(course_key=course_key, student=student).save()
         # Break if only once

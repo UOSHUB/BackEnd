@@ -46,7 +46,7 @@ class Subscribe(APIView):
     @login_required()
     def delete(request):
         # Store current student database model object
-        student = Student.objects.filter(sid=request.session["sid"])[0]
+        student = Student.objects.filter(sid=request.session["sid"])
         # If student is stored among the subscribers
         if student.exists():
             # Remove student from the database
