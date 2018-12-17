@@ -4,6 +4,7 @@ from ..models import Student, KnownGrade
 from Requests import zoho, term_code
 from .common import login_required
 from Requests.myudc import reports
+from datetime import datetime
 from threading import Thread
 
 
@@ -40,6 +41,35 @@ class Subscribe(APIView):
             return Response(status=201)
         # Otherwise return ALREADY REPORTED response
         return Response(status=208)
+
+    @staticmethod
+    def patch(request):
+        # Checks grades for all subscribed students
+        def check_grades():
+            # Loop through all subscribed students
+            for student in Student.objects.all():
+                # Scrape a list of new grades from reports
+                reports._format = "xml"
+                courses, gpa = reports.scrape.grades_and_gpa(
+                    # Get student's transcript and pass it with the term code
+                    reports.get.unofficial_transcript(student.sid), term_code,
+                    # Also, pass it a list of student's already known grades from database
+                    [grade.course_key for grade in KnownGrade.objects.filter(student=student)]
+                )
+                # Loop though new grades and their courses
+                for course_key, course_title, grade, new in courses:
+                    # If course grade is new
+                    if new:
+                        # Send an email announcement to the student about the grade
+                        zoho.send.grades_summary(student.sid, courses, gpa, (grade, course_title))
+                        # Add the course of the grade to the database (to be ignored next time)
+                        KnownGrade(course_key=course_key, student=student).save()
+        # If it's not after midnight
+        if not 0 < datetime.now().hour < 7:
+            # Execute grades checking process on a new thread
+            Thread(target=check_grades, daemon=True).start()
+        # Return OK
+        return Response()
 
     # Unsubscribe from services on DELETE request
     @staticmethod
