@@ -1,6 +1,6 @@
 Django==2.1.4
 lxml==4.2.5
-requests==2.20.1
+requests==2.21.0
 netifaces==0.10.7
 djangorestframework==3.9.0
 django-compressor==2.2
