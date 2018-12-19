@@ -1,9 +1,10 @@
 from rest_framework.response import Response
+from Requests.outlook import edit as outlook
 from rest_framework.views import APIView
 from ..models import Student, KnownGrade
-from Requests import zoho, term_code
 from .common import login_required
 from Requests.myudc import reports
+from Requests import term_code
 from threading import Thread
 
 
@@ -33,7 +34,7 @@ class Subscribe(APIView):
                     # Store all of them as known grades in the database
                     KnownGrade(student=student, course_key=course[0]).save()
                 # Send an email with grades and GPA summary
-                zoho.send.grades_summary(sid, courses, gpa)
+                outlook.send_grades_summary(sid, courses, gpa)
             # Execute subscription process on a new thread
             Thread(target=subscribe, daemon=True).start()
             # Return CREATED response
@@ -60,7 +61,7 @@ class Subscribe(APIView):
                     # If course grade is new
                     if new:
                         # Send an email announcement to the student about the grade
-                        zoho.send.grades_summary(student.sid, courses, gpa, (grade, course_title))
+                        outlook.send_grades_summary(student.sid, courses, gpa, (grade, course_title))
                         # Add the course of the grade to the database (to be ignored next time)
                         KnownGrade(course_key=course_key, student=student).save()
         # Execute grades checking process on a new thread
