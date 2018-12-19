@@ -3,7 +3,7 @@ import requests
 
 
 # Sends an simple email from a user to another
-def send_email(sid, pin, subject, body, recipients):
+def send_email(sid, pin, subject, body, recipients, save=True):
     # "recipients" has to be an array of strings
     if isinstance(recipients, str):
         # So if it's a string, put it in an array
@@ -30,7 +30,7 @@ def send_email(sid, pin, subject, body, recipients):
                     {"EmailAddress": {"Address": recipient}} for recipient in recipients
                 ]
                 # Whether to show email in "Sent Items" page or not
-            }, "SaveToSentItems": "true"
+            }, "SaveToSentItems": save
         }
         # Return the response status
     ).status_code

@@ -31,7 +31,7 @@ def grades_and_gpa(transcript, term_code, known_grades=()):
                 # Store its credit hours, grade and key
                 crhrs = int(course.find("CREDIT_HOURS").text)
                 grade = course.find("GRDE_CODE_FINAL").text
-                key = course.find("SUBJ_CODE").text
+                key = course.find("SUBJ_CODE").text[-7:]
                 # Add them to total hours and term quality
                 all_hours += crhrs
                 term_quality += __to_gpa(grade, 0) * crhrs

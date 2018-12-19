@@ -4,7 +4,6 @@ from ..models import Student, KnownGrade
 from Requests import zoho, term_code
 from .common import login_required
 from Requests.myudc import reports
-from datetime import datetime
 from threading import Thread
 
 
@@ -64,10 +63,8 @@ class Subscribe(APIView):
                         zoho.send.grades_summary(student.sid, courses, gpa, (grade, course_title))
                         # Add the course of the grade to the database (to be ignored next time)
                         KnownGrade(course_key=course_key, student=student).save()
-        # If it's not after midnight
-        if not 0 < datetime.now().hour < 7:
-            # Execute grades checking process on a new thread
-            Thread(target=check_grades, daemon=True).start()
+        # Execute grades checking process on a new thread
+        Thread(target=check_grades, daemon=True).start()
         # Return OK
         return Response()
 
