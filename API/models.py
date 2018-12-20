@@ -14,8 +14,8 @@ class Student(models.Model):
 
 # A database class describing a student's known course grade
 class KnownGrade(models.Model):
-    # Course MyUDC key as a 7 digits primary key
-    course_key = models.CharField(max_length=7, primary_key=True)
+    # Course MyUDC key as a 7 digits string
+    course_key = models.CharField(max_length=7)
     # Link known grade to its student with its id as a foreign key
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
 

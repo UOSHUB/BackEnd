@@ -6,7 +6,23 @@ from .common import login_required
 from Requests.myudc import reports
 from Requests import term_code
 from threading import Thread
+from time import sleep
 
+
+# Fetches grades and GPA from transcript
+def fetch_grades_and_gpa(student, known_grades=(), loop=0):
+    reports._format = "xml"
+    try:  # Scrape a list of new grades from reports
+        return reports.scrape.grades_and_gpa(
+            # Get student's transcript and pass it with the term code
+            reports.get.unofficial_transcript(student.sid), term_code, known_grades
+        )
+    except Exception:
+        # If an error occurs, repeat thrice and sleep
+        if loop < 3:
+            print("sleeping for a while...")
+            sleep(4)
+            fetch_grades_and_gpa(student, known_grades, loop + 1)
 
 # Subscribe requests handler
 class Subscribe(APIView):
@@ -20,15 +36,12 @@ class Subscribe(APIView):
         if not Student.objects.filter(sid=sid).exists():
             # Subscribes student and sends grades summary email
             def subscribe():
-                reports._format = "xml"
-                # Scrape grades and GPA from transcript report
-                courses, gpa = reports.scrape.grades_and_gpa(
-                    # Get student's transcript and pass it with the term code
-                    reports.get.unofficial_transcript(sid), term_code
-                )
                 # Create and save student in the database
                 student = Student(sid=sid)
                 student.save()
+                # Scrape grades and GPA from transcript report
+                reports._format = "xml"
+                courses, gpa = fetch_grades_and_gpa(student)
                 # Loop through all courses
                 for course in courses:
                     # Store all of them as known grades in the database
@@ -48,13 +61,10 @@ class Subscribe(APIView):
         def check_grades():
             # Loop through all subscribed students
             for student in Student.objects.all():
-                # Scrape a list of new grades from reports
-                reports._format = "xml"
-                courses, gpa = reports.scrape.grades_and_gpa(
-                    # Get student's transcript and pass it with the term code
-                    reports.get.unofficial_transcript(student.sid), term_code,
-                    # Also, pass it a list of student's already known grades from database
-                    [grade.course_key for grade in KnownGrade.objects.filter(student=student)]
+                # Fetch grades and GPA from transcript
+                courses, gpa = fetch_grades_and_gpa(
+                    # Pass student and a list of his already known grades from database
+                    student, [grade.course_key for grade in KnownGrade.objects.filter(student=student)]
                 )
                 # Loop though new grades and their courses
                 for course_key, course_title, grade, new in courses:

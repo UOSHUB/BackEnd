@@ -17,7 +17,7 @@ def grades_and_gpa(transcript, term_code, known_grades=()):
     xml = __parse_xml(transcript)
     try:
         quality = float(xml.find(".//SHRLGPA_QUALITY_POINTS").text)
-        hours = int(xml.find(".//SHRLGPA_HOURS_EARNED").text)
+        hours = int(xml.find(".//SHRLGPA_GPA_HOURS").text)
     except AttributeError: quality, hours = 0, 0
     all_hours = hours
     term_quality = 0

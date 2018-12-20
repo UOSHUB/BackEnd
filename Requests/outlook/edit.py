@@ -22,7 +22,7 @@ def send_email(sid, pin, subject, body, recipients, save=True):
                 "Subject": subject,
                 # Email text body
                 "Body": {
-                    "ContentType": "Text",
+                    "ContentType": "HTML",
                     "Content": body
                 },
                 # Loop through and add recipients of the email

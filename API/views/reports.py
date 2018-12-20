@@ -37,7 +37,7 @@ class Reports(APIView):
             # Return 404 report not found error
             return Response("Report not found!", status=404)
         # Set report variables
-        reports._format = "xml"
+        reports._format = "pdf"
         term = term_code or default_term
         # Get report and create response
         response = HttpResponse(
