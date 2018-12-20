@@ -26,6 +26,15 @@ def fetch_grades_and_gpa(student, known_grades=(), loop=0):
 
 # Subscribe requests handler
 class Subscribe(APIView):
+    # Gets students dictionary on GET request
+    @staticmethod
+    def get(request):
+        # Returns dictionary of subscribed students with list of their known grades
+        return Response({
+            student.sid: [grade.course_key for grade in KnownGrade.objects.filter(student=student)]
+            for student in Student.objects.all()
+        })
+
     # Subscribe to services on POST request
     @staticmethod
     @login_required()
@@ -55,25 +64,23 @@ class Subscribe(APIView):
         # Otherwise return ALREADY REPORTED response
         return Response(status=208)
 
+    # Checks new grades on PATCH request
     @staticmethod
     def patch(request):
         # Checks grades for all subscribed students
         def check_grades():
             # Loop through all subscribed students
-            for student in Student.objects.all():
+            for sid, known_grades in Subscribe.get(request).data.items():
                 # Fetch grades and GPA from transcript
-                courses, gpa = fetch_grades_and_gpa(
-                    # Pass student and a list of his already known grades from database
-                    student, [grade.course_key for grade in KnownGrade.objects.filter(student=student)]
-                )
+                courses, gpa = fetch_grades_and_gpa(sid, known_grades)
                 # Loop though new grades and their courses
                 for course_key, course_title, grade, new in courses:
                     # If course grade is new
                     if new:
                         # Send an email announcement to the student about the grade
-                        outlook.send_grades_summary(student.sid, courses, gpa, (grade, course_title))
+                        outlook.send_grades_summary(sid, courses, gpa, (grade, course_title))
                         # Add the course of the grade to the database (to be ignored next time)
-                        KnownGrade(course_key=course_key, student=student).save()
+                        KnownGrade(course_key=course_key, student=Student.objects.get(sid=sid)).save()
         # Execute grades checking process on a new thread
         Thread(target=check_grades, daemon=True).start()
         # Return OK
