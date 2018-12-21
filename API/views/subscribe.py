@@ -15,14 +15,15 @@ def fetch_grades_and_gpa(student, known_grades=(), loop=0):
     try:  # Scrape a list of new grades from reports
         return reports.scrape.grades_and_gpa(
             # Get student's transcript and pass it with the term code
-            reports.get.unofficial_transcript(student.sid), term_code, known_grades
+            reports.get.unofficial_transcript(student), term_code, known_grades
         )
-    except Exception:
+    except Exception as error:
         # If an error occurs, repeat thrice and sleep
         if loop < 3:
-            print("sleeping for a while...")
+            print("Error:", error, "sleeping for a while...")
             sleep(4)
             fetch_grades_and_gpa(student, known_grades, loop + 1)
+
 
 # Subscribe requests handler
 class Subscribe(APIView):
@@ -50,13 +51,14 @@ class Subscribe(APIView):
                 student.save()
                 # Scrape grades and GPA from transcript report
                 reports._format = "xml"
-                courses, gpa = fetch_grades_and_gpa(student)
+                courses, gpa = fetch_grades_and_gpa(sid)
                 # Loop through all courses
                 for course in courses:
                     # Store all of them as known grades in the database
                     KnownGrade(student=student, course_key=course[0]).save()
                 # Send an email with grades and GPA summary
                 outlook.send_grades_summary(sid, courses, gpa)
+                print("Subscribed and notified", sid)
             # Execute subscription process on a new thread
             Thread(target=subscribe, daemon=True).start()
             # Return CREATED response
@@ -71,6 +73,7 @@ class Subscribe(APIView):
         def check_grades():
             # Loop through all subscribed students
             for sid, known_grades in Subscribe.get(request).data.items():
+                print("Checking grades for", sid)
                 # Fetch grades and GPA from transcript
                 courses, gpa = fetch_grades_and_gpa(sid, known_grades)
                 # Loop though new grades and their courses
@@ -81,6 +84,7 @@ class Subscribe(APIView):
                         outlook.send_grades_summary(sid, courses, gpa, (grade, course_title))
                         # Add the course of the grade to the database (to be ignored next time)
                         KnownGrade(course_key=course_key, student=Student.objects.get(sid=sid)).save()
+                        print("Grade sent by email to", sid)
         # Execute grades checking process on a new thread
         Thread(target=check_grades, daemon=True).start()
         # Return OK
