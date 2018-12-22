@@ -31,7 +31,7 @@ class Login(APIView):
         request.session.update({"sid": sid, "pin": pin})
         # Return name and sid indicating success, or go to GET if on browser
         return Response({
-            "name": name, "studentId": sid, "subscribed": Student.objects.filter(sid=sid).exists()
+            "name": name, "studentId": sid, "subscribed": Student.objects.filter(sid__iexact=sid).exists()
         }) if client_side(request) else redirect(request.path)
 
     # Returns login session/status on GET request

@@ -6,6 +6,7 @@ from .common import login_required
 from Requests.myudc import reports
 from Requests import term_code
 from threading import Thread
+from requests import get
 from time import sleep
 
 
@@ -30,11 +31,8 @@ class Subscribe(APIView):
     # Gets students dictionary on GET request
     @staticmethod
     def get(request):
-        # Returns dictionary of subscribed students with list of their known grades
-        return Response({
-            student.sid: [grade.course_key for grade in KnownGrade.objects.filter(student=student)]
-            for student in Student.objects.all()
-        })
+        # Returns a list of all subscribed students
+        return Response([student.sid for student in Student.objects.all()])
 
     # Subscribe to services on POST request
     @staticmethod
@@ -43,24 +41,10 @@ class Subscribe(APIView):
         # Store current student id
         sid = request.session["sid"]
         # If student isn't stored among the subscribers
-        if not Student.objects.filter(sid=sid).exists():
-            # Subscribes student and sends grades summary email
-            def subscribe():
-                # Create and save student in the database
-                student = Student(sid=sid)
-                student.save()
-                # Scrape grades and GPA from transcript report
-                reports._format = "xml"
-                courses, gpa = fetch_grades_and_gpa(sid)
-                # Loop through all courses
-                for course in courses:
-                    # Store all of them as known grades in the database
-                    KnownGrade(student=student, course_key=course[0]).save()
-                # Send an email with grades and GPA summary
-                outlook.send_grades_summary(sid, courses, gpa)
-                print("Subscribed and notified", sid)
-            # Execute subscription process on a new thread
-            Thread(target=subscribe, daemon=True).start()
+        if not Student.objects.filter(sid__iexact=sid).exists():
+            # Save student to the database
+            Student(sid=sid).save()
+            print("Subscribed", sid)
             # Return CREATED response
             return Response(status=201)
         # Otherwise return ALREADY REPORTED response
@@ -72,19 +56,33 @@ class Subscribe(APIView):
         # Checks grades for all subscribed students
         def check_grades():
             # Loop through all subscribed students
-            for sid, known_grades in Subscribe.get(request).data.items():
+            for sid in get("https://uoshub.com/api/subscribe/").json():
                 print("Checking grades for", sid)
+                # If student exists, get his known grades from local db, otherwise set as to False
+                if Student.objects.filter(sid__iexact=sid).exists():
+                    student = Student.objects.get(sid__iexact=sid)
+                    known_grades = [grade.course_key for grade in KnownGrade.objects.filter(student=student)]
+                else:
+                    student = Student(sid=sid)
+                    student.save()
+                    known_grades = None
                 # Fetch grades and GPA from transcript
-                courses, gpa = fetch_grades_and_gpa(sid, known_grades)
+                courses, gpa = fetch_grades_and_gpa(sid, known_grades or ())
+                # If it's a new student, send his a subscribed message
+                if known_grades is None:
+                    outlook.send_grades_summary(sid, courses, gpa)
+                    print("Subscribed and notified", sid)
                 # Loop though new grades and their courses
                 for course_key, course_title, grade, new in courses:
                     # If course grade is new
                     if new:
-                        # Send an email announcement to the student about the grade
-                        outlook.send_grades_summary(sid, courses, gpa, (grade, course_title))
                         # Add the course of the grade to the database (to be ignored next time)
-                        KnownGrade(course_key=course_key, student=Student.objects.get(sid=sid)).save()
-                        print("Grade sent by email to", sid)
+                        KnownGrade(course_key=course_key, student=student).save()
+                        # If student isn't new
+                        if known_grades is not None:
+                            # Send an email announcement to the student about the new grade
+                            outlook.send_grades_summary(sid, courses, gpa, (grade, course_title))
+                            print("Grade email sent to", sid)
         # Execute grades checking process on a new thread
         Thread(target=check_grades, daemon=True).start()
         # Return OK

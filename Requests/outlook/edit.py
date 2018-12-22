@@ -63,7 +63,8 @@ def send_grades_summary(sid, courses, gpa, new_grade=None):
         f"You got {article} {grade} in {course}" if new_grade else "Subscribed to UOS HUB!",
         # Email body contains grades, GPA details, new grade or thanks for subscription message
         "<br>".join(([
-            f"This is to inform you that you got {article} <b>{grade}</b> in <b>{course}</b><br><br><hr>"
+            f"This is to inform you that you got {article} <b>{grade}</b> in <b>{course}</b><br>",
+            "<i>Grades Checker was down today, it's up again now; sorry for the delayed notification.</i><br><br><br><hr>"
             "Here's a summary of your grades including this ☝ one and your GPA:<br>"
         ] if new_grade else [
             "Thank you for subscribing to UOS HUB Grades Checker,",
@@ -78,7 +79,7 @@ def send_grades_summary(sid, courses, gpa, new_grade=None):
         ] if courses else [
             "None of this term's grades have come out yet.",
             f"Your Cumulative GPA without this term is: {gpa['old']:.2f}"
-        ])),
+        ]) + ["<br><br><hr>This is an automated notification from UOS HUB."]),
         # Recipient is the student
         __email(sid)
     )
