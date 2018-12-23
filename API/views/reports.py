@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Requests.myudc.reports import get as reports
@@ -20,9 +19,9 @@ reports_types = {
 # Student's reports requests handler
 class Reports(APIView):
     """
-    This downloads six different reports from MyUDC as a PDF file.
+    This loads the six different reports from MyUDC as an HTML page.
     """
-    # Returns student's pdf report on GET request
+    # Returns student's html report on GET request
     @staticmethod
     def get(request, report_type, term_code):
         # If report type is not specified
@@ -37,15 +36,10 @@ class Reports(APIView):
             # Return 404 report not found error
             return Response("Report not found!", status=404)
         # Set report variables
-        reports._format = "pdf"
+        reports._format = "html"
         term = term_code or default_term
         # Get report and create response
-        response = HttpResponse(
+        return Response(
             # Get report from MyUDC using sent term code or the default one otherwise
-            getattr(reports, report_type)(request.session["sid"], term),
-            # Specify type as pdf for client handling
-            content_type="application/pdf"
+            getattr(reports, report_type)(request.session["sid"], term)
         )
-        # Name returned pdf report by its type and term
-        response["Content-Disposition"] = f'filename="{report_type}_{term}.pdf"'
-        return response
