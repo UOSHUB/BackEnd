@@ -12,7 +12,7 @@ __to_gpa = {
 }.get
 
 # Scrapes grades and GPA from transcript report
-def grades_and_gpa(transcript, term_code, known_grades=()):
+def grades_and_gpa(transcript, term_code):
     # Parse xml and declare variables
     xml = __parse_xml(transcript)
     try:
@@ -23,7 +23,8 @@ def grades_and_gpa(transcript, term_code, known_grades=()):
     term_quality = 0
     grades = []
     # Loop through the available terms in transcript
-    for term in xml.find(".//LIST_G_ACADEMIC_HIST_TERM") or ():
+    terms = xml.find(".//LIST_G_ACADEMIC_HIST_TERM")
+    for term in terms if terms is not None else ():
         # If the term is the selected one
         if term.find("TERM_CODE_KEY").text == term_code:
             # Loop through courses in that term
@@ -35,8 +36,8 @@ def grades_and_gpa(transcript, term_code, known_grades=()):
                 # Add them to total hours and term quality
                 all_hours += crhrs
                 term_quality += __to_gpa(grade, 0) * crhrs
-                # Add course's (key, title, grade, new or not) to the grades list
-                grades.append((key, course.find("COURSE_TITLE").text, grade, key not in known_grades))
+                # Add course's (key, title, grade) to the grades list
+                grades.append((key, course.find("COURSE_TITLE").text, grade))
     # Calculate and return new grades and (term, new and old GPA)
     return grades, {
         "term": term_quality / (all_hours - hours) if all_hours != hours else 0,
