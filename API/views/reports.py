@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Requests.myudc.reports import get as reports
@@ -23,7 +24,7 @@ class Reports(APIView):
     """
     # Returns student's html report on GET request
     @staticmethod
-    def get(request, report_type, term_code):
+    def get(request, report_type, term_code, extension):
         # If report type is not specified
         if not report_type:
             # Return a list of available report types
@@ -36,10 +37,18 @@ class Reports(APIView):
             # Return 404 report not found error
             return Response("Report not found!", status=404)
         # Set report variables
-        reports._format = "html"
+        reports._format = extension = extension or "pdf"
         term = term_code or default_term
         # Get report and create response
-        return Response(
+        response = HttpResponse(
             # Get report from MyUDC using sent term code or the default one otherwise
-            getattr(reports, report_type)(request.session["sid"], term)
+            getattr(reports, report_type)(request.session["sid"], term),
+            # Set content type as the sent extension
+            content_type=f"text/{extension[:4]}"
         )
+        # If report is requested in pdf
+        if extension == "pdf":
+            # Set type and download file headers
+            response["Content-Type"] = "application/pdf"
+            response["Content-Disposition"] = f'filename="{report_type}_{term}.pdf"'
+        return response

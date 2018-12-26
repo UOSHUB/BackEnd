@@ -39,7 +39,7 @@ class Subscribe(APIView):
     def patch(request):
         # Fetches student's grades and GPA from transcript
         def fetch_grades_and_gpa(sid, loop=0):
-            reports._format = "xml"
+            reports.get._format = "xml"
             try:  # Scrape a list of grades from reports
                 return reports.scrape.grades_and_gpa(
                     # Get student's transcript and pass it with the term code
