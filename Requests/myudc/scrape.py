@@ -162,9 +162,8 @@ def final_exams(page):
 def student_details(page):
     # Extract tables from page and store needed cells
     cells = __parse(page).findall(".//table[@class='datadisplaytable']/tr/td")
-    # Return student's registration term, collage and major
+    # Return student's collage and major
     return {
-        "term": __get_term_code(cells[2].text),
         "college": cells[4].text,
         "major": f"{cells[3].text} in {cells[5].text}".replace("Undergraduate in ", "")
     }

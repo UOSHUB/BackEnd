@@ -25,7 +25,7 @@ def report(options):
 
 
 # Gets student's unofficial transcript
-def unofficial_transcript(sid, _=None):
+def unofficial_transcript(sid, *_):
     return report({
         # Report cipher
         "REPORT": "SYFTRTE_REP",
@@ -47,7 +47,7 @@ def unofficial_transcript(sid, _=None):
 
 
 # Gets student's whole study plan
-def study_plan(sid, reg_term_code):
+def study_plan(sid, *_):
     return report({
         # Report cipher
         "REPORT": "SYRSPOS_REP",
@@ -62,13 +62,13 @@ def study_plan(sid, reg_term_code):
         "P_LEVEL_CODE": "ALL",
         # Student id
         "P_STUDENT_ID": sid.upper(),
-        # Student enrollment term code
-        "P_TERM_CODE": reg_term_code
+        # Student enrollment term code (extracted from student id)
+        "P_TERM_CODE": '20' + (sid[1:4] if sid[1] != '0' else '141') + '0'
     }).content
 
 
 # Gets student's personal information
-def personal_information(sid, _=None):
+def personal_information(sid, *_):
     return report({
         # Report cipher
         "REPORT": "SYREXDT_REP",
