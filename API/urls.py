@@ -49,7 +49,7 @@ urlpatterns = [
     # MyUDC holds path
     url(r"^holds/$", Holds.as_view()),
     # MyUDC reports path
-    url(r"^reports/((?P<report_type>[a-z_]+)/((?P<term_code>[0-9]{6})/((?P<extension>html|htmlcss|xml|pdf)/)?)?)?$", Reports.as_view()),
+    url(r"^reports/((?P<report_type>[a-z_]+)/((?P<report_format>html|htmlcss|xml|pdf)/)?)?$", Reports.as_view()),
     # Design Schedule path (MyUDC and its Reports)
     # /api/design returns a list of registrable courses
     # url(r"^design/(?P<term_code>[0-9]{6})/$", Design.as_view()),

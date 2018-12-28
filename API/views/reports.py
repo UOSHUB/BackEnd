@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Requests.myudc.reports import get as reports
-from Requests import term_code as default_term
+from Requests import term_code
 
 # Define list of reports types
 reports_types = {
@@ -24,7 +24,7 @@ class Reports(APIView):
     """
     # Returns student's html report on GET request
     @staticmethod
-    def get(request, report_type, term_code, extension):
+    def get(request, report_type, report_format):
         # If report type is not specified
         if not report_type:
             # Return a list of available report types
@@ -37,18 +37,18 @@ class Reports(APIView):
             # Return 404 report not found error
             return Response("Report not found!", status=404)
         # Set report variables
-        reports._format = extension = extension or "pdf"
-        term = term_code or default_term
+        reports._format = report_format = report_format or "pdf"
+        sid = request.session["sid"]
         # Get report and create response
         response = HttpResponse(
-            # Get report from MyUDC using sent term code or the default one otherwise
-            getattr(reports, report_type)(request.session["sid"], term),
-            # Set content type as the sent extension
-            content_type=f"text/{extension[:4]}"
+            # Get report from MyUDC
+            getattr(reports, report_type)(sid, term_code),
+            # Set content type as the sent format
+            content_type=f"text/{report_format[:4]}"
         )
         # If report is requested in pdf
-        if extension == "pdf":
+        if report_format == "pdf":
             # Set type and download file headers
             response["Content-Type"] = "application/pdf"
-            response["Content-Disposition"] = f'filename="{report_type}_{term}.pdf"'
+            response["Content-Disposition"] = f'filename="{report_type}_{sid}.pdf"'
         return response
