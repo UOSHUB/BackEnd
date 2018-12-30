@@ -3,7 +3,7 @@ import re
 
 # Formats student id into email address
 def __email(sid):
-    return f"{sid}@sharjah.ac.ae"
+    return f"{sid}@{'uoshj.onmicrosoft.com' if sid[0] == 'u' else 'sharjah.ac.ae'}"
 
 
 # Commonly used outlook api link

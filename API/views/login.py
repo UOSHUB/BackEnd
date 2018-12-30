@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import redirect
 from Requests import outlook
-from ..models import Student
+# from ..models import Student
 
 
 # Login requests handler
@@ -19,19 +19,24 @@ class Login(APIView):
     @staticmethod
     def post(request):
         # Store submitted credentials
-        sid = request.data.get("sid")
+        sid = request.data.get("sid").upper()
         pin = request.data.get("pin")
         # Login to outlook
         name = outlook.login(sid, pin)
-        # If credentials are wrong
+        # If login fails
         if not name:
-            # Return error message with BAD_REQUEST status
-            return Response("Wrong Credentials!", status=400)
+            # Try login using other email format
+            sid = sid.lower()
+            name = outlook.login(sid, pin)
+            # If credentials are wrong
+            if not name:
+                # Return error message with BAD_REQUEST status
+                return Response("Wrong Credentials!", status=400)
         # Store submitted credentials in session
         request.session.update({"sid": sid, "pin": pin})
         # Return name and sid indicating success, or go to GET if on browser
         return Response({
-            "name": name, "studentId": sid, "subscribed": Student.objects.filter(sid__iexact=sid).exists()
+            "name": name,  # "subscribed": Student.objects.filter(sid__iexact=sid).exists()
         }) if client_side(request) else redirect(request.path)
 
     # Returns login session/status on GET request
