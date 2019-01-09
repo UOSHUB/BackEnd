@@ -2,7 +2,8 @@ from .common import Credentials, login_required, client_side
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import redirect
-from Requests import outlook
+from Requests import blackboard
+from time import time
 # from ..models import Student
 
 
@@ -21,22 +22,16 @@ class Login(APIView):
         # Store submitted credentials
         sid = request.data.get("sid").upper()
         pin = request.data.get("pin")
-        # Login to outlook
-        name = outlook.login(sid, pin)
-        # If login fails
-        if not name:
-            # Try login using other email format
-            sid = sid.lower()
-            name = outlook.login(sid, pin)
-            # If credentials are wrong
-            if not name:
-                # Return error message with BAD_REQUEST status
-                return Response("Wrong Credentials!", status=400)
-        # Store submitted credentials in session
-        request.session.update({"sid": sid, "pin": pin})
-        # Return name and sid indicating success, or go to GET if on browser
+        # Try logging in to Blackboard
+        try: cookies = blackboard.login(sid, pin)
+        except Exception as error:
+            # If it failed, return error message with BAD_REQUEST status
+            return Response(str(error), status=400)
+        # Store submitted credentials and Blackboard cookies in session
+        request.session.update({"sid": sid, "pin": pin, "blackboard": cookies, "blackboard_time": time()})
+        # Return empty response indicating success, or go to GET if from API
         return Response({
-            "name": name,  # "subscribed": Student.objects.filter(sid__iexact=sid).exists()
+            # "subscribed": Student.objects.filter(sid__iexact=sid).exists()
         }) if client_side(request) else redirect(request.path)
 
     # Returns login session/status on GET request
