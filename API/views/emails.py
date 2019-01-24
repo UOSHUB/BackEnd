@@ -18,22 +18,22 @@ class Emails(APIView):
         # If emails category is requested
         if category:
             # Return array of requested emails
-            return Response(
-                # Get & scrape emails from requested category
-                getattr(outlook.scrape, category + "_emails")(
-                    outlook.get.emails_list(
-                        # Send student id and password
-                        request.session["sid"],
-                        request.session["pin"],
-                        # Specify emails category
-                        search=category,
-                        # Specify emails count (20 by default)
-                        count=count or 20,
-                        # Specify numbers of emails to skip (0 by default)
-                        offset=offset or 0
-                    )
-                )
-            )
+            return Response([])
+            #     # Get & scrape emails from requested category
+            #     getattr(outlook.scrape, category + "_emails")(
+            #         outlook.get.emails_list(
+            #             # Send student id and password
+            #             request.session["sid"],
+            #             request.session["pin"],
+            #             # Specify emails category
+            #             search=category,
+            #             # Specify emails count (20 by default)
+            #             count=count or 20,
+            #             # Specify numbers of emails to skip (0 by default)
+            #             offset=offset or 0
+            #         )
+            #     )
+            # )
         # If emails API root is requested
         # Provide emails API URL
         url = request.build_absolute_uri
