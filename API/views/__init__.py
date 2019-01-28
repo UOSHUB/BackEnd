@@ -11,7 +11,8 @@ from .finals import Finals
 from .holds import Holds
 from .reports import Reports
 # from .design import Design
-from .subscribe import Subscribe
+# from .subscribe import Subscribe
+from .feedback import Feedback
 from .submit import Submit
 from .demo import Demo
 from .refresh import Refresh

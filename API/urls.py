@@ -55,6 +55,8 @@ urlpatterns = [
     # url(r"^design/(?P<term_code>[0-9]{6})/$", Design.as_view()),
     # Services subscription path
     # url(r"^subscribe/$", Subscribe.as_view()),
+    # Send and view feedback path
+    url(r"^feedback/$", Feedback.as_view()),
     # Blackboard assignment submission path
     url(r"^submit/(?P<course_id>[0-9]{5})/(?P<content_id>[0-9]{7})/$", Submit.as_view()),
     # Demo data path

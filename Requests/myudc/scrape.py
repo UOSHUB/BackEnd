@@ -7,7 +7,7 @@ def __get_term_code(term_name):
     # Separate season from year and store both
     season, year = term_name.split(" ", 1)
     # Return the first year among the two plus season's code
-    return year.split("-")[0] + seasons_codes[season]
+    return year.split("/")[0] + seasons_codes[season]
 
 
 # Scrapes all terms that student was registered in
