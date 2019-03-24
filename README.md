@@ -70,3 +70,9 @@ There're a lot of thing we still need to do in the back-end:
 - [REST Framework](https://github.com/encode/django-rest-framework)
 - [Requests](https://github.com/requests/requests)
 - [lxml](https://github.com/lxml/lxml)
+
+### License
+
+Copyright (C) 2019 by Omar Einea.
+
+This is an open source software licensed under GPL v3.0. Copy of the license can be found [here](./LICENSE.md).
