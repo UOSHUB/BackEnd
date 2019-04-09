@@ -4,7 +4,7 @@ import os
 
 # Dictionary of abbreviations and their corresponding UOS websites URLs
 urls = {
-    "udc": "https://uos.sharjah.ac.ae:9050/prod_enUS/twbkwbis.P_WWWLogin",
+    "udc": "https://ssb-prod.ec.sharjah.ac.ae:9000/PROD/twbkwbis.P_WWWLogin",
     "uos": "http://www.sharjah.ac.ae/en/Pages/default.aspx",
     "ms": "https://www.outlook.com/sharjah.ac.ae",
     "bb": "https://elearning.sharjah.ac.ae/",

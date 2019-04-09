@@ -1,7 +1,7 @@
 import requests
 
 # Root url of myUDC
-__root_url = "https://uos.sharjah.ac.ae:9050/prod_enUS/"
+__root_url = "https://ssb-prod.ec.sharjah.ac.ae:9000/PROD/"
 
 
 # Gets student's schedule page by term code
